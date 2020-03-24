@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.Views.SpacePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button x:Name="PrevButton" Grid.Row="0" 
+                HorizontalAlignment="Center" Click="PrevButton_Click" 
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+            <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+        </Button>
+        <Button x:Name="WallpaperImageButton" Grid.Row="1" HorizontalAlignment="Center"
+                Click="WallpaperImageButton_Click">
+            <Image x:Name="WallpaperImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="UniformToFill" />
+        </Button>
+        <Button x:Name="NextButton" Grid.Row="2" 
+                HorizontalAlignment="Center" Click="NextButton_Click"
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70D;" />
+        </Button>
+    </Grid>
+</Page>

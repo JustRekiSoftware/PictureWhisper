@@ -1,0 +1,29 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.Views.SearchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="5,5,5,5"
+                Orientation="Vertical"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+
+        <StackPanel Margin="10,10,10,0" Orientation="Horizontal">
+            <TextBox x:Name="SearchTextBox" PlaceholderText="输入关键词（使用空格分隔）"
+                     Width="500" />
+            <Button x:Name="ConfirmButton"
+                    Click="ConfirmButton_Click"
+                    Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                <SymbolIcon Symbol="Find" />
+            </Button>
+        </StackPanel>
+        <TextBlock x:Name="ErrorMessageTextBlock" Foreground="Red" Width="500" Visibility="Collapsed" />
+        <ToggleSwitch x:Name="SearchType" Header="搜索用户？" Margin="10,10,10,10"
+                      IsOn="{x:Bind SearchTypeResult, Mode=TwoWay}" />
+    </StackPanel>
+</Page>

@@ -1,0 +1,86 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <HyperlinkButton x:Name="WallpaperRecommendHyperlinkButton" Foreground="Gray"
+                                 Click="WallpaperRecommendHyperlinkButton_Click"
+                                 Margin="10,0,0,0">
+                    <TextBlock Text="推荐" />
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="WallpaperTypeHyperlinkButton" Foreground="Gray"
+                                 Click="WallpaperTypeHyperlinkButton_Click"
+                                 Margin="10,0,0,0">
+                    <TextBlock Text="分区" />
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="SpaceHyperlinkButton" Foreground="Gray"
+                                 Click="SpaceHyperlinkButton_Click"
+                                 Margin="10,0,0,0">
+                    <TextBlock Text="动态" />
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="WallpaperSearchResultHyperlinkButton" Foreground="Gray"
+                                 Click="WallpaperSearchResultHyperlinkButton_Click"
+                                 Margin="10,0,0,0" Visibility="Collapsed">
+                    <TextBlock Text="壁纸搜索" />
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="UserSearchResultHyperlinkButton" Foreground="Gray"
+                                 Click="UserSearchResultHyperlinkButton_Click"
+                                 Margin="10,0,0,0" Visibility="Collapsed">
+                    <TextBlock Text="用户搜索" />
+                </HyperlinkButton>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Width="160" Grid.Column="1">
+                <Button x:Name="AddButton" Click="AddButton_Click"
+                        Width="40" Height="40" 
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Add" />
+                </Button>
+                <Button x:Name="SearchButton" Click="SearchButton_Click"
+                        Width="40" Height="40" 
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Find" />
+                </Button>
+                <Button x:Name="UserButton" Click="UserButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <Ellipse Width="22" Height="22">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Button>
+                <Button x:Name="MessageButton" Click="MessageButton_Click"
+                        Width="40" Height="40" 
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Mail" />
+                </Button>
+                <Button x:Name="SettingButton" Click="SettingButton_Click"
+                        Width="40" Height="40" 
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Setting" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Frame x:Name="ContentFrame" Grid.Row="1" />
+    </Grid>
+</Page>

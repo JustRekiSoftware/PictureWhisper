@@ -1,0 +1,53 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.Views.WallpaperPublishPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"
+                x:Name="CloseButton" Click="CloseButton_Click"
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+            <SymbolIcon Symbol="Cancel" />
+        </Button>
+        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image  x:Name="UploadImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="Uniform" Visibility="Collapsed" />
+            <Button x:Name="UploadPictureButton" Content="上传图片" Visibility="Visible"
+                    Click="UploadPictureButton_Click" Background="{StaticResource SystemAccentColor}" />
+            <TextBlock x:Name="UploadErrorMsgTextBlock" Margin="10,10,10,10" 
+                       Foreground="red" Visibility="Collapsed" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+            <TextBox x:Name="TitleTextBox" Header="标题" PlaceholderText="输入标题" 
+                     MaxLength="128" AcceptsReturn="True"
+                     TextWrapping="Wrap" Margin="10,0,0,0" />
+            <ComboBox x:Name="TypeComboBox" ItemsSource="{x:Bind WallpaperTypeLVM.WallpaperTypes}"
+                      Width="100" Header="分区" Margin="10,5,0,0"
+                      DisplayMemberPath="WT_Name" SelectedValuePath="WT_ID" />
+            <TextBox x:Name="TagTextBox" Header="标签" PlaceholderText="输入标签（使用逗号分隔）" 
+                     MaxLength="128" Height="70" AcceptsReturn="True"
+                     TextWrapping="Wrap" Margin="10,10,0,0" />
+            <TextBox x:Name="StoryTextBox" Header="图语" PlaceholderText="输入图语"
+                     MaxLength="1024" Height="100" AcceptsReturn="True"
+                     TextWrapping="Wrap" Margin="10,10,0,0" />
+            <Button x:Name="ConfirmButton" Content="投稿" HorizontalAlignment="Center"
+                    Click="ConfirmButton_Click" Margin="10,10,10,10"
+                    Background="{StaticResource SystemAccentColor}" />
+            <TextBlock x:Name="PublishErrorMsgTextBlock" Margin="0,10,10,10" 
+                       Foreground="red" Visibility="Collapsed" />
+        </StackPanel>
+    </Grid>
+</Page>

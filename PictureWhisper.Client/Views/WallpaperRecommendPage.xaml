@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.Views.WallpaperRecommendPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:data="using:PictureWhisper.Client.ViewModels"
+    Loaded="Page_Loaded"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="5,5,5,5">
+        <ScrollViewer>
+            <controls:WaterfallFlowView xmlns:controls="using:Marduk.Controls" x:Name="Panel" 
+                                        StackCount="4" DelayMeasure="True" 
+                                        ItemSource="{x:Bind RecommendLVM.RecommendWallpapers}">
+                <controls:WaterfallFlowView.ItemContainerStyle>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </controls:WaterfallFlowView.ItemContainerStyle>
+                <controls:WaterfallFlowView.ItemTemplate>
+                    <DataTemplate x:DataType="data:WallpaperDto">
+                        <Button x:Name="ImageButton" Click="ImageButton_Click"
+                                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                            <Image Source="{x:Bind Image}" Stretch="Uniform" />
+                        </Button>
+                    </DataTemplate>
+                </controls:WaterfallFlowView.ItemTemplate>
+            </controls:WaterfallFlowView>
+        </ScrollViewer>
+
+        <Button x:Name="RefreshButton" Click="RefreshButton_Click" Margin="10,10,10,10"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <SymbolIcon Symbol="Refresh" />
+        </Button>
+    </Grid>
+</Page>

@@ -1,0 +1,23 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.Views.SettingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="5,5,5,5">
+        <StackPanel>
+            <TextBlock Text="自动设置壁纸设置" FontSize="24" />
+            <ToggleSwitch x:Name="AutoSetWallpaperToggleSwitch" Header="启用自动设置壁纸？"
+                      Margin="0,10,0,0" Toggled="AutoSetWallpaperToggleSwitch_Toggled"
+                      IsOn="{x:Bind SettingInfo.STI_AutoSetWallpaper, Mode=TwoWay}" />
+            <TextBlock x:Name="AutoSetWallpaperTextBlock" Visibility="Collapsed" Margin="0,5,0,0" />
+        </StackPanel>
+        <StackPanel Margin="0,20,0,0">
+            <TextBlock Text="关于" FontSize="24" />
+            <TextBlock Text="{x:Bind AboutText, Mode=OneWay}" Margin="0,10,0,0" />
+        </StackPanel>
+    </StackPanel>
+</Page>

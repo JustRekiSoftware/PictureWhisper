@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="PictureWhisper.Client.SignupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PictureWhisper.Client"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:data="using:PictureWhisper.Domain.Entites"
+    Loaded="Page_Loaded"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="10,10,10,0" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" 
+                Orientation="Vertical" 
+                BorderBrush="{StaticResource SystemAccentColor}"
+                BorderThickness="1">
+        
+        <TextBlock Text="注册" FontSize="32" Width="300" 
+                   Foreground="{StaticResource SystemAccentColor}"
+                   Margin="10,10,10,0" />
+        <TextBox x:Name="EmailTextBox" Header="注册" PlaceholderText="输入邮箱" 
+                 Width="300" Margin="10,10,10,0" MaxLength="32" />
+        <TextBox x:Name="NameTextBox" Header="昵称" PlaceholderText="输入昵称"
+                 Width="300" Margin="10,10,10,0" MaxLength="16" />
+        <PasswordBox x:Name="PwdPasswordBox" Header="密码" PlaceholderText="输入密码" 
+                 Width="300" Margin="10,10,10,0" MaxLength="16" />
+        <PasswordBox x:Name="PwdRepeatPasswordBox" PlaceholderText="再次输入密码"
+                 Width="300" Margin="10,10,10,0" MaxLength="16" />
+        <TextBlock Text="请选择你感兴趣的标签：" 
+                   Width="300" Margin="10,10,10,0" />
+        <ProgressRing x:Name="TagPickerProgressRing" Width="28" 
+                      Height="28" Margin="10,10,10,0" />
+        <GridView x:Name="TagPicker" 
+                  IsItemClickEnabled="True" 
+                  ItemClick="TagPicker_ItemClick"
+                  SelectionMode="Multiple"
+                  ItemsSource="{x:Bind WallpaperTypeLVM.WallpaperTypes}"
+                  Width="300" Margin="5,5,10,0">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="data:T_WallpaperType">
+                    <StackPanel Margin="5,5,0,0" VerticalAlignment="Center"
+                                Width="55" Height="22">
+                        <TextBlock Text="{x:Bind WT_Name}"  />
+                    </StackPanel>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        <TextBlock x:Name="ErrorMsgTextBlock" Foreground="Red" 
+                   Visibility="Collapsed" Margin="10,10,10,0"
+                   Width="300" />
+        <Button x:Name="ConfirmButton" Content="注册" 
+                Width="300" Margin="10,10,10,10"
+                HorizontalAlignment="Center" 
+                Background="{StaticResource SystemAccentColor}"
+                Click="ConfirmButton_Click" />
+    </StackPanel>
+</Page>

@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200305100240_PictrueWhisperMigration.cs" />
+    <Compile Remove="Migrations\20200305100240_PictrueWhisperMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200305100636_PictureWhisperMigration.cs" />
+    <Compile Remove="Migrations\20200305100636_PictureWhisperMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200305112135_PictureWhisperMigration.cs" />
+    <Compile Remove="Migrations\20200305112135_PictureWhisperMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200307032327_PWMigration.cs" />
+    <Compile Remove="Migrations\20200307032327_PWMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200307073203_PWMigration.cs" />
+    <Compile Remove="Migrations\20200307073203_PWMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200309011408_AddC_ReplyNum.cs" />
+    <Compile Remove="Migrations\20200309011408_AddC_ReplyNum.Designer.cs" />
+    <Compile Remove="Migrations\20200316064156_UpdateWallpaperToBindable.cs" />
+    <Compile Remove="Migrations\20200316064156_UpdateWallpaperToBindable.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.5.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+</Project>
