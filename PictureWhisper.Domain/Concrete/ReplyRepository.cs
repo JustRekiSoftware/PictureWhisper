@@ -47,6 +47,8 @@ namespace PictureWhisper.Domain.Concrete
             {
                 return false;
             }
+            comment.C_ReplyNum += 1;
+            context.Entry(comment).State = EntityState.Modified;
             entity.RPL_Date = DateTime.Now;
             context.Replies.Add(entity);
             try
@@ -68,6 +70,13 @@ namespace PictureWhisper.Domain.Concrete
             {
                 return false;
             }
+            var comment = await context.Comments.FindAsync(entity.RPL_CommentID);
+            if (comment.C_Status == (short)Status.已删除)
+            {
+                return false;
+            }
+            comment.C_ReplyNum -= 1;
+            context.Entry(comment).State = EntityState.Modified;
             entity.RPL_Status = (short)Status.已删除;
             context.Entry(entity).State = EntityState.Modified;
             try
