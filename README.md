@@ -10,5 +10,15 @@ IdentityServer 4 to protect web api (using ClientCredential)
 
 MVVM and DataBinding, EFcore
 
-Marduk.Controls is used in this app
-(the github link: https://github.com/ProjectMarduk/Marduk.Controls)
+# Open Source Project Used
+Marduk.Controls
+(https://github.com/ProjectMarduk/Marduk.Controls)
+
+NewtonSoft.Json
+(https://github.com/JamesNK/Newtonsoft.Json)
+
+IdentityServer 4
+(https://github.com/IdentityServer/IdentityServer4)
+
+EFcore
+(https://github.com/dotnet/efcore)
