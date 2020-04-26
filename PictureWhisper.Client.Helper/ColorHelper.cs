@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
-namespace PictureWhisper.Client.Helpers
+namespace PictureWhisper.Client.Helper
 {
     public class ColorHelper
     {

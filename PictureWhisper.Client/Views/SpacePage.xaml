@@ -18,10 +18,10 @@
         <Button x:Name="PrevButton" Grid.Row="0" 
                 HorizontalAlignment="Center" Click="PrevButton_Click" 
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+            <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
         </Button>
         <Button x:Name="WallpaperImageButton" Grid.Row="1" HorizontalAlignment="Center"
-                Click="WallpaperImageButton_Click">
+                Click="WallpaperImageButton_Click" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
             <Image x:Name="WallpaperImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="UniformToFill" />
         </Button>
         <Button x:Name="NextButton" Grid.Row="2" 

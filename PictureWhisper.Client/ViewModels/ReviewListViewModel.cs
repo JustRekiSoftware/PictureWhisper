@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;

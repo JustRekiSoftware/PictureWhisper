@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
 
 namespace PictureWhisper.Client.ViewModels

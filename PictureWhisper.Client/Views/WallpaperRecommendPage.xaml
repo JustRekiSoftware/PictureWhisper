@@ -33,7 +33,8 @@
         </ScrollViewer>
 
         <Button x:Name="RefreshButton" Click="RefreshButton_Click" Margin="10,10,10,10"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
             <SymbolIcon Symbol="Refresh" />
         </Button>
     </Grid>

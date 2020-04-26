@@ -13,7 +13,7 @@ namespace PictureWhisper.Client.Domain.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2");
+                .HasAnnotation("ProductVersion", "3.1.3");
 
             modelBuilder.Entity("PictureWhisper.Client.Domain.Entities.T_HistoryInfo", b =>
                 {
@@ -45,18 +45,14 @@ namespace PictureWhisper.Client.Domain.Migrations
 
             modelBuilder.Entity("PictureWhisper.Client.Domain.Entities.T_SettingInfo", b =>
                 {
-                    b.Property<int>("SI_ID")
+                    b.Property<int>("STI_ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("SI_AutoSetWallpaper")
+                    b.Property<bool>("STI_AutoSetWallpaper")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SI_WallpaperSavePath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("SI_ID");
+                    b.HasKey("STI_ID");
 
                     b.ToTable("T_SettingInfo");
                 });

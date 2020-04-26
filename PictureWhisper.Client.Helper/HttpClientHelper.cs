@@ -8,7 +8,7 @@ using IdentityModel.Client;
 using Newtonsoft.Json.Linq;
 using System.Threading;
 
-namespace PictureWhisper.Client.Helpers
+namespace PictureWhisper.Client.Helper
 {
     public class HttpClientHelper
     {

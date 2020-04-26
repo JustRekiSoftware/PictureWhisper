@@ -21,9 +21,9 @@
                    Foreground="{StaticResource SystemAccentColor}"
                    Margin="10,10,10,0" />
         <TextBox x:Name="EmailTextBox" Header="注册" PlaceholderText="输入邮箱" 
-                 Width="300" Margin="10,10,10,0" MaxLength="32" />
+                 Width="300" Margin="10,10,10,0" MaxLength="32" IsSpellCheckEnabled="False" />
         <TextBox x:Name="NameTextBox" Header="昵称" PlaceholderText="输入昵称"
-                 Width="300" Margin="10,10,10,0" MaxLength="16" />
+                 Width="300" Margin="10,10,10,0" MaxLength="16" IsSpellCheckEnabled="False" />
         <PasswordBox x:Name="PwdPasswordBox" Header="密码" PlaceholderText="输入密码" 
                  Width="300" Margin="10,10,10,0" MaxLength="16" />
         <PasswordBox x:Name="PwdRepeatPasswordBox" PlaceholderText="再次输入密码"
@@ -55,5 +55,14 @@
                 HorizontalAlignment="Center" 
                 Background="{StaticResource SystemAccentColor}"
                 Click="ConfirmButton_Click" />
+        <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center" Margin="10,10,10,0">
+            <TextBlock Text="已有账号？点此" VerticalAlignment="Center" />
+            <HyperlinkButton Name="SigninHyperlinkButton"
+                             Click="SigninHyperlinkButton_Click"
+                             VerticalAlignment="Center">
+                <TextBlock Text="登录" />
+            </HyperlinkButton>
+        </StackPanel>
     </StackPanel>
 </Page>

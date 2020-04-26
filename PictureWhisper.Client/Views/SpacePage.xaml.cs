@@ -1,4 +1,4 @@
-﻿using PictureWhisper.Client.Helpers;
+﻿using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -49,19 +49,19 @@ namespace PictureWhisper.Client.Views
             }
             if (CurrentIndex > 0)
             {
-                PrevFontIcon.Glyph = "&#xE70E;";
+                PrevFontIcon.Glyph = "\xE70E";
                 CurrentIndex--;
                 ImageVM.Image = WallpaperLVM.SpaceWallpapers[CurrentIndex].Image;
             }
             if (CurrentIndex == 0)
             {
-                PrevFontIcon.Glyph = "&#xE72C;";
+                PrevFontIcon.Glyph = "\xE72C";
             }
         }
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentIndex < WallpaperLVM.SpaceWallpapers.Count)
+            if (CurrentIndex < WallpaperLVM.SpaceWallpapers.Count - 1)
             {
                 CurrentIndex++;
                 ImageVM.Image = WallpaperLVM.SpaceWallpapers[CurrentIndex].Image;
@@ -69,6 +69,10 @@ namespace PictureWhisper.Client.Views
             if (CurrentIndex > WallpaperLVM.SpaceWallpapers.Count - 5)
             {
                 await LoadSpaceWallpapersAsync(PageNum++);
+            }
+            if (CurrentIndex > 0)
+            {
+                PrevFontIcon.Glyph = "\xE70E";
             }
         }
 
@@ -85,6 +89,7 @@ namespace PictureWhisper.Client.Views
             PageNum = 1;
             CurrentIndex = 0;
             await LoadSpaceWallpapersAsync(PageNum++);
+            ImageVM.Image = WallpaperLVM.SpaceWallpapers[CurrentIndex].Image;
             base.OnNavigatedTo(e);
         }
 

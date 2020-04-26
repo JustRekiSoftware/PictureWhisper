@@ -40,12 +40,12 @@
                 <HyperlinkButton x:Name="WallpaperSearchResultHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperSearchResultHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="壁纸搜索" />
+                    <TextBlock x:Name="WallpaperSearchResultHyperlinkButtonTextBlock" Text="壁纸搜索" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="UserSearchResultHyperlinkButton" Foreground="Gray"
                                  Click="UserSearchResultHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="用户搜索" />
+                    <TextBlock x:Name="UserSearchResultHyperlinkButtonTextBlock" Text="用户搜索" />
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Width="160" Grid.Column="1">

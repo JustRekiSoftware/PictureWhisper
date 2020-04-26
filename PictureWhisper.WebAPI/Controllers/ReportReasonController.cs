@@ -23,7 +23,7 @@ namespace PictureWhisper.WebAPI.Controllers
             reportReasonRepo = repo;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<string>> GetReportReasonAsync(short id)
         {
             var result = await reportReasonRepo.QueryAsync(id);

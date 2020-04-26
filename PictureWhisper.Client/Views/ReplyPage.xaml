@@ -20,68 +20,139 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
-            <StackPanel HorizontalAlignment="Center">
-                <Button x:Name="CommentUserButton" Click="CommentUserButton_Click"
-                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-                    <Ellipse Width="40" Height="40">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind CommentDto.PublisherAvatar, Mode=OneWay}"
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" 
+              Margin="5,5,5,5" BorderBrush="LightGray" 
+              BorderThickness="0,0,0,1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.RowSpan="2" Grid.Column="0" x:Name="CommentUserButton" 
+                    Click="CommentUserButton_Click"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Ellipse Width="40" Height="40">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind CommentDto.PublisherAvatar, Mode=OneWay}"
                                     Stretch="UniformToFill" />
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </Button>
-                <TextBlock Text="{x:Bind CommentDto.PublisherInfo.U_Name, Mode=OneWay}" Margin="0,5,0,0" />
-            </StackPanel>
-            <StackPanel Margin="10,0,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{x:Bind CommentDto.CommentInfo.C_Date, Mode=OneWay}" />
-                    <Button x:Name="MoreButton" Grid.Row="1" Margin="10,10,10,10"
-                            HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Button.Content>
-                            <SymbolIcon Symbol="More" />
-                        </Button.Content>
-                        <Button.Flyout>
-                            <Flyout>
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="ScrollViewer.HorizontalScrollMode" 
-                                                Value="Disabled"/>
-                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" 
-                                                Value="Disabled"/>
-                                        <Setter Property="IsTabStop" Value="True"/>
-                                        <Setter Property="TabNavigation" Value="Cycle"/>
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <StackPanel>
-                                    <Button x:Name="CommentReportButton" Content="举报" 
-                                            Click="CommentReportButton_Click" />
-                                    <Button x:Name="CommentDeleteButton" Content="删除" 
-                                            Click="CommentDeleteButton_Click" 
-                                            Visibility="Collapsed" />
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </StackPanel>
-                <TextBlock Text="{x:Bind CommentDto.CommentInfo.C_Content, Mode=OneWay}" Margin="0,5,0,0" />
-                <HyperlinkButton x:Name="ReplyCommentHyperlinkButton" 
-                                 Click="ReplyCommentHyperlinkButton_Click"
-                                 Margin="0,5,0,0">
-                    <TextBlock Text="回复" />
-                </HyperlinkButton>
-            </StackPanel>
-        </StackPanel>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Button>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Bind CommentDto.PublisherInfo.U_Name, Mode=OneWay}" Margin="0,10,0,0" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind CommentDto.CommentInfo.C_Date, Mode=OneWay}" Margin="10,0,0,0" />
+            <Button Grid.Row="0" Grid.Column="2"
+                    HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button.Content>
+                    <SymbolIcon Symbol="More" />
+                </Button.Content>
+                <Button.Flyout>
+                    <Flyout>
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="ScrollViewer.HorizontalScrollMode" 
+                                                                Value="Disabled"/>
+                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" 
+                                                                Value="Disabled"/>
+                                <Setter Property="IsTabStop" Value="True"/>
+                                <Setter Property="TabNavigation" Value="Cycle"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                        <StackPanel>
+                            <Button x:Name="CommentReportButton" Content="举报" 
+                                    Click="CommentReportButton_Click" />
+                            <Button x:Name="CommentDeleteButton" Content="删除" 
+                                    Click="CommentDeleteButton_Click" 
+                                    Visibility="{x:Bind CommentDto.DeleteButtonVisibility, Mode=OneWay}" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind CommentDto.CommentInfo.C_Content, Mode=OneWay}" Margin="10,10,0,0" />
+            <HyperlinkButton Grid.Row="2" Grid.Column="1" x:Name="ReplyCommentHyperlinkButton" 
+                             Click="ReplyCommentHyperlinkButton_Click"
+                             Margin="10,10,0,0">
+                <TextBlock Text="回复" />
+            </HyperlinkButton>
+        </Grid>
         <ScrollViewer x:Name="ReplyScrollViewer"
                       VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Hidden"
                       ViewChanged="ReplyScrollViewer_ViewChanged"
-                      Grid.Row="0" Grid.ColumnSpan="2">
+                      Grid.Row="1" Grid.ColumnSpan="2">
             <ListView ItemsSource="{x:Bind ReplyLVM.CommentReplys, Mode=OneWay}"
                       SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:ReplyDto">
-                        <StackPanel Orientation="Horizontal">
+                        <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.RowSpan="2" Grid.Column="0" Click="ReplyUserButton_Click"
+                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                <Ellipse Width="40" Height="40">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{x:Bind PublisherAvatar, Mode=OneWay}"
+                                                    Stretch="UniformToFill" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Button>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Bind PublisherInfo.U_Name, Mode=OneWay}" Margin="0,10,0,0" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ReplyInfo.RPL_Date, Mode=OneWay}" Margin="10,0,0,0" />
+                            <Button Grid.Row="0" Grid.Column="2"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Button.Content>
+                                    <SymbolIcon Symbol="More" />
+                                </Button.Content>
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <Flyout.FlyoutPresenterStyle>
+                                            <Style TargetType="FlyoutPresenter">
+                                                <Setter Property="ScrollViewer.HorizontalScrollMode" 
+                                                                Value="Disabled"/>
+                                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" 
+                                                                Value="Disabled"/>
+                                                <Setter Property="IsTabStop" Value="True"/>
+                                                <Setter Property="TabNavigation" Value="Cycle"/>
+                                            </Style>
+                                        </Flyout.FlyoutPresenterStyle>
+                                        <StackPanel>
+                                            <Button x:Name="ReplyReportButton" Content="举报" 
+                                                            Click="ReplyReportButton_Click" />
+                                            <Button x:Name="ReplyDeleteButton" Content="删除" 
+                                                            Click="ReplyDeleteButton_Click" 
+                                                            Visibility="{x:Bind DeleteButtonVisibility, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ReplyInfo.RPL_Content, Mode=OneWay}" Margin="10,10,0,0" />
+                            <HyperlinkButton Grid.Row="2" Grid.Column="1" x:Name="ReplyHyperlinkButton" 
+                                                 Click="ReplyHyperlinkButton_Click"
+                                                 Margin="10,10,0,0">
+                                <TextBlock Text="回复" />
+                            </HyperlinkButton>
+                        </Grid>
+                        <!--<StackPanel Orientation="Horizontal">
                             <StackPanel HorizontalAlignment="Center">
                                 <Button x:Name="ReplyUserButton" Click="ReplyUserButton_Click"
                                         Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
@@ -132,7 +203,7 @@
                                     <TextBlock Text="回复" />
                                 </HyperlinkButton>
                             </StackPanel>
-                        </StackPanel>
+                        </StackPanel>-->
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

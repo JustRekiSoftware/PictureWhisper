@@ -1,4 +1,4 @@
-﻿using PictureWhisper.Client.Helpers;
+﻿using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using System;
 using System.Collections.Generic;

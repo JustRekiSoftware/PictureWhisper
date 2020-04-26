@@ -1,21 +1,12 @@
 ﻿using PictureWhisper.Client.Domain.Entities;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -50,15 +41,6 @@ namespace PictureWhisper.Client
         {
             ContentFrame.Navigate(typeof(ReportReviewPage), SigninInfo);
             HyperLinkButtonFocusChange("ReportReviewHyperlinkButton");
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            var rootFrame = Window.Current.Content as Frame;
-            if (rootFrame.CanGoBack)
-            {
-                rootFrame.GoBack();
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -110,6 +92,13 @@ namespace PictureWhisper.Client
             }
             LastFocus = currentFocus;
             LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
+        }
+
+        private async void SignoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(SigninPage));
         }
     }
 }

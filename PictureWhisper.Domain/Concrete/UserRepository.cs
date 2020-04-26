@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
-using PictureWhisper.Domain.Extensions;
 
 namespace PictureWhisper.Domain.Concrete
 {

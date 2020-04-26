@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -62,6 +62,39 @@ namespace PictureWhisper.Client.Views
             MainPage.PageFrame.Navigate(typeof(ReportPage), reportInfo);
         }
 
+        private async void CommentDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var comment = (CommentDto)((Button)sender).DataContext;
+            var contentDialog = new ContentDialog
+            {
+                Title = "删除评论",
+                Content = "是否删除评论？",
+                PrimaryButtonText = "是",
+                SecondaryButtonText = "否"
+            };
+            contentDialog.PrimaryButtonClick += async (_sender, _e) =>
+            {
+                using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+                {
+                    var url = HttpClientHelper.baseUrl + "comment/" + comment.CommentInfo.C_ID;
+                    var resp = await client.DeleteAsync(new Uri(url));
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        CommentLVM.WallpaperComments.Remove(comment);
+                    }
+                    else
+                    {
+                        contentDialog.Hide();
+                    }
+                }
+            };
+            contentDialog.SecondaryButtonClick += (_sender, _e) =>
+            {
+                contentDialog.Hide();
+            };
+            await contentDialog.ShowAsync();
+        }
+
         private async void CommentScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -71,11 +104,18 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        private void AvatarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var comment = (CommentDto)((Button)sender).DataContext;
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), comment.PublisherInfo);
+        }
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             PageNum = 1;
-            await CommentLVM.GetWallpaperCommentsAsync(UserId, PageNum++, PageSize);
+            await CommentLVM.GetMessageCommentsAsync(UserId, PageNum++, PageSize);
             base.OnNavigatedTo(e);
         }
     }

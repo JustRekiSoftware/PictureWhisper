@@ -38,7 +38,7 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="imagedata:WallpaperDto">
                         <Image Source="{x:Bind Image}" Width="320" Height="180" 
-                               Stretch="UniformToFill" Margin="20,20,20,20" />
+                               Stretch="UniformToFill" Margin="10,10,10,10" />
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

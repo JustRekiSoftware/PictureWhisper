@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
-using PictureWhisper.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -54,6 +54,39 @@ namespace PictureWhisper.Client.Views
             MessageMainPage.PageFrame.Navigate(typeof(ReportPage), param);
         }
 
+        private async void ReplyDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var reply = (ReplyDto)((Button)sender).DataContext;
+            var contentDialog = new ContentDialog
+            {
+                Title = "删除回复",
+                Content = "是否删除回复？",
+                PrimaryButtonText = "是",
+                SecondaryButtonText = "否"
+            };
+            contentDialog.PrimaryButtonClick += async (_sender, _e) =>
+            {
+                using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+                {
+                    var url = HttpClientHelper.baseUrl + "reply/" + reply.ReplyInfo.RPL_ID;
+                    var resp = await client.DeleteAsync(new Uri(url));
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        ReplyLVM.CommentReplys.Remove(reply);
+                    }
+                    else
+                    {
+                        contentDialog.Hide();
+                    }
+                }
+            };
+            contentDialog.SecondaryButtonClick += (_sender, _e) =>
+            {
+                contentDialog.Hide();
+            };
+            await contentDialog.ShowAsync();
+        }
+
         private async void ReplyHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
@@ -81,6 +114,13 @@ namespace PictureWhisper.Client.Views
             {
                 await ReplyLVM.GetMessageReplysAsync(UserId, PageNum++, PageSize);
             }
+        }
+
+        private void ReplyUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            var reply = (ReplyDto)((Button)sender).DataContext;
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), reply.PublisherInfo);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)

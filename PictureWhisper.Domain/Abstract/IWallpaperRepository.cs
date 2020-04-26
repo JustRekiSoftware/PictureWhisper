@@ -23,7 +23,7 @@ namespace PictureWhisper.Domain.Abstract
 
         Task<List<T_Wallpaper>> GetTypeWallpaperAsync(short type, int page, int pageSize);
 
-        Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int page, int pageSize);
+        Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int count);
 
         Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int page, int pageSize);
 

@@ -1,5 +1,5 @@
 ﻿using PictureWhisper.Client.Domain.Entities;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -120,9 +120,9 @@ namespace PictureWhisper.Client
             if (currentFocus.Visibility == Visibility.Collapsed)
             {
                 currentFocus.Visibility = Visibility.Visible;
-                if (content != null)
+                if (content != null && currentFocusName == "ReplyHyperlinkButton")
                 {
-                    currentFocus.Content = content;
+                    ReplyHyperlinkButtonTextBlock.Text = content;
                 }
             }
             if (LastFocus != null)

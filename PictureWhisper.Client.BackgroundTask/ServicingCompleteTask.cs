@@ -1,4 +1,4 @@
-﻿using PictureWhisper.Client.BackgroundTask.Helpers;
+﻿using PictureWhisper.Client.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 
-namespace PictureWhisper.Client.BackgroundTask.Tasks
+namespace PictureWhisper.Client.BackgroundTask
 {
     public sealed class ServicingCompleteTask : IBackgroundTask
     {

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -45,6 +45,8 @@ namespace PictureWhisper.Client.Views
         {
             var comment = (CommentDto)((HyperlinkButton)sender).DataContext;
             WallpaperMainPage.PageFrame.Navigate(typeof(ReplyPage), comment);
+            WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton", 
+                "回复" + comment.PublisherInfo.U_Name);
         }
 
         private void CommentReportButton_Click(object sender, RoutedEventArgs e)
@@ -134,8 +136,18 @@ namespace PictureWhisper.Client.Views
                 else
                 {
                     ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                    CommentTextBox.Text = string.Empty;
+                    PageNum = 1;
+                    await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
                 }
             }
+        }
+
+        public void AvatarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var comment = (CommentDto)((Button)sender).DataContext;
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), comment.PublisherInfo);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)

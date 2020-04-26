@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -220,6 +220,8 @@ namespace PictureWhisper.Client.Views
                 {
                     UserVM.User.UserInfo.U_Name = NameTextBox.Text;
                     UserVM.User.UserInfo.U_Info = InfoTextBox.Text;
+                    UserInfoEditStackPanel.Visibility = Visibility.Collapsed;
+                    UserInfoDisplayStackPanel.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -294,6 +296,7 @@ namespace PictureWhisper.Client.Views
         {
             if (e.Parameter != null)
             {
+                UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
                 UserVM.User.UserInfo = (UserInfoDto)e.Parameter;
                 await UserVM.GetAvatarAsync(UserVM.User.UserInfo.U_Avatar);
                 UserVM.FillInfo();

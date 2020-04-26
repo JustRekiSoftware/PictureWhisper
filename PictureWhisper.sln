@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PictureWhisper.Client.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PictureWhisper.Client.BackgroundTask", "PictureWhisper.Client.BackgroundTask\PictureWhisper.Client.BackgroundTask.csproj", "{CD8E652C-9D4F-4356-9389-BF1D1FD29FC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PictureWhisper.Client.Helper", "PictureWhisper.Client.Helper\PictureWhisper.Client.Helper.csproj", "{60C13F8E-70A1-4402-9CC7-28DAE018E437}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +179,26 @@ Global
 		{CD8E652C-9D4F-4356-9389-BF1D1FD29FC0}.Release|x64.Build.0 = Release|x64
 		{CD8E652C-9D4F-4356-9389-BF1D1FD29FC0}.Release|x86.ActiveCfg = Release|x86
 		{CD8E652C-9D4F-4356-9389-BF1D1FD29FC0}.Release|x86.Build.0 = Release|x86
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|ARM.ActiveCfg = Debug|ARM
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|ARM.Build.0 = Debug|ARM
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|ARM64.Build.0 = Debug|ARM64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|x64.ActiveCfg = Debug|x64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|x64.Build.0 = Debug|x64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|x86.ActiveCfg = Debug|x86
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Debug|x86.Build.0 = Debug|x86
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|ARM.ActiveCfg = Release|ARM
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|ARM.Build.0 = Release|ARM
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|ARM64.ActiveCfg = Release|ARM64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|ARM64.Build.0 = Release|ARM64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|x64.ActiveCfg = Release|x64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|x64.Build.0 = Release|x64
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|x86.ActiveCfg = Release|x86
+		{60C13F8E-70A1-4402-9CC7-28DAE018E437}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

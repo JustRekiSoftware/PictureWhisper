@@ -1,5 +1,5 @@
 ﻿using PictureWhisper.Client.Domain.Concrete;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -128,7 +128,8 @@ namespace PictureWhisper.Client
 
         private void MessageButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(typeof(MessageMainPage), UserId);
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(MessageMainPage), UserId);
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -165,7 +166,17 @@ namespace PictureWhisper.Client
                 currentFocus.Visibility = Visibility.Visible;
                 if (content != null)
                 {
-                    currentFocus.Content = content;
+                    switch (currentFocusName)
+                    {
+                        case "WallpaperSearchResultHyperlinkButton":
+                            WallpaperSearchResultHyperlinkButtonTextBlock.Text = content;
+                            break;
+                        case "UserSearchResultHyperlinkButton":
+                            UserSearchResultHyperlinkButtonTextBlock.Text = content;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             if (LastFocus != null)

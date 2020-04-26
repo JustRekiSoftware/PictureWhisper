@@ -10,7 +10,6 @@ using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
-using PictureWhisper.Domain.Extensions;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace PictureWhisper.Domain.Concrete
@@ -175,10 +174,9 @@ namespace PictureWhisper.Domain.Concrete
                 .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int page, int pageSize)
+        public async Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int count)
         {
-            return await context.Wallpapers
-                .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await context.Wallpapers.Take(count).ToListAsync();
         }
 
         public async Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int page, int pageSize)
@@ -217,6 +215,7 @@ namespace PictureWhisper.Domain.Concrete
             var userIds = await context.Follows
                 .Where(p => p.FLW_FollowerID == id)
                 .Select(p => p.FLW_FollowedID).ToListAsync();
+            userIds.Add(id);
             foreach (var userId in userIds)
             {
                 result.AddRange(await context.Wallpapers

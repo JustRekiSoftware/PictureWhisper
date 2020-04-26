@@ -1,4 +1,4 @@
-﻿using PictureWhisper.Client.Helpers;
+﻿using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -44,14 +44,17 @@ namespace PictureWhisper.Client.Views
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            RecommendLVM.PageNum = 1;
-            await RecommendLVM.GetRecommendWallpapersAsync(UserId);
+            await RecommendLVM.Refresh();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            RecommendLVM.PageNum = 1;
-            await RecommendLVM.GetRecommendWallpapersAsync(UserId);
+            //RecommendLVM.Count = 10;
+            //await RecommendLVM.GetRecommendWallpapersAsync(UserId);
+            if (RecommendLVM.RecommendWallpapers.Count == 0)
+            {
+                await RecommendLVM.Refresh();
+            }
         }
     }
 }

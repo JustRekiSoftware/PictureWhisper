@@ -1,4 +1,4 @@
-﻿using PictureWhisper.Client.BackgroundTask.Helpers;
+﻿using PictureWhisper.Client.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.System.UserProfile;
 
-namespace PictureWhisper.Client.BackgroundTask.Tasks
+namespace PictureWhisper.Client.BackgroundTask
 {
     public sealed class AutoSetWallpaperTask : IBackgroundTask
     {

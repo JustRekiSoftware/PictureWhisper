@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Domain.Entities;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
 using PictureWhisper.Domain.Helpers;
 using System;

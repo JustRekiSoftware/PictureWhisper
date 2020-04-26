@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,8 @@ namespace PictureWhisper.Client.ViewModels
     {
         public ObservableCollection<WallpaperDto> RecommendWallpapers { get; set; }
         private int UserId { get; set; }
-        public readonly int PageSize = 20;
-        public int PageNum { get; set; }
+        private int TotalCount { get; set; }
+        private bool IsBusy { get; set; }
 
         public bool HasMoreItems { get; set; }
 
@@ -25,20 +25,16 @@ namespace PictureWhisper.Client.ViewModels
         {
             RecommendWallpapers = new ObservableCollection<WallpaperDto>();
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
-            PageNum = 1;
+            IsBusy = false;
         }
 
-        public async Task<int> GetRecommendWallpapersAsync(int id)
+        public async Task<int> GetRecommendWallpapersAsync(int id, uint limit)
         {
             var count = 0;
-            if (PageNum == 1)
-            {
-                RecommendWallpapers.Clear();
-            }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = string.Format("{0}wallpaper/recommend/{1}/{2}/{3}",
-                    HttpClientHelper.baseUrl, id, PageNum, PageSize);
+                var url = string.Format("{0}wallpaper/recommend/{1}/{2}",
+                    HttpClientHelper.baseUrl, id, limit);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
                 {
@@ -52,7 +48,7 @@ namespace PictureWhisper.Client.ViewModels
                     HasMoreItems = false;
                     return count;
                 }
-                if (result.Count < PageSize)
+                if (result.Count < TotalCount + limit)
                 {
                     HasMoreItems = false;
                 }
@@ -62,10 +58,10 @@ namespace PictureWhisper.Client.ViewModels
                 }
                 foreach (var wallpaper in result)
                 {
-                    if (SQLiteHelper.IsWallpaperHistory(wallpaper.W_ID))
-                    {
-                        continue;
-                    }
+                    //if (SQLiteHelper.IsWallpaperHistory(wallpaper.W_ID))
+                    //{
+                    //    continue;
+                    //}
                     url = HttpClientHelper.baseUrl
                         + "download/picture/small/" + wallpaper.W_Location;
                     var image = await ImageHelper.GetImageAsync(client, url);
@@ -76,27 +72,48 @@ namespace PictureWhisper.Client.ViewModels
                     });
                     count++;
                 }
+                TotalCount += count;
             }
-            PageNum++;
 
             return count;
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            if (IsBusy)
+            {
+                return null;
+            }
+            IsBusy = true;
             return GetMoreItemsAsync(count).AsAsyncOperation();
         }
 
         public async Task<LoadMoreItemsResult> GetMoreItemsAsync(uint count)
         {
             var result = new LoadMoreItemsResult();
-            result.Count = (uint)await GetRecommendWallpapersAsync(UserId);
+            result.Count = (uint)await GetRecommendWallpapersAsync(UserId, count);
             while (result.Count < count)
             {
-                result.Count += (uint)await GetRecommendWallpapersAsync(UserId);
+                if (HasMoreItems)
+                {
+                    result.Count += (uint)await GetRecommendWallpapersAsync(UserId, count);
+                }
+                else
+                {
+                    break;
+                }
             }
-
+            IsBusy = false;
             return result;
+        }
+
+        public async Task Refresh()
+        {
+            HasMoreItems = true;
+            IsBusy = false;
+            TotalCount = 0;
+            RecommendWallpapers.Clear();
+            await LoadMoreItemsAsync(20);
         }
     }
 }

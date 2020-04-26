@@ -39,7 +39,6 @@ namespace PictureWhisper.WebAPI.Controllers
         public async Task<IActionResult> PostReplyAsync(T_Reply entity)
         {
             var result = await replyRepo.InsertAsync(entity);
-
             if (result)
             {
                 return Ok();
@@ -52,7 +51,6 @@ namespace PictureWhisper.WebAPI.Controllers
         public async Task<IActionResult> DeleteReplyAsync(int id)
         {
             var result = await replyRepo.DeleteAsync(id);
-
             if (result)
             {
                 return Ok();

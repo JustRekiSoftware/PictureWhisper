@@ -33,10 +33,11 @@
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
-                <Button x:Name="CloseButton" Click="CloseButton_Click"
-                        Width="40" Height="40" 
-                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-                    <SymbolIcon Symbol="Cancel" />
+                <Button x:Name="SignoutButton" Click="SignoutButton_Click"
+                        Width="40" Height="40">
+                    <Button.Content>
+                        <SymbolIcon Symbol="More" />
+                    </Button.Content>
                 </Button>
             </StackPanel>
         </Grid>

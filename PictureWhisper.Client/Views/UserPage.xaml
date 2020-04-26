@@ -64,7 +64,11 @@
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
                 <Button x:Name="UIDFollowButton" Content="{x:Bind UserVM.User.FollowButtonText, Mode=OneWay}" 
                         Click="UIDFollowButton_Click"  Background="{StaticResource SystemAccentColor}" />
-                <TextBlock Text="{x:Bind UserVM.User.FollowedTextBlockText, Mode=OneWay}" Margin="10,0,0,0" />
+                <StackPanel HorizontalAlignment="Stretch">
+                    <TextBlock Text="ta的关注" HorizontalAlignment="Center" Margin="10,0,0,0" />
+                    <TextBlock Text="{x:Bind UserVM.User.FollowedTextBlockText, Mode=OneWay}"
+                               HorizontalAlignment="Center" Margin="10,0,0,0" />
+                </StackPanel>
             </StackPanel>
             <Button x:Name="UIDEditInfoButton" Content="修改信息" Margin="0,10,0,0" 
                     Click="UIDEditInfoButton_Click"  Background="{StaticResource SystemAccentColor}"

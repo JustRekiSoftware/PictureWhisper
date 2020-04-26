@@ -1,21 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
@@ -63,14 +53,14 @@ namespace PictureWhisper.Client.Views
             }
             if (CurrentIndex > 0)
             {
-                PrevFontIcon.Glyph = "&#xE70E;";
+                PrevFontIcon.Glyph = "\xE76B";
                 CurrentIndex--;
                 CurrentImage = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
                 CurrentWallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
             }
             if (CurrentIndex == 0)
             {
-                PrevFontIcon.Glyph = "&#xE72C;";
+                PrevFontIcon.Glyph = "\xE72C";
             }
         }
 

@@ -39,7 +39,7 @@
                 <HyperlinkButton x:Name="ReplyHyperlinkButton" Foreground="Gray"
                                  Click="ReplyHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="回复" />
+                    <TextBlock x:Name="ReplyHyperlinkButtonTextBlock" Text="回复" />
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">

@@ -61,11 +61,10 @@ namespace PictureWhisper.WebAPI.Controllers
             return result;
         }
 
-        [HttpGet("recommend/{id}/{page}/{pageSize}")]
-        public async Task<ActionResult<List<T_Wallpaper>>> GetRecommendWallpapersAsync(int id,
-            int page, int pageSize)
+        [HttpGet("recommend/{id}/{count}")]
+        public async Task<ActionResult<List<T_Wallpaper>>> GetRecommendWallpapersAsync(int id, int count)
         {
-            var result = await wallpaperRepo.GetRecommendWallpaperAsync(id, page, pageSize);
+            var result = await wallpaperRepo.GetRecommendWallpaperAsync(id, count);
             if (result == null || result.Count == 0)
             {
                 return NotFound();

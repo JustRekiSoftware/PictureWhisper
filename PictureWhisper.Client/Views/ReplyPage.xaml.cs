@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -101,7 +101,7 @@ namespace PictureWhisper.Client.Views
 
         private void ReplyHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            var reply = (ReplyDto)((Button)sender).DataContext;
+            var reply = (ReplyDto)((HyperlinkButton)sender).DataContext;
             ReplyTo = reply;
             ReplyTextBox.PlaceholderText = "@" + ReplyTo.PublisherInfo.U_Name + ": ";
         }
@@ -138,6 +138,9 @@ namespace PictureWhisper.Client.Views
                 else
                 {
                     ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                    ReplyTextBox.Text = string.Empty;
+                    PageNum = 1;
+                    await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
                 }
             }
         }
@@ -194,7 +197,7 @@ namespace PictureWhisper.Client.Views
         private void ReplyCommentHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             ReplyTo = null;
-            ReplyTextBox.PlaceholderText = string.Empty;
+            ReplyTextBox.PlaceholderText = "有什么想说的？";
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -216,12 +219,15 @@ namespace PictureWhisper.Client.Views
 
         private void CommentUserButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), CommentDto.PublisherInfo);
         }
 
         private void ReplyUserButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var reply = (ReplyDto)((Button)sender).DataContext;
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), reply.PublisherInfo);
         }
     }
 }

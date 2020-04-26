@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 
-namespace PictureWhisper.Client.BackgroundTask.Helpers
+namespace PictureWhisper.Client.Helper
 {
-    public class BackgroundTaskHelper
+    public static class BackgroundTaskHelper
     {
         public static async Task<BackgroundTaskRegistration> RegisterBackgroundTaskAsync(Type taskEntryPoint,
                                                                         string taskName,
@@ -64,12 +64,12 @@ namespace PictureWhisper.Client.BackgroundTask.Helpers
             }
         }
 
-        private void DefualtOnProgress(BackgroundTaskRegistration sender, BackgroundTaskProgressEventArgs args)
+        private static void DefualtOnProgress(BackgroundTaskRegistration sender, BackgroundTaskProgressEventArgs args)
         {
             
         }
 
-        private void DefualtOnCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
+        private static void DefualtOnCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
         {
             
         }

@@ -1,25 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.BackgroundTask.Tasks;
-using PictureWhisper.Client.Domain.Concrete;
+using PictureWhisper.Client.BackgroundTask;
 using PictureWhisper.Client.Domain.Entities;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Background;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -62,6 +50,7 @@ namespace PictureWhisper.Client
                 {
                     var userSigninDto = JObject.Parse(await resp.Content.ReadAsStringAsync())
                             .ToObject<UserSigninDto>();
+                    var rootFrame = Window.Current.Content as Frame;
                     var signinInfo = SQLiteHelper.GetSigninInfo();
                     if (signinInfo != null)
                     {
@@ -97,7 +86,7 @@ namespace PictureWhisper.Client
                     {
                         if (settingInfo.STI_AutoSetWallpaper)
                         {
-                            await BackgroundTask.Helpers.BackgroundTaskHelper
+                            await BackgroundTaskHelper
                                 .RegisterBackgroundTaskAsync(
                                 typeof(AutoSetWallpaperTask),
                                 typeof(AutoSetWallpaperTask).Name,
@@ -106,8 +95,14 @@ namespace PictureWhisper.Client
                                 true);
                         }
                     }
-                    var rootFrame = Window.Current.Content as Frame;
-                    rootFrame.Navigate(typeof(MainPage));
+                    if (userSigninDto.U_Type == (short)UserType.注册用户)
+                    {
+                        rootFrame.Navigate(typeof(MainPage));
+                    }
+                    else
+                    {
+                        rootFrame.Navigate(typeof(ReviewMainPage));
+                    }
                 }
                 else
                 {

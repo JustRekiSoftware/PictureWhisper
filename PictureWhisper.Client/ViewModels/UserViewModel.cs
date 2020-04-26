@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Helpers;
+using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -63,9 +63,25 @@ namespace PictureWhisper.Client.ViewModels
 
         public void FillInfo()
         {
-            User.FollowButtonText = "关注（" + User.UserInfo.U_FollowerNum + "）";
-            User.FollowedTextBlockText = "ta的关注"
-                + Environment.NewLine + User.UserInfo.U_FollowedNum;
+            User.FollowButtonText = "+  关注 " + FormatFollowNum(User.UserInfo.U_FollowerNum);
+            User.FollowedTextBlockText = FormatFollowNum(User.UserInfo.U_FollowedNum);
+        }
+
+        public string FormatFollowNum(int num)
+        {
+            var numStr = num.ToString();
+            if (numStr.Length <= 3)
+            {
+                return numStr;
+            }
+            else if (numStr.Length == 4)
+            {
+                return numStr[0] + "," + numStr.Substring(1);
+            }
+            else
+            {
+                return numStr.Substring(0, numStr.Length - 4) + "." + numStr[numStr.Length - 4] + "万";
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace PictureWhisper.Client.BackgroundTask.Helpers
+namespace PictureWhisper.Client.Helper
 {
     public class SQLiteHelper
     {
@@ -21,7 +21,14 @@ namespace PictureWhisper.Client.BackgroundTask.Helpers
             using (var db = new LocalDBContext())
             {
                 db.DbPath = DbPath;
-                return db.SigninInfos.FirstOrDefault();
+                try
+                {
+                    return db.SigninInfos.FirstOrDefault();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
@@ -41,6 +48,8 @@ namespace PictureWhisper.Client.BackgroundTask.Helpers
             {
                 db.DbPath = DbPath;
                 db.SigninInfos.Remove(signinInfo);
+                db.HistoryInfos.RemoveRange(db.HistoryInfos);
+                db.SettingInfos.RemoveRange(db.SettingInfos);
                 await db.SaveChangesAsync();
             }
         }
@@ -67,7 +76,14 @@ namespace PictureWhisper.Client.BackgroundTask.Helpers
             using (var db = new LocalDBContext())
             {
                 db.DbPath = DbPath;
-                return db.SettingInfos.FirstOrDefault();
+                try
+                {
+                    return db.SettingInfos.FirstOrDefault();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
@@ -103,7 +119,14 @@ namespace PictureWhisper.Client.BackgroundTask.Helpers
             using (var db = new LocalDBContext())
             {
                 db.DbPath = DbPath;
-                return db.RecommendInfos.FirstOrDefault();
+                try
+                {
+                    return db.RecommendInfos.FirstOrDefault();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 

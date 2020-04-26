@@ -2,7 +2,7 @@
 
 namespace PictureWhisper.Client.Domain.Migrations
 {
-    public partial class FirstMigration : Migration
+    public partial class InitailCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,14 +36,13 @@ namespace PictureWhisper.Client.Domain.Migrations
                 name: "T_SettingInfo",
                 columns: table => new
                 {
-                    SI_ID = table.Column<int>(nullable: false)
+                    STI_ID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SI_AutoSetWallpaper = table.Column<bool>(nullable: false),
-                    SI_WallpaperSavePath = table.Column<string>(nullable: false)
+                    STI_AutoSetWallpaper = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_T_SettingInfo", x => x.SI_ID);
+                    table.PrimaryKey("PK_T_SettingInfo", x => x.STI_ID);
                 });
 
             migrationBuilder.CreateTable(
