@@ -46,10 +46,10 @@ namespace PictureWhisper.WebAPI.Controllers
                 await Task.Run(() =>
                 {
                     Image image = Image.FromStream(file.OpenReadStream());
-                    if (image.Width > 200)
+                    if (image.Width > 480)
                     {
-                        var scale = image.Width / 200.0;
-                        var smallImage = image.GetThumbnailImage(200,
+                        var scale = image.Width /480.0;
+                        var smallImage = image.GetThumbnailImage(480,
                             (int)(image.Height / scale), null, IntPtr.Zero);
                         smallImage.Save(pathSmall, ImageFormat.Png);
                     }
@@ -93,10 +93,10 @@ namespace PictureWhisper.WebAPI.Controllers
                 await Task.Run(() =>
                 {
                     Image image = Image.FromStream(file.OpenReadStream());
-                    if (image.Width > 200)
+                    if (image.Width > 480)
                     {
-                        var scale = image.Width / 200.0;
-                        var smallImage = image.GetThumbnailImage(200,
+                        var scale = image.Width / 480.0;
+                        var smallImage = image.GetThumbnailImage(480,
                             (int)(image.Height / scale), null, IntPtr.Zero);
                         smallImage.Save(pathSmall, ImageFormat.Png);
                     }
@@ -139,10 +139,10 @@ namespace PictureWhisper.WebAPI.Controllers
                 await Task.Run(() =>
                 {
                     Image image = Image.FromStream(file.OpenReadStream());
-                    if (image.Width > 200)
+                    if (image.Width > 480)
                     {
-                        var scale = image.Width / 200.0;
-                        var smallImage = image.GetThumbnailImage(200,
+                        var scale = image.Width / 480.0;
+                        var smallImage = image.GetThumbnailImage(480,
                             (int)(image.Height / scale), null, IntPtr.Zero);
                         smallImage.Save(pathSmall, ImageFormat.Png);
                     }
