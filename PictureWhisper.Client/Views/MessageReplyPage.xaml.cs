@@ -97,13 +97,15 @@ namespace PictureWhisper.Client.Views
                     + "comment/" + reply.ReplyInfo.RPL_CommentID;
                 var comment = JObject.Parse(await client.GetStringAsync(new Uri(url)))
                     .ToObject<T_Comment>();
-                var commentDto = GetCommentDto(comment);
+                var commentDto = await GetCommentDto(comment);
                 url = HttpClientHelper.baseUrl
                     + "wallpaper/" + comment.C_WallpaperID;
                 var wallpaper = JObject.Parse(await client.GetStringAsync(new Uri(url)))
                     .ToObject<T_Wallpaper>();
                 rootFrame.Navigate(typeof(WallpaperMainPage), wallpaper);
                 WallpaperMainPage.PageFrame.Navigate(typeof(ReplyPage), commentDto);
+                WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton",
+                    "回复" + commentDto.PublisherInfo.U_Name);
             }
         }
 

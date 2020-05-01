@@ -11,8 +11,7 @@
         <StackPanel>
             <TextBlock Text="自动设置壁纸设置" FontSize="24" />
             <ToggleSwitch x:Name="AutoSetWallpaperToggleSwitch" Header="启用自动设置壁纸？"
-                      Margin="0,10,0,0" Toggled="AutoSetWallpaperToggleSwitch_Toggled"
-                      IsOn="{x:Bind SettingInfo.STI_AutoSetWallpaper, Mode=TwoWay}" />
+                      Margin="0,10,0,0" Toggled="AutoSetWallpaperToggleSwitch_Toggled" />
             <TextBlock x:Name="AutoSetWallpaperTextBlock" Visibility="Collapsed" Margin="0,5,0,0" />
         </StackPanel>
         <StackPanel Margin="0,20,0,0">

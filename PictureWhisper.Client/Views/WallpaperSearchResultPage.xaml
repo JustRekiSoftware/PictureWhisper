@@ -35,7 +35,7 @@
                 <TextBlock Text="展开/隐藏" />
             </HyperlinkButton>
         </StackPanel>
-        <ScrollViewer x:Name="WallpaperScrollViewer" Margin="0, 5, 0, 10"
+        <ScrollViewer x:Name="WallpaperScrollViewer" Margin="0,5,0,10"
                       HorizontalScrollBarVisibility="Hidden"
                       VerticalScrollBarVisibility="Hidden" Grid.Row="1"
                       ViewChanged="WallpaperScrollViewer_ViewChanged">
@@ -47,7 +47,7 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
                         <Image Source="{x:Bind Image}" Width="320" Height="180" 
-                               Stretch="UniformToFill" Margin="20, 20, 20, 20" />
+                               Stretch="UniformToFill" Margin="20,20,20,20" />
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

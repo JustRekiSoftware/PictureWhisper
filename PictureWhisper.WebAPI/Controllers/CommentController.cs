@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PictureWhisper.WebAPI.Controllers
 {
@@ -20,6 +17,18 @@ namespace PictureWhisper.WebAPI.Controllers
         public CommentController(ICommentRepository repo)
         {
             commentRepo = repo;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<T_Comment>> GetCommentsAsync(int id)
+        {
+            var result = await commentRepo.QueryAsync(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return result;
         }
 
         [HttpGet("{type}/{id}/{page}/{pageSize}")]

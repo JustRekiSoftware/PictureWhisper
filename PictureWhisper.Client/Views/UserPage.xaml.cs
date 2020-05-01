@@ -1,22 +1,14 @@
 ﻿using Newtonsoft.Json.Linq;
+using PictureWhisper.Client.BackgroundTask;
 using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
@@ -32,7 +24,6 @@ namespace PictureWhisper.Client.Views
     {
         private UserViewModel UserVM { get; set; }
         private int UserId { get; set; }
-        private bool IsFollow { get; set; }
 
         public UserPage()
         {
@@ -119,10 +110,10 @@ namespace PictureWhisper.Client.Views
             {
                 return;
             }
-            IsFollow = !IsFollow;
+            UserVM.User.IsFollow = !UserVM.User.IsFollow;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                if (IsFollow)
+                if (UserVM.User.IsFollow)
                 {
                     var url = HttpClientHelper.baseUrl + "follow";
                     var followInfo = new T_Follow();
@@ -133,7 +124,7 @@ namespace PictureWhisper.Client.Views
                     var resp = await client.PostAsync(new Uri(url), content);
                     if (!resp.IsSuccessStatusCode)
                     {
-                        IsFollow = !IsFollow;
+                        UserVM.User.IsFollow = !UserVM.User.IsFollow;
                     }
                     else
                     {
@@ -147,7 +138,7 @@ namespace PictureWhisper.Client.Views
                     var resp = await client.DeleteAsync(new Uri(url));
                     if (!resp.IsSuccessStatusCode)
                     {
-                        IsFollow = !IsFollow;
+                        UserVM.User.IsFollow = !UserVM.User.IsFollow;
                     }
                     else
                     {
@@ -155,13 +146,13 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            if (IsFollow)
+            if (UserVM.User.IsFollow)
             {
-                UIDFollowButton.Content = UserVM.User.FollowButtonText;
+                UserVM.User.FollowButtonText = "已关注";
             }
             else
             {
-                UIDFollowButton.Content = "已关注";
+                UserVM.FillInfo();
             }
         }
 
@@ -270,6 +261,8 @@ namespace PictureWhisper.Client.Views
                     var resp = await client.DeleteAsync(new Uri(url));
                     if (resp.IsSuccessStatusCode)
                     {
+                        await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
+                        BackgroundTaskHelper.UnRegisterBackgroundTask(typeof(AutoSetWallpaperTask).Name);
                         var rootFrame = Window.Current.Content as Frame;
                         if (rootFrame.CanGoBack)
                         {
@@ -288,6 +281,7 @@ namespace PictureWhisper.Client.Views
         private async void UIDSignoutButton_Click(object sender, RoutedEventArgs e)
         {
             await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
+            BackgroundTaskHelper.UnRegisterBackgroundTask(typeof(AutoSetWallpaperTask).Name);
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(SigninPage));
         }
@@ -300,23 +294,13 @@ namespace PictureWhisper.Client.Views
                 UserVM.User.UserInfo = (UserInfoDto)e.Parameter;
                 await UserVM.GetAvatarAsync(UserVM.User.UserInfo.U_Avatar);
                 UserVM.FillInfo();
-                if (UserId != UserVM.User.UserInfo.U_ID)
+                if (UserVM.User.IsFollow)
                 {
-                    using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
-                    {
-                        var url = HttpClientHelper.baseUrl + "follow/" + UserId +
-                            "/" + UserVM.User.UserInfo.U_ID;
-                        var resp = await client.GetAsync(new Uri(url));
-                        if (resp.IsSuccessStatusCode)
-                        {
-                            IsFollow = true;
-                            UIDFollowButton.Content = "已关注";
-                        }
-                        else
-                        {
-                            IsFollow = false;
-                        }
-                    }
+                    UserVM.User.FollowButtonText = "已关注";
+                }
+                else
+                {
+                    UserVM.FillInfo();
                 }
             }
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;

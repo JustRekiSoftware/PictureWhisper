@@ -4,24 +4,15 @@ using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
@@ -196,79 +187,38 @@ namespace PictureWhisper.Client.Views
         {
             var fileName = WallpaperVM.Wallpaper.WallpaperInfo.W_Location
                 .Split("/").ToList().LastOrDefault();
+            var url = HttpClientHelper.baseUrl + "download/picture/origin/"
+                + WallpaperVM.Wallpaper.WallpaperInfo.W_Location;
             var fileSavePicker = new FileSavePicker();
             fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             fileSavePicker.FileTypeChoices.Add("图像文件", new List<string>() { ".png" });
             fileSavePicker.SuggestedFileName = fileName;
             var saveFile = await fileSavePicker.PickSaveFileAsync();
-            await SaveWallpaperToLocalAsync(saveFile);
+            await SaveWallpaperToLocalAsync(saveFile, url);
         }
 
-        private async Task SaveWallpaperToLocalAsync(StorageFile saveFile)
+        private async Task SaveWallpaperToLocalAsync(StorageFile saveFile, string url)
         {
-            var writeableBitmap = await BitmapFactory.FromContent(WallpaperVM.Wallpaper.Image.UriSource);
-            var outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
-                writeableBitmap.PixelBuffer,
-                BitmapPixelFormat.Bgra8,
-                writeableBitmap.PixelWidth,
-                writeableBitmap.PixelHeight
-            );
-            await SaveSoftwareBitmapToFileAsync(outputBitmap, saveFile);
-        }
-
-        private async Task TempSaveWallpaperToLocalAsync()
-        {
-            var writeableBitmap = await BitmapFactory.FromContent(WallpaperVM.Wallpaper.Image.UriSource);
-            var outputBitmap = SoftwareBitmap.CreateCopyFromBuffer(
-                writeableBitmap.PixelBuffer,
-                BitmapPixelFormat.Bgra8,
-                writeableBitmap.PixelWidth,
-                writeableBitmap.PixelHeight
-            );
-            var saveFile = await ApplicationData.Current.TemporaryFolder
-                .CreateFileAsync("temp.png", CreationCollisionOption.ReplaceExisting);
-            await SaveSoftwareBitmapToFileAsync(outputBitmap, saveFile);
-        }
-
-        private async Task SaveSoftwareBitmapToFileAsync(SoftwareBitmap softwareBitmap, StorageFile outputFile)
-        {
-            using (var stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(
-                    1.0, // Maximum quality
-                    PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
-                // Create an encoder with the desired format
-                var encoder = await BitmapEncoder
-                    .CreateAsync(BitmapEncoder.PngEncoderId, stream, propertySet);
+                var buffer = await ImageHelper.GetImageBufferAsync(client, url);
+                await FileIO.WriteBufferAsync(saveFile, buffer);
+            }
+        }
 
-                // Set the software bitmap
-                encoder.SetSoftwareBitmap(softwareBitmap);
-
-                try
+        private async Task TempSaveWallpaperToLocalAsync(string url)
+        {
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var buffer = await ImageHelper.GetImageBufferAsync(client, url);
+                if (buffer == null)
                 {
-                    await encoder.FlushAsync();
+                    return;
                 }
-                catch (Exception err)
-                {
-                    const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
-                    switch (err.HResult)
-                    {
-                        case WINCODEC_ERR_UNSUPPORTEDOPERATION:
-                            // If the encoder does not support writing a thumbnail, then try again
-                            // but disable thumbnail generation.
-                            encoder.IsThumbnailGenerated = false;
-                            break;
-                        default:
-                            throw;
-                    }
-                }
-
-                if (encoder.IsThumbnailGenerated == false)
-                {
-                    await encoder.FlushAsync();
-                }
+                //必须放在LocalFolder里才能正确设置壁纸
+                var saveFile = await ApplicationData.Current.LocalFolder
+                    .CreateFileAsync("temp.png", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteBufferAsync(saveFile, buffer);
             }
         }
 
@@ -277,10 +227,14 @@ namespace PictureWhisper.Client.Views
             if (UserProfilePersonalizationSettings.IsSupported() == true)
             {
                 var current = UserProfilePersonalizationSettings.Current;
-                await TempSaveWallpaperToLocalAsync();
-                var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Name, "temp.png");
+                var url = HttpClientHelper.baseUrl + "download/picture/origin/"
+                    + WallpaperVM.Wallpaper.WallpaperInfo.W_Location;
+                await TempSaveWallpaperToLocalAsync(url);
+                //必须放在LocalFolder里才能正确设置壁纸
+                var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp.png");
                 var file = await StorageFile.GetFileFromPathAsync(path);
                 await current.TrySetWallpaperImageAsync(file);
+                MoreButtonFlyout.Hide();
             }
             else
             {
@@ -320,6 +274,14 @@ namespace PictureWhisper.Client.Views
                     if (resp.IsSuccessStatusCode)
                     {
                         IsLike = bool.Parse(await resp.Content.ReadAsStringAsync());
+                        if (IsLike)
+                        {
+                            LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
+                        }
+                        else
+                        {
+                            LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                        }
                     }
                     else
                     {
@@ -331,11 +293,27 @@ namespace PictureWhisper.Client.Views
                     if (resp.IsSuccessStatusCode)
                     {
                         IsFavorite = bool.Parse(await resp.Content.ReadAsStringAsync());
+                        if (IsFavorite)
+                        {
+                            FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
+                        }
+                        else
+                        {
+                            FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                        }
                     }
                     else
                     {
                         IsFavorite = false;
                     }
+                    url = HttpClientHelper.baseUrl + "user/" +
+                        WallpaperVM.Wallpaper.WallpaperInfo.W_PublisherID;
+                    WallpaperVM.Wallpaper.PublisherInfo =
+                        JObject.Parse(await client.GetStringAsync(new Uri(url))).ToObject<UserInfoDto>();
+                    url = HttpClientHelper.baseUrl + "download/picture/origin/" +
+                        WallpaperVM.Wallpaper.PublisherInfo.U_Avatar;
+                    WallpaperVM.Wallpaper.PublisherAvatar =
+                        await ImageHelper.GetImageAsync(client, url);
                 }
                 if (UserId == WallpaperVM.Wallpaper.WallpaperInfo.W_PublisherID)
                 {

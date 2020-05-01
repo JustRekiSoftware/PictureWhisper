@@ -32,8 +32,7 @@ namespace PictureWhisper.Client.Views
     {
         private ReportListViewModel ReportLVM { get; set; }
         private int CurrentIndex { get; set; }
-        private BitmapImage CurrentImage { get; set; }
-        private ReportDto CurrentReport { get; set; }
+        private ReviewViewModel ReviewVM { get; set; }
         private readonly int PageSize = 20;
         private int PageNum { get; set; }
         private int UserId { get; set; }
@@ -41,6 +40,7 @@ namespace PictureWhisper.Client.Views
         public ReportReviewPage()
         {
             ReportLVM = new ReportListViewModel();
+            ReviewVM = new ReviewViewModel();
             this.InitializeComponent();
         }
 
@@ -63,24 +63,24 @@ namespace PictureWhisper.Client.Views
             }
             if (CurrentIndex > 0)
             {
-                PrevFontIcon.Glyph = "&#xE70E;";
+                PrevFontIcon.Glyph = "\xE76B";
                 CurrentIndex--;
-                CurrentImage = ReportLVM.Reports[CurrentIndex].Image;
-                CurrentReport = ReportLVM.Reports[CurrentIndex];
+                ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
             }
             if (CurrentIndex == 0)
             {
-                PrevFontIcon.Glyph = "&#xE72C;";
+                PrevFontIcon.Glyph = "\xE72C";
             }
         }
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentIndex < ReportLVM.Reports.Count)
+            if (CurrentIndex < ReportLVM.Reports.Count - 1)
             {
                 CurrentIndex++;
-                CurrentImage = ReportLVM.Reports[CurrentIndex].Image;
-                CurrentReport = ReportLVM.Reports[CurrentIndex];
+                ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
             }
             if (CurrentIndex > ReportLVM.Reports.Count - 5)
             {
@@ -94,6 +94,11 @@ namespace PictureWhisper.Client.Views
             PageNum = 1;
             CurrentIndex = 0;
             await LoadReportsAsync(PageNum++);
+            if (ReportLVM.Reports.Count > CurrentIndex)
+            {
+                ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
+            }
             base.OnNavigatedTo(e);
         }
 
@@ -104,6 +109,12 @@ namespace PictureWhisper.Client.Views
 
         private async Task SendReviewInfoAsync(bool isPass)
         {
+            if (ReportLVM.Reports.Count == 0)
+            {
+                ReviewVM.Image = new BitmapImage();
+                ReviewVM.ReportDto = new ReportDto();
+                return;
+            }
             ErrorMessageTextBlock.Text += "错误信息：" + Environment.NewLine;
             var reviewInfo = new T_Review()
             {
@@ -131,11 +142,17 @@ namespace PictureWhisper.Client.Views
                 {
                     ReportLVM.Reports.Remove(ReportLVM
                         .Reports[CurrentIndex]);
-                    if (CurrentIndex < ReportLVM.Reports.Count)
+                    if (ReportLVM.Reports.Count == 0)
+                    {
+                        ReviewVM.Image = new BitmapImage();
+                        ReviewVM.ReportDto = new ReportDto();
+                        return;
+                    }
+                    if (CurrentIndex < ReportLVM.Reports.Count - 1)
                     {
                         CurrentIndex++;
-                        CurrentImage = ReportLVM.Reports[CurrentIndex].Image;
-                        CurrentReport = ReportLVM.Reports[CurrentIndex];
+                        ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                        ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
                     }
                     if (CurrentIndex > ReportLVM.Reports.Count - 5)
                     {

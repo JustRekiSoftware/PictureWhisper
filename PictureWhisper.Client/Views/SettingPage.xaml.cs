@@ -20,23 +20,28 @@ namespace PictureWhisper.Client.Views
     public sealed partial class SettingPage : Page
     {
         private T_SettingInfo SettingInfo { get; set; }
+        private bool StatusChange { get; set; }
         private string AboutText { get; set; }
 
         public SettingPage()
         {
-            SettingInfo = new T_SettingInfo();
             this.InitializeComponent();
         }
 
         private async void AutoSetWallpaperToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!StatusChange)
+            {
+                return;
+            }
+            SettingInfo.STI_AutoSetWallpaper = !SettingInfo.STI_AutoSetWallpaper;
             await SQLiteHelper.UpdateSettingInfoAsync(SettingInfo);
             if (SettingInfo.STI_AutoSetWallpaper)
             {
                 await BackgroundTaskHelper.RegisterBackgroundTaskAsync(
                     typeof(AutoSetWallpaperTask),
                     typeof(AutoSetWallpaperTask).Name,
-                    new TimeTrigger(60, false),
+                    new TimeTrigger(15, false),
                     null,
                     true);
                 AutoSetWallpaperTextBlock.Text = "后台任务已启动";
@@ -50,17 +55,26 @@ namespace PictureWhisper.Client.Views
             }
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             AutoSetWallpaperTextBlock.Visibility = Visibility.Collapsed;
-            SettingInfo = SQLiteHelper.GetSettingInfo();
-            var path = Path.Combine(KnownFolders.PicturesLibrary.Path, "PictureWhisper");
-            if (SettingInfo == null)
+            var settingInfo = SQLiteHelper.GetSettingInfo();
+            if (settingInfo != null)
             {
-                SettingInfo.STI_AutoSetWallpaper = false;
+                SettingInfo = settingInfo;
             }
-            await SQLiteHelper.AddSettingInfoAsync(SettingInfo);
-            SettingInfo = SQLiteHelper.GetSettingInfo();
+            if (SettingInfo.STI_AutoSetWallpaper)
+            {
+                StatusChange = false;
+                AutoSetWallpaperToggleSwitch.IsOn = true;
+                StatusChange = true;
+            }
+            else
+            {
+                StatusChange = false;
+                AutoSetWallpaperToggleSwitch.IsOn = false;
+                StatusChange = true;
+            }
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("图语");
             builder.AppendLine("JustReki Software");

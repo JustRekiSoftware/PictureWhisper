@@ -87,6 +87,10 @@ namespace PictureWhisper.Client.ViewModels
                 var url = string.Format("{0}comment/message/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
+                if (!response.IsSuccessStatusCode)
+                {
+                    return;
+                }
                 var comments = JArray.Parse(
                     await response.Content.ReadAsStringAsync());
                 var result = comments.ToObject<List<T_Comment>>();

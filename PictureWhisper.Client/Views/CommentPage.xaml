@@ -24,7 +24,8 @@
                       HorizontalScrollBarVisibility="Hidden"
                       ViewChanged="CommentScrollViewer_ViewChanged"
                       Grid.Row="0" Grid.ColumnSpan="2">
-            <ListView x:Name="CommentListView" ItemsSource="{x:Bind CommentLVM.WallpaperComments, Mode=OneWay}"
+            <ListView x:Name="CommentListView" 
+                      ItemsSource="{x:Bind CommentLVM.WallpaperComments, Mode=OneWay}"
                       SelectionMode="None">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

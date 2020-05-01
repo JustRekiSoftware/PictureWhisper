@@ -45,6 +45,7 @@ namespace PictureWhisper.Client.ViewModels
                 url = HttpClientHelper.baseUrl +
                     "download/picture/origin/" + User.UserInfo.U_Avatar;
                 User.UserAvatar = await ImageHelper.GetImageAsync(client, url);
+                await GetIsFollowAsync(User.UserInfo.U_ID);
                 User.FollowButtonText = "关注（" + User.UserInfo.U_FollowerNum + "）";
                 User.FollowedTextBlockText = "ta的关注" 
                     + Environment.NewLine + User.UserInfo.U_FollowedNum;
@@ -58,6 +59,23 @@ namespace PictureWhisper.Client.ViewModels
                 var url = HttpClientHelper.baseUrl +
                     "download/picture/origin/" + imagePath;
                 User.UserAvatar = await ImageHelper.GetImageAsync(client, url);
+            }
+        }
+
+        public async Task GetIsFollowAsync(int id)
+        {
+            var userId = SQLiteHelper.GetSigninInfo().SI_UserID;
+            if (userId == id)
+            {
+                User.IsFollow = false;
+            }
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl +
+                    "follow/" + userId + "/" + id;
+                var isFollow = bool.Parse(await client.GetStringAsync(new Uri(url)));
+
+                User.IsFollow = isFollow;
             }
         }
 

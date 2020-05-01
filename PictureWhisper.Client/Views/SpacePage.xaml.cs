@@ -89,7 +89,17 @@ namespace PictureWhisper.Client.Views
             PageNum = 1;
             CurrentIndex = 0;
             await LoadSpaceWallpapersAsync(PageNum++);
-            ImageVM.Image = WallpaperLVM.SpaceWallpapers[CurrentIndex].Image;
+            if (WallpaperLVM.SpaceWallpapers.Count == 0)
+            {
+                PrevButton.Visibility = Visibility.Collapsed;
+                NextButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ImageVM.Image = WallpaperLVM.SpaceWallpapers[CurrentIndex].Image;
+                PrevButton.Visibility = Visibility.Visible;
+                NextButton.Visibility = Visibility.Visible;
+            }
             base.OnNavigatedTo(e);
         }
 

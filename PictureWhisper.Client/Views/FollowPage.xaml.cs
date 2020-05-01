@@ -1,4 +1,7 @@
-﻿using PictureWhisper.Client.ViewModels;
+﻿using Newtonsoft.Json.Linq;
+using PictureWhisper.Client.Helper;
+using PictureWhisper.Client.ViewModels;
+using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +17,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http;
+using Windows.Web.Http.Headers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -58,6 +63,66 @@ namespace PictureWhisper.Client.Views
             await LoadFollowUsersAsync(PageNum++);
         }
 
+        private void AvatarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userDto = (UserDto)((Button)sender).DataContext;
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(UserMainPage), userDto.UserInfo);
+        }
+
+        private async void UIDFollowButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userDto = (UserDto)((Button)sender).DataContext;
+            if (UserId == userDto.UserInfo.U_ID)
+            {
+                return;
+            }
+            userDto.IsFollow = !userDto.IsFollow;
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                if (userDto.IsFollow)
+                {
+                    var url = HttpClientHelper.baseUrl + "follow";
+                    var followInfo = new T_Follow();
+                    followInfo.FLW_FollowerID = UserId;
+                    followInfo.FLW_FollowedID = userDto.UserInfo.U_ID;
+                    var content = new HttpStringContent(JObject.FromObject(followInfo).ToString());
+                    content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+                    var resp = await client.PostAsync(new Uri(url), content);
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        userDto.IsFollow = !userDto.IsFollow;
+                    }
+                    else
+                    {
+                        userDto.UserInfo.U_FollowerNum++;
+                    }
+                }
+                else
+                {
+                    var url = HttpClientHelper.baseUrl + "follow/" + UserId + "/" +
+                        userDto.UserInfo.U_ID;
+                    var resp = await client.DeleteAsync(new Uri(url));
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        userDto.IsFollow = !userDto.IsFollow;
+                    }
+                    else
+                    {
+                        userDto.UserInfo.U_FollowerNum--;
+                    }
+                }
+            }
+            if (userDto.IsFollow)
+            {
+                userDto.FollowButtonText = "已关注";
+            }
+            else
+            {
+                UserLVM.FillInfo();
+            }
+        }
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null)
@@ -72,6 +137,10 @@ namespace PictureWhisper.Client.Views
         private async Task LoadFollowUsersAsync(int page)
         {
             await UserLVM.GetFollowUsersAsync(UserId, page, PageSize);
+            if (UserLVM.FollowUsers.Count > 0)
+            {
+                UserLVM.FillInfo();
+            }
         }
     }
 }

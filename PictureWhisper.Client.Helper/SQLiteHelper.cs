@@ -2,10 +2,8 @@
 using PictureWhisper.Client.Domain.Concrete;
 using PictureWhisper.Client.Domain.Entities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -50,7 +48,14 @@ namespace PictureWhisper.Client.Helper
                 db.SigninInfos.Remove(signinInfo);
                 db.HistoryInfos.RemoveRange(db.HistoryInfos);
                 db.SettingInfos.RemoveRange(db.SettingInfos);
-                await db.SaveChangesAsync();
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+
+                }
             }
         }
 

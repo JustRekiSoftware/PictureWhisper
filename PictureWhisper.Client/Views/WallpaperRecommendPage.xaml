@@ -7,14 +7,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:data="using:PictureWhisper.Client.ViewModels"
-    Loaded="Page_Loaded"
+    xmlns:resizer="using:PictureWhisper.Client.ItemResizers"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Margin="5,5,5,5">
-        <ScrollViewer>
-            <controls:WaterfallFlowView xmlns:controls="using:Marduk.Controls" x:Name="Panel" 
-                                        StackCount="4" DelayMeasure="True" 
-                                        ItemSource="{x:Bind RecommendLVM.RecommendWallpapers}">
+        <ScrollViewer x:Name="RecommendWallpaperScrollViewer"
+                      ViewChanged="RecommendWallpaperScrollViewer_ViewChanged">
+            <controls:WaterfallFlowView xmlns:controls="using:Marduk.Controls" x:Name="WaterfallFlowView" 
+                                        StackCount="3" DelayMeasure="True" SelectMode="None"
+                                        ItemSource="{x:Bind RecommendLVM.RecommendWallpapers, Mode=OneWay}">
+                <controls:WaterfallFlowView.Resizer>
+                    <resizer:RecommendWallpaperResizer/>
+                </controls:WaterfallFlowView.Resizer>
                 <controls:WaterfallFlowView.ItemContainerStyle>
                     <Style TargetType="ContentControl">
                         <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
@@ -24,8 +28,10 @@
                 <controls:WaterfallFlowView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
                         <Button x:Name="ImageButton" Click="ImageButton_Click"
-                                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-                            <Image Source="{x:Bind Image}" Stretch="Uniform" />
+                                Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                            <Image Source="{x:Bind Image, Mode=OneWay}" Stretch="Uniform" />
                         </Button>
                     </DataTemplate>
                 </controls:WaterfallFlowView.ItemTemplate>

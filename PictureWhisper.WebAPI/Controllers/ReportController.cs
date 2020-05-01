@@ -26,7 +26,7 @@ namespace PictureWhisper.WebAPI.Controllers
         public async Task<ActionResult<T_Report>> GetReportAsync(int id)
         {
             var result = await reportRepo.QueryAsync(id);
-            if (result == null || result.RPT_Status != (short)Status.未审核)
+            if (result == null)
             {
                 return NotFound();
             }

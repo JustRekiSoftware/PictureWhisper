@@ -27,7 +27,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = string.Format("{0}review/wallpaper/{1}/{2}/{3}",
+                var url = string.Format("{0}review/message/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)

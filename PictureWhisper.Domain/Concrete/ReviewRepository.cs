@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
@@ -38,6 +36,8 @@ namespace PictureWhisper.Domain.Concrete
                     break;
                 case (short)ReviewType.举报审核:
                     var report = await context.Reports.FindAsync(entity.RV_ReviewedID);
+                    report.RPT_Status = (short)Status.正常;
+                    context.Entry(report).State = EntityState.Modified;
                     switch (report.RPT_Type)
                     {
                         case (short)ReportType.壁纸:
@@ -66,13 +66,17 @@ namespace PictureWhisper.Domain.Concrete
                         case (short)ReportType.用户:
                             var reportedUser = await context.Users.FindAsync(entity.RV_ReviewedID);
                             reportedUser.U_Status = (short)(entity.RV_Result ? Status.正常 : Status.已删除);
-                            //if (!entity.RV_Result)
-                            //{
-                            //    await DeleteFollowAsync(reportedUser.U_ID);
-                            //}
+                            if (!entity.RV_Result)
+                            {
+                                await DeleteFollowAsync(reportedUser.U_ID);
+                            }
                             context.Entry(reportedUser).State = EntityState.Modified;
                             break;
+                        default:
+                            break;
                     }
+                    break;
+                default:
                     break;
             }
             entity.RV_Date = DateTime.Now;
@@ -120,8 +124,7 @@ namespace PictureWhisper.Domain.Concrete
 
         public async Task DeleteFollowAsync(long id)
         {
-            var follows = await context.Follows.Where(p => p.FLW_FollowerID == id 
-                || p.FLW_FollowedID == id).ToListAsync();
+            var follows = await context.Follows.Where(p => p.FLW_FollowedID == id).ToListAsync();
             context.Follows.RemoveRange(follows);
         }
 

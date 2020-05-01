@@ -25,6 +25,13 @@ namespace PictureWhisper.Client.ViewModels
             set { SetProperty(ref userAvatar, value); }
         }
 
+        private bool isFollow;
+        public bool IsFollow
+        {
+            get { return isFollow; }
+            set { SetProperty(ref isFollow, value); }
+        }
+
         private string followButtonText;
         public string FollowButtonText
         {

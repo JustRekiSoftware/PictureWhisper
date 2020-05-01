@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Http;
 using System.Reflection;
-using Microsoft.AspNetCore.JsonPatch;
+using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
 {
@@ -167,8 +163,7 @@ namespace PictureWhisper.Domain.Concrete
         public async Task<List<T_Wallpaper>> GetTypeWallpaperAsync(short type, int page, int pageSize)
         {
             return await context.Wallpapers
-                .Where(p => (p.W_Status == (short)Status.未审核 
-                    || p.W_Status == (short)Status.正常)
+                .Where(p => (p.W_Status != (short)Status.已删除)
                     && p.W_Type == type)
                 .OrderByDescending(p => p.W_Date)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -176,7 +171,54 @@ namespace PictureWhisper.Domain.Concrete
 
         public async Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int count)
         {
-            return await context.Wallpapers.Take(count).ToListAsync();
+            var rand = new Random();
+            var result = new List<T_Wallpaper>();
+            var userCount = await context.Users.CountAsync();
+            var targetUser = await context.Users.FindAsync(id);
+            var targetTags = targetUser.U_Tag.Split(' ').ToList();
+            targetTags.RemoveAll(p => p == string.Empty);
+            var tryCount = 0;
+            while (result.Count < count)
+            {
+                if (tryCount++ > 3)
+                {
+                    break;
+                }
+                var wallpaperCount = await context.Wallpapers.CountAsync();
+                if (wallpaperCount < 10000 || userCount < 1000)
+                {
+                    return await context.Wallpapers.Skip(rand.Next(0, wallpaperCount)).Take(count).ToListAsync();
+                }
+                var users = await context.Users.Skip(rand.Next(0, userCount)).Take(20).ToListAsync();
+                if (users.Contains(targetUser))
+                {
+                    users.Remove(targetUser);
+                }
+                var scores = new List<double>();
+                foreach (var user in users)
+                {
+                    var tags = user.U_Tag.Split(' ').ToList();
+                    var score = (double)tags.Intersect(targetTags).Count() / (double)tags.Union(targetTags).Count();
+                    scores.Add(score);
+                }
+                var maxScore = scores.Max();
+                var neighbor = users[scores.IndexOf(maxScore)];
+                var wallpaperIds =  await context.Favorites
+                    .Where(p => p.FVRT_FavoritorID == neighbor.U_ID)
+                    .OrderByDescending(p => p.FVRT_Date)
+                    .Select(p => p.FVRT_WallpaperID).Take(count).ToListAsync();
+                foreach (var wallpaperId in wallpaperIds)
+                {
+                    var wallpaper = await context.Wallpapers.FindAsync(wallpaperId);
+                    if (wallpaper.W_Status == (short)Status.已删除 || result.Contains(wallpaper))
+                    {
+                        continue;
+                    }
+                    result.Add(wallpaper);
+                }
+            }
+
+            return result;
         }
 
         public async Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int page, int pageSize)
@@ -231,10 +273,16 @@ namespace PictureWhisper.Domain.Concrete
             var now = DateTime.Now;
             var today = new DateTime(now.Year, now.Month, now.Day);
             var yestoday = new DateTime(now.Year, now.Month, now.Day - 1);
-            var top = await context.Wallpapers.MaxAsync(p => p.W_LikeNum + p.W_FavoriteNum * 2);
-            var result = await context.Wallpapers.Where(p => p.W_Date > yestoday && p.W_Date < today
-                && p.W_Status == (short)Status.正常
-                && (p.W_LikeNum + p.W_FavoriteNum * 2) == top).FirstOrDefaultAsync();
+            var query = context.Wallpapers.Where(p => p.W_Date >= yestoday && p.W_Date <= today
+                && p.W_Status == (short)Status.正常);
+            var count = await query.CountAsync();
+            if (count == 0)
+            {
+                return "today/" + yestoday.ToString("yyyy-MM-dd") + ".png";
+            }
+            var top = await query.MaxAsync(p => p.W_LikeNum + p.W_FavoriteNum * 2);
+            var result = await query.Where(p => (p.W_LikeNum + p.W_FavoriteNum * 2) == top)
+                .FirstOrDefaultAsync();
 
             return result.W_Location;
         }

@@ -48,7 +48,7 @@
                     <TextBlock x:Name="UserSearchResultHyperlinkButtonTextBlock" Text="用户搜索" />
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="160" Grid.Column="1">
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <Button x:Name="AddButton" Click="AddButton_Click"
                         Width="40" Height="40" 
                         Background="{StaticResource ApplicationPageBackgroundThemeBrush}">

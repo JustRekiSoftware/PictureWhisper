@@ -27,14 +27,17 @@ namespace PictureWhisper.Client.BackgroundTask
                     var url = HttpClientHelper.baseUrl + "download/picture/origin/"
                         + await resp.Content.ReadAsStringAsync();
                     var buffer = await ImageHelper.GetImageBufferAsync(client, url);
-                    var imageFile = await ApplicationData.Current.TemporaryFolder
-                        .CreateFileAsync("AutoSetTemp.png", CreationCollisionOption.ReplaceExisting);
-                    await FileIO.WriteBufferAsync(imageFile, buffer);
-                    if (UserProfilePersonalizationSettings.IsSupported() == true)
+                    if (buffer != null)
                     {
-                        var current = UserProfilePersonalizationSettings.Current;
-                        var file = await StorageFile.GetFileFromPathAsync(imageFile.Name);
-                        await current.TrySetWallpaperImageAsync(file);
+                        var imageFile = await ApplicationData.Current.LocalFolder
+                        .CreateFileAsync("AutoSetTemp.png", CreationCollisionOption.ReplaceExisting);
+                        await FileIO.WriteBufferAsync(imageFile, buffer);
+                        if (UserProfilePersonalizationSettings.IsSupported() == true)
+                        {
+                            var current = UserProfilePersonalizationSettings.Current;
+                            var file = await StorageFile.GetFileFromPathAsync(imageFile.Path);
+                            await current.TrySetWallpaperImageAsync(file);
+                        }
                     }
                 }
             }

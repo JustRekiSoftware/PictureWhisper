@@ -24,15 +24,15 @@
                 <SymbolIcon Symbol="More" />
             </Button.Content>
             <Button.Flyout>
-                <Flyout>
-                    <!--<Flyout.FlyoutPresenterStyle>
+                <Flyout x:Name="MoreButtonFlyout">
+                    <Flyout.FlyoutPresenterStyle>
                         <Style TargetType="FlyoutPresenter">
                             <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
                             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
                             <Setter Property="IsTabStop" Value="True"/>
                             <Setter Property="TabNavigation" Value="Cycle"/>
                         </Style>
-                    </Flyout.FlyoutPresenterStyle>-->
+                    </Flyout.FlyoutPresenterStyle>
                     <StackPanel>
                         <Button x:Name="WallpaperReportButton" Content="举报" 
                             Click="WallpaperReportButton_Click" />
@@ -94,7 +94,8 @@
                         </Ellipse.Fill>
                     </Ellipse>
                 </Button>
-                <TextBlock Text="{x:Bind WallpaperVM.Wallpaper.PublisherInfo.U_Name, Mode=OneWay}" Margin="0,5,0,0" />
+                <TextBlock Text="{x:Bind WallpaperVM.Wallpaper.PublisherInfo.U_Name, Mode=OneWay}" Margin="0,5,0,0"
+                           HorizontalAlignment="Center" />
             </StackPanel>
         </Grid>
     </Grid>

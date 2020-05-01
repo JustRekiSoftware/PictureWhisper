@@ -64,6 +64,99 @@ namespace PictureWhisper.WebAPI.Controllers
             }
         }
 
+        [HttpPost("picture/today")]
+        public async Task<ActionResult<string>> UploadTodayPictureAsync()
+        {
+            try
+            {
+                IFormFileCollection files = Request.Form.Files;
+                if (files == null || files.Count == 0 || files.Count > 1)
+                {
+                    return BadRequest();
+                }
+                var file = files[0];
+                var today = DateTime.Now.ToString("yyyy-MM-dd");
+                var path = string.Format("today/{0}.png", today);
+                var fullDirectory = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/small/today");
+                if (!Directory.Exists(fullDirectory))
+                {
+                    Directory.CreateDirectory(fullDirectory);
+                    fullDirectory = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/origin/today");
+                    Directory.CreateDirectory(fullDirectory);
+                }
+                var pathSmall = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/small/" + path);
+                var pathOrigin = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/origin/" + path);
+                await Task.Run(() =>
+                {
+                    Image image = Image.FromStream(file.OpenReadStream());
+                    if (image.Width > 200)
+                    {
+                        var scale = image.Width / 200.0;
+                        var smallImage = image.GetThumbnailImage(200,
+                            (int)(image.Height / scale), null, IntPtr.Zero);
+                        smallImage.Save(pathSmall, ImageFormat.Png);
+                    }
+                    image.Save(pathOrigin, ImageFormat.Png);
+                });
+
+                return path;
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("picture/default/{name}")]
+        public async Task<ActionResult<string>> UploadTodayPictureAsync(string name)
+        {
+            try
+            {
+                IFormFileCollection files = Request.Form.Files;
+                if (files == null || files.Count == 0 || files.Count > 1)
+                {
+                    return BadRequest();
+                }
+                var file = files[0];
+                var path = string.Format("default/{0}.png", name);
+                var fullDirectory = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/small/default");
+                if (!Directory.Exists(fullDirectory))
+                {
+                    Directory.CreateDirectory(fullDirectory);
+                    fullDirectory = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/origin/default");
+                    Directory.CreateDirectory(fullDirectory);
+                }
+                var pathSmall = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/small/" + path);
+                var pathOrigin = Path.Combine(Directory.GetCurrentDirectory(),
+                    "pictures/origin/" + path);
+                await Task.Run(() =>
+                {
+                    Image image = Image.FromStream(file.OpenReadStream());
+                    if (image.Width > 200)
+                    {
+                        var scale = image.Width / 200.0;
+                        var smallImage = image.GetThumbnailImage(200,
+                            (int)(image.Height / scale), null, IntPtr.Zero);
+                        smallImage.Save(pathSmall, ImageFormat.Png);
+                    }
+                    image.Save(pathOrigin, ImageFormat.Png);
+                });
+
+                return path;
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
         public string RandomName(int count)
         {
             StringBuilder result = new StringBuilder(20);

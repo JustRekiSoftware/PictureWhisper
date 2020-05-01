@@ -22,8 +22,7 @@ namespace PictureWhisper.Client.Views
     {
         private WallpaperListViewModel WallpaperLVM { get; set; }
         private int CurrentIndex { get; set; }
-        private BitmapImage CurrentImage { get; set; }
-        private T_Wallpaper CurrentWallpaper { get; set; }
+        private ReviewViewModel ReviewVM { get; set; }
         private readonly int PageSize = 20;
         private int PageNum { get; set; }
         private int UserId { get; set; }
@@ -31,6 +30,7 @@ namespace PictureWhisper.Client.Views
         public WallpaperReviewPage()
         {
             WallpaperLVM = new WallpaperListViewModel();
+            ReviewVM = new ReviewViewModel();
             this.InitializeComponent();
         }
 
@@ -55,8 +55,8 @@ namespace PictureWhisper.Client.Views
             {
                 PrevFontIcon.Glyph = "\xE76B";
                 CurrentIndex--;
-                CurrentImage = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
-                CurrentWallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
+                ReviewVM.Image = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
+                ReviewVM.Wallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
             }
             if (CurrentIndex == 0)
             {
@@ -66,11 +66,11 @@ namespace PictureWhisper.Client.Views
 
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentIndex < WallpaperLVM.ReviewWallpapers.Count)
+            if (CurrentIndex < WallpaperLVM.ReviewWallpapers.Count - 1)
             {
                 CurrentIndex++;
-                CurrentImage = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
-                CurrentWallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
+                ReviewVM.Image = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
+                ReviewVM.Wallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
             }
             if (CurrentIndex > WallpaperLVM.ReviewWallpapers.Count - 5)
             {
@@ -84,6 +84,11 @@ namespace PictureWhisper.Client.Views
             PageNum = 1;
             CurrentIndex = 0;
             await LoadReviewWallpapersAsync(PageNum++);
+            if (WallpaperLVM.ReviewWallpapers.Count > CurrentIndex)
+            {
+                ReviewVM.Image = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
+                ReviewVM.Wallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
+            }
             base.OnNavigatedTo(e);
         }
 
@@ -94,6 +99,12 @@ namespace PictureWhisper.Client.Views
 
         private async Task SendReviewInfoAsync(bool isPass)
         {
+            if (WallpaperLVM.ReviewWallpapers.Count == 0)
+            {
+                ReviewVM.Image = new BitmapImage();
+                ReviewVM.Wallpaper = new T_Wallpaper();
+                return;
+            }
             ErrorMessageTextBlock.Text += "错误信息：" + Environment.NewLine;
             var reviewInfo = new T_Review()
             {
@@ -121,11 +132,17 @@ namespace PictureWhisper.Client.Views
                 {
                     WallpaperLVM.ReviewWallpapers.Remove(WallpaperLVM
                         .ReviewWallpapers[CurrentIndex]);
-                    if (CurrentIndex < WallpaperLVM.ReviewWallpapers.Count)
+                    if (WallpaperLVM.ReviewWallpapers.Count == 0)
+                    {
+                        CurrentIndex = 0;
+                        ReviewVM.Image = new BitmapImage();
+                        ReviewVM.Wallpaper = new T_Wallpaper();
+                    }
+                    if (CurrentIndex < WallpaperLVM.ReviewWallpapers.Count - 1)
                     {
                         CurrentIndex++;
-                        CurrentImage = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
-                        CurrentWallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
+                        ReviewVM.Image = WallpaperLVM.ReviewWallpapers[CurrentIndex].Image;
+                        ReviewVM.Wallpaper = WallpaperLVM.ReviewWallpapers[CurrentIndex].WallpaperInfo;
                     }
                     if (CurrentIndex > WallpaperLVM.ReviewWallpapers.Count - 5)
                     {

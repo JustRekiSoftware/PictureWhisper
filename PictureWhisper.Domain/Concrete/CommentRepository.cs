@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
@@ -19,6 +15,11 @@ namespace PictureWhisper.Domain.Concrete
         public CommentRepository(DB_PictureWhisperContext context)
         {
             this.context = context;
+        }
+
+        public async Task<T_Comment> QueryAsync(int id)
+        {
+            return await context.Comments.FindAsync(id);
         }
 
         public async Task<List<T_Comment>> QueryAsync(string type, int id, int page, int pageSize)

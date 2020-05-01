@@ -1,30 +1,15 @@
-﻿using PictureWhisper.Client.Domain.Concrete;
+﻿using Newtonsoft.Json.Linq;
+using PictureWhisper.Client.Domain.Entities;
 using PictureWhisper.Client.Helper;
+using PictureWhisper.Client.ViewModels;
+using PictureWhisper.Client.Views;
+using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.Web.Http;
-using System.Drawing;
-using Windows.UI.Xaml.Media.Imaging;
-using PictureWhisper.Client.Views;
-using Windows.UI.ViewManagement;
-using Windows.Graphics.Imaging;
-using PictureWhisper.Domain.Entites;
-using PictureWhisper.Client.Domain.Entities;
-using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.ViewModels;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -164,19 +149,19 @@ namespace PictureWhisper.Client
             if (currentFocus.Visibility == Visibility.Collapsed)
             {
                 currentFocus.Visibility = Visibility.Visible;
-                if (content != null)
+            }
+            if (content != null)
+            {
+                switch (currentFocusName)
                 {
-                    switch (currentFocusName)
-                    {
-                        case "WallpaperSearchResultHyperlinkButton":
-                            WallpaperSearchResultHyperlinkButtonTextBlock.Text = content;
-                            break;
-                        case "UserSearchResultHyperlinkButton":
-                            UserSearchResultHyperlinkButtonTextBlock.Text = content;
-                            break;
-                        default:
-                            break;
-                    }
+                    case "WallpaperSearchResultHyperlinkButton":
+                        WallpaperSearchResultHyperlinkButtonTextBlock.Text = content;
+                        break;
+                    case "UserSearchResultHyperlinkButton":
+                        UserSearchResultHyperlinkButtonTextBlock.Text = content;
+                        break;
+                    default:
+                        break;
                 }
             }
             if (LastFocus != null)

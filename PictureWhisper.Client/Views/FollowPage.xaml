@@ -10,37 +10,61 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Margin="5,5,5,5">
-        <ScrollViewer x:Name="UserScrollViewer" Margin="0, 5, 0, 10"
+        <ScrollViewer x:Name="UserScrollViewer" Margin="0,5,0,10"
                       HorizontalScrollBarVisibility="Hidden"
                       VerticalScrollBarVisibility="Hidden"
                       ViewChanged="UserScrollViewer_ViewChanged">
-            <GridView x:Name="UserGridView" 
-                  IsItemClickEnabled="True" 
-                  ItemClick="UserGridView_ItemClick"
+            <ListView x:Name="UserListView"
                   SelectionMode="None"
-                  ItemsSource="{x:Bind UserLVM.FollowUsers, Mode=OneWay}">
-                <GridView.ItemTemplate>
+                  ItemsSource="{x:Bind UserLVM.FollowUsers}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:UserDto">
-                        <Grid Margin="0,5,0,0">
+                        <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Ellipse Width="60" Height="60" Grid.Column="0">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{x:Bind UserAvatar, Mode=OneWay}" Stretch="UniformToFill" />
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <StackPanel Margin="10,0,0,0" Grid.Column="1">
-                                <TextBlock Text="{x:Bind UserInfo.U_Name, Mode=OneWay}" Margin="0,10,0,0"
-                                           VerticalAlignment="Top" />
-                                <TextBlock Text="{x:Bind UserInfo.U_Info, Mode=OneWay}" Margin="0,0,0,10"
-                                           VerticalAlignment="Bottom" />
+
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                <Button Click="AvatarButton_Click"
+                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                    <Ellipse Width="40" Height="40">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{x:Bind UserAvatar, Mode=OneWay}"
+                                                    Stretch="UniformToFill" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Button>
+                                <TextBlock Text="{x:Bind UserInfo.U_Name, Mode=OneWay}" 
+                                           HorizontalAlignment="Center" Margin="0,10,0,5" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="简介" Margin="10,5,0,0" />
+                                <TextBlock Text="{x:Bind UserInfo.U_Info, Mode=OneWay}" Margin="10,5,0,5" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                <Button x:Name="UIDFollowButton" Content="{x:Bind FollowButtonText, Mode=OneWay}" 
+                                        Click="UIDFollowButton_Click"  Background="{StaticResource SystemAccentColor}"
+                                        Margin="10,5,0,0" />
+                                <StackPanel HorizontalAlignment="Stretch">
+                                    <TextBlock Text="ta的关注" HorizontalAlignment="Center" Margin="10,5,0,0" />
+                                    <TextBlock Text="{x:Bind FollowedTextBlockText, Mode=OneWay}"
+                                               HorizontalAlignment="Center" Margin="10,5,0,5" />
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
+                </ListView.ItemTemplate>
+            </ListView>
         </ScrollViewer>
         <Button x:Name="RefreshButton" HorizontalAlignment="Right" 
                 VerticalAlignment="Bottom" Margin="10,10,10,10"

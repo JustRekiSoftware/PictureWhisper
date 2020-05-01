@@ -74,11 +74,11 @@ namespace PictureWhisper.Client.Views
             {
                 if (Code == IdentifyCodeTextBox.Text)
                 {
-                    if (NewPwdTextBox.Text.TrimEnd() != string.Empty 
-                            && RepeatNewPwdtextBox.Text.TrimEnd() != string.Empty
-                            && NewPwdTextBox.Text.TrimEnd() == RepeatNewPwdtextBox.Text.TrimEnd())
+                    if (NewPwdTextBox.Password.TrimEnd() != string.Empty 
+                            && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
+                            && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
                     {
-                        var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Text.TrimEnd());
+                        var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Password.TrimEnd());
                         using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                         {
                             var url = HttpClientHelper.baseUrl + "user/" + SigninInfo.SI_UserID;
@@ -114,6 +114,10 @@ namespace PictureWhisper.Client.Views
                         ErrorMessageTextBlock.Text += "· 新密码未输入或两次密码输入不一致" + Environment.NewLine;
                     }
                 }
+                else
+                {
+                    ErrorMessageTextBlock.Text += "· 验证码输入错误" + Environment.NewLine;
+                }
             }
             if (ErrorMessageTextBlock.Text.Contains("·"))
             {
@@ -124,8 +128,8 @@ namespace PictureWhisper.Client.Views
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Code = string.Empty;
-            NewPwdTextBox.Text = string.Empty;
-            RepeatNewPwdtextBox.Text = string.Empty;
+            NewPwdTextBox.Password = string.Empty;
+            RepeatNewPwdtextBox.Password = string.Empty;
             if (FromPage == "SigininPage")
             {
                 var rootFrame = Window.Current.Content as Frame;

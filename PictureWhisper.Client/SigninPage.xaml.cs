@@ -8,6 +8,7 @@ using System;
 using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -151,6 +152,29 @@ namespace PictureWhisper.Client
                     return;
                 }
             }
+        }
+
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter != null && (string)e.Parameter != string.Empty)
+            {
+                var signinSuccess = (bool)e.Parameter;
+                if (!signinSuccess)
+                {
+                    var contentDialog = new ContentDialog
+                    {
+                        Title = "登录失败",
+                        Content = "登录失败，密码已修改或账号已注销",
+                        PrimaryButtonText = "确定"
+                    };
+                    contentDialog.PrimaryButtonClick += (_sender, _e) =>
+                    {
+                        contentDialog.Hide();
+                    };
+                    await contentDialog.ShowAsync();
+                }
+            }
+            base.OnNavigatedTo(e);
         }
     }
 }

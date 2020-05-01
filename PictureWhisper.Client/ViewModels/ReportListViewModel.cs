@@ -28,7 +28,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = string.Format("{0}report/query/{1}/{2}",
+                var url = string.Format("{0}report/{1}/{2}",
                     HttpClientHelper.baseUrl, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
@@ -80,7 +80,7 @@ namespace PictureWhisper.Client.ViewModels
                             messgaeToId = comment.C_PublisherID;
                             displayText = GetCommentDisplayText(comment);
                             url = HttpClientHelper.baseUrl
-                                + "download/picture/origin/" + GetUserAvatarPath(comment.C_PublisherID);
+                                + "download/picture/origin/" + await GetUserAvatarPath(comment.C_PublisherID);
                             image = await ImageHelper.GetImageAsync(client, url);
                             break;
                         case (short)ReportType.回复:
@@ -97,7 +97,7 @@ namespace PictureWhisper.Client.ViewModels
                             messgaeToId = reply.RPL_PublisherID;
                             displayText = GetReplyDisplayText(reply);
                             url = HttpClientHelper.baseUrl
-                                + "download/picture/origin/" + GetUserAvatarPath(reply.RPL_PublisherID);
+                                + "download/picture/origin/" + await GetUserAvatarPath(reply.RPL_PublisherID);
                             image = await ImageHelper.GetImageAsync(client, url);
                             break;
                         case (short)ReportType.用户:

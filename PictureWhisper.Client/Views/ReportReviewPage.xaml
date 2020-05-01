@@ -19,18 +19,18 @@
         <Button x:Name="PrevButton" Grid.Column="0" 
                 HorizontalAlignment="Center" Click="PrevButton_Click" 
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+            <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
         </Button>
-        <Image Grid.Column="1" Source="{x:Bind CurrentImage}" Stretch="Uniform" />
+        <Image Grid.Column="1" Source="{x:Bind ReviewVM.Image, Mode=OneWay}" Stretch="Uniform" />
         <StackPanel Grid.Column="2"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
-            <TextBlock Text="相关信息" />
-            <TextBlock Text="{x:Bind CurrentReport.DisplayText}" Margin="0,5,0,0" />
-            <TextBlock Text="举报理由" Margin="0,10,0,0" />
-            <TextBlock Text="{x:Bind CurrentReport.ReportReason}" Margin="0,5,0,0" />
-            <TextBlock Text="补充说明" Margin="0,10,0,0" />
-            <TextBlock Text="{x:Bind CurrentReport.ReportInfo.RPT_Additional}" Margin="0,5,0,0" />
+                    Margin="10,0,0,0">
+            <TextBlock Text="相关信息" FontSize="18" />
+            <TextBlock Text="{x:Bind ReviewVM.ReportDto.DisplayText, Mode=OneWay}" Margin="0,5,0,0" />
+            <TextBlock Text="举报理由" Margin="0,10,0,0" FontSize="18" />
+            <TextBlock Text="{x:Bind ReviewVM.ReportDto.ReportReason, Mode=OneWay}" Margin="0,5,0,0" />
+            <TextBlock Text="补充说明" Margin="0,10,0,0" FontSize="18" />
+            <TextBlock Text="{x:Bind ReviewVM.ReportDto.ReportInfo.RPT_Additional, Mode=OneWay}" Margin="0,5,0,0" />
             <Button x:Name="PassButton" Content="审核通过" Click="PassButton_Click"
                     Background="{StaticResource SystemAccentColor}" Margin="0,5,0,0"
                     HorizontalAlignment="Center" />
@@ -42,7 +42,7 @@
         <Button x:Name="NextButton" Grid.Column="3"
                 HorizontalAlignment="Center" Click="NextButton_Click"
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70E;" />
+            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;" />
         </Button>
     </Grid>
 </Page>

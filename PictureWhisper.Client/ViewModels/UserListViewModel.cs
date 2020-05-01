@@ -49,11 +49,13 @@ namespace PictureWhisper.Client.ViewModels
                     url = HttpClientHelper.baseUrl
                         + "download/picture/small/" + user.U_Avatar;
                     var image = await ImageHelper.GetImageAsync(client, url);
-                    this.SearchResultUsers.Add(new UserDto
+                    var userDto = new UserDto
                     {
                         UserInfo = user,
                         UserAvatar = image
-                    });
+                    };
+                    await GetIsFollowAsync(userDto);
+                    this.SearchResultUsers.Add(userDto);
                 }
             }
         }
@@ -85,12 +87,76 @@ namespace PictureWhisper.Client.ViewModels
                     url = HttpClientHelper.baseUrl
                         + "download/picture/small/" + user.U_Avatar;
                     var image = await ImageHelper.GetImageAsync(client, url);
-                    this.SearchResultUsers.Add(new UserDto
+                    var userDto = new UserDto
                     {
                         UserInfo = user,
                         UserAvatar = image
-                    });
+                    };
+                    await GetIsFollowAsync(userDto);
+                    this.FollowUsers.Add(userDto);
                 }
+            }
+        }
+
+        public async Task GetIsFollowAsync(UserDto user)
+        {
+            var userId = SQLiteHelper.GetSigninInfo().SI_UserID;
+            if (userId == user.UserInfo.U_ID)
+            {
+                user.IsFollow = false;
+            }
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl +
+                    "follow/" + userId + "/" + user.UserInfo.U_ID;
+                var isFollow = bool.Parse(await client.GetStringAsync(new Uri(url)));
+
+                user.IsFollow = isFollow;
+            }
+        }
+
+        public void FillInfo()
+        {
+            foreach (var user in SearchResultUsers)
+            {
+                if (user.IsFollow)
+                {
+                    user.FollowButtonText = "已关注 ";
+                }
+                else
+                {
+                    user.FollowButtonText = "+  关注 " + FormatFollowNum(user.UserInfo.U_FollowerNum);
+                }
+                user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
+            }
+            foreach (var user in FollowUsers)
+            {
+                if (user.IsFollow)
+                {
+                    user.FollowButtonText = "已关注 ";
+                }
+                else
+                {
+                    user.FollowButtonText = "+  关注 " + FormatFollowNum(user.UserInfo.U_FollowerNum);
+                }
+                user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
+            }
+        }
+
+        public string FormatFollowNum(int num)
+        {
+            var numStr = num.ToString();
+            if (numStr.Length <= 3)
+            {
+                return numStr;
+            }
+            else if (numStr.Length == 4)
+            {
+                return numStr[0] + "," + numStr.Substring(1);
+            }
+            else
+            {
+                return numStr.Substring(0, numStr.Length - 4) + "." + numStr[numStr.Length - 4] + "万";
             }
         }
     }

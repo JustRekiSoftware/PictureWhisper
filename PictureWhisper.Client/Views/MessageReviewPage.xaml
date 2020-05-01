@@ -16,9 +16,28 @@
                       ViewChanged="ReviewScrollViewer_ViewChanged">
             <ListView ItemsSource="{x:Bind ReviewLVM.Reviews}"
                       SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:ReviewDto">
-                        <TextBlock Text="{x:Bind ReviewDisplayText}" Margin="0,5,0,0" />
+                        <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind ReviewTitleText, Mode=OneWay}" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ReviewInfo.RV_Date, Mode=OneWay}" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ReviewDisplayText, Mode=OneWay}" Margin="10,10,0,5" />
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

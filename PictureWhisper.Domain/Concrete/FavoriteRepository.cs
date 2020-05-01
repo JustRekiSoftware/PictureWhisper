@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -71,6 +70,7 @@ namespace PictureWhisper.Domain.Concrete
                 return false;
             }
 
+            await UpdateUserTag(entity.FVRT_FavoritorID);
             return true;
         }
 
@@ -96,7 +96,80 @@ namespace PictureWhisper.Domain.Concrete
                 return false;
             }
 
+            await UpdateUserTag(favoritorId);
             return true;
+        }
+
+        private async Task UpdateUserTag(int id)
+        {
+            var targetUser = await context.Users.FindAsync(id);
+            var likeWallpaperIds = await context.Likes
+                .Where(p => p.L_LikerID == id)
+                .Select(p => p.L_WallpaperID).ToListAsync();
+            var favoriteWallpaperIds = await context.Favorites
+                .Where(p => p.FVRT_FavoritorID == id)
+                .Select(p => p.FVRT_WallpaperID).ToListAsync();
+            var wallpapersTagScores = new Dictionary<string, int>();
+            var initalTags = targetUser.U_Tag.Split(' ').ToList();
+            initalTags.RemoveAll(p => p == string.Empty);
+            foreach (var tag in initalTags)
+            {
+                wallpapersTagScores.Add(tag, 75);
+            }
+            foreach (var wallpaperId in likeWallpaperIds)
+            {
+                var wallpaper = await context.Wallpapers.FindAsync(wallpaperId);
+                var tags = wallpaper.W_Tag.Split(',').ToList();
+                foreach (var tag in tags)
+                {
+                    if (wallpapersTagScores.ContainsKey(tag))
+                    {
+                        wallpapersTagScores[tag] += 1;
+                    }
+                    else
+                    {
+                        wallpapersTagScores.Add(tag, 1);
+                    }
+                }
+            }
+            foreach (var wallpaperId in favoriteWallpaperIds)
+            {
+                var wallpaper = await context.Wallpapers.FindAsync(wallpaperId);
+                var tags = wallpaper.W_Tag.Split(',').ToList();
+                foreach (var tag in tags)
+                {
+                    if (wallpapersTagScores.ContainsKey(tag))
+                    {
+                        wallpapersTagScores[tag] += 2;
+                    }
+                    else
+                    {
+                        wallpapersTagScores.Add(tag, 2);
+                    }
+                }
+            }
+            var orderedTagScores = wallpapersTagScores.OrderByDescending(p => p.Value);
+            var resultTag = new StringBuilder();
+            foreach (var keyValue in orderedTagScores)
+            {
+                if (resultTag.Length + keyValue.Key.Length >= 128)
+                {
+                    break;
+                }
+                resultTag.Append(" ");
+                resultTag.Append(keyValue.Key);
+            }
+
+            targetUser.U_Tag = resultTag.ToString();
+            context.Entry(targetUser).State = EntityState.Modified;
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+            }
         }
     }
 }

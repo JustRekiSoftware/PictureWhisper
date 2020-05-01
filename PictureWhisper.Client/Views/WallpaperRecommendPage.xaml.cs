@@ -1,18 +1,8 @@
 ﻿using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -26,6 +16,7 @@ namespace PictureWhisper.Client.Views
     {
         public RecommendWallpaperListViewModel RecommendLVM { get; set; }
         public int UserId { get; set; }
+        private readonly int Count = 20;
 
         public WallpaperRecommendPage()
         {
@@ -42,19 +33,33 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(WallpaperMainPage), wallpaper.WallpaperInfo);
         }
 
-        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private async void RecommendWallpaperScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            await RecommendLVM.Refresh();
+            var scrollViewer = (ScrollViewer)sender;
+            if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
+            {
+                await LoadRecommendWallpaperAsync();
+            }
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            //RecommendLVM.Count = 10;
-            //await RecommendLVM.GetRecommendWallpapersAsync(UserId);
-            if (RecommendLVM.RecommendWallpapers.Count == 0)
+            RecommendLVM.RecommendWallpapers.Clear();
+            await LoadRecommendWallpaperAsync();
+        }
+
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (RecommendLVM != null && RecommendLVM.RecommendWallpapers.Count == 0)
             {
-                await RecommendLVM.Refresh();
+                await LoadRecommendWallpaperAsync();
             }
+            base.OnNavigatedTo(e);
+        }
+
+        private async Task LoadRecommendWallpaperAsync()
+        {
+            await RecommendLVM.GetRecommendWallpapersAsync(Count);
         }
     }
 }

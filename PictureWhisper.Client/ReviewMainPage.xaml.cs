@@ -1,12 +1,14 @@
-﻿using PictureWhisper.Client.Domain.Entities;
+﻿using Newtonsoft.Json.Linq;
+using PictureWhisper.Client.Domain.Entities;
 using PictureWhisper.Client.Helper;
+using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -18,6 +20,7 @@ namespace PictureWhisper.Client
     public sealed partial class ReviewMainPage : Page
     {
         private T_SigninInfo SigninInfo { get; set; }
+        private ImageViewModel ImageVM { get; set; }
         private HyperlinkButton LastFocus { get; set; }
 
         public static ReviewMainPage Page { get; set; }
@@ -26,6 +29,7 @@ namespace PictureWhisper.Client
         public ReviewMainPage()
         {
             this.InitializeComponent();
+            ImageVM = new ImageViewModel();
             NavigationCacheMode = NavigationCacheMode.Enabled;
             PageFrame = ContentFrame;
             Page = this;
@@ -43,7 +47,7 @@ namespace PictureWhisper.Client
             HyperLinkButtonFocusChange("ReportReviewHyperlinkButton");
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             SigninInfo = SQLiteHelper.GetSigninInfo();
             if (SigninInfo.SI_Type == (short)UserType.审核人员)
@@ -59,6 +63,12 @@ namespace PictureWhisper.Client
                 ReportReviewHyperlinkButton.Visibility = Visibility.Visible;
                 ContentFrame.Navigate(typeof(ReportReviewPage), SigninInfo);
                 HyperLinkButtonFocusChange("ReportReviewHyperlinkButton");
+            }
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl +
+                    "download/picture/origin/" + SigninInfo.SI_Avatar;
+                ImageVM.Image = await ImageHelper.GetImageAsync(client, url);
             }
             base.OnNavigatedTo(e);
         }
@@ -99,6 +109,28 @@ namespace PictureWhisper.Client
             await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(SigninPage));
+        }
+
+        private async void UserButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl + "user/" + SigninInfo.SI_UserID;
+                var response = await client.GetAsync(new Uri(url));
+                if (!response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                var wallpaper = JObject.Parse(
+                    await response.Content.ReadAsStringAsync());
+                var result = wallpaper.ToObject<UserInfoDto>();
+                if (result == null)
+                {
+                    return;
+                }
+                var rootFrame = Window.Current.Content as Frame;
+                rootFrame.Navigate(typeof(UserMainPage), result);
+            }
         }
     }
 }

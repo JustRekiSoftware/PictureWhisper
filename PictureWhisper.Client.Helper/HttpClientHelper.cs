@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using IdentityModel.Client;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Web.Http;
-using IdentityModel.Client;
-using Newtonsoft.Json.Linq;
-using System.Threading;
 
 namespace PictureWhisper.Client.Helper
 {

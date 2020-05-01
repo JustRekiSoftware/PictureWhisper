@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Domain.Concrete;
+using PictureWhisper.Client.Domain.Entities;
 using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
 using System;
@@ -111,22 +112,18 @@ namespace PictureWhisper.Client
                             }
                             else
                             {
-                                rootFrame.Navigate(typeof(SigninPage), e.Arguments);
-                                var contentDialog = new ContentDialog
-                                {
-                                    Title = "登录失败",
-                                    Content = "登录失败，密码已修改或账号已注销",
-                                    PrimaryButtonText = "确定"
-                                };
-                                contentDialog.PrimaryButtonClick += (_sender, _e) =>
-                                {
-                                    contentDialog.Hide();
-                                };
-                                await contentDialog.ShowAsync();
                                 result.SI_Status = userSigninDto.U_Status;
+                                rootFrame.Navigate(typeof(SigninPage), false);
                             }
                             await SQLiteHelper.UpdateSigninInfoAsync(result);
                         }
+                    }
+                    var settingInfo = SQLiteHelper.GetSettingInfo();
+                    if (settingInfo == null)
+                    {
+                        settingInfo = new T_SettingInfo();
+                        settingInfo.STI_AutoSetWallpaper = false;
+                        await SQLiteHelper.AddSettingInfoAsync(settingInfo);
                     }
                 }
                 // Ensure the current window is active

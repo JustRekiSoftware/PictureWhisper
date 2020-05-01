@@ -9,6 +9,8 @@ namespace PictureWhisper.Domain.Abstract
 {
     public interface ICommentRepository
     {
+        Task<T_Comment> QueryAsync(int id);
+
         Task<List<T_Comment>> QueryAsync(string type, int id, int page, int pageSize);
 
         Task<bool> InsertAsync(T_Comment entity);
