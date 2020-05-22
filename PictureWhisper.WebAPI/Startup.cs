@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using PictureWhisper.WebAPI.DI;
 using PictureWhisper.Domain.Concrete;
+using PictureWhisper.WebAPI.Hubs;
 
 namespace PictureWhisper.WebAPI
 {
@@ -28,13 +29,15 @@ namespace PictureWhisper.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //依赖注入
             services.AddDbContextPool<DB_PictureWhisperContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DB_PictureWhisper")));
-
             DIIoc.Injection(services);
 
             services.AddControllers().AddNewtonsoftJson();
 
+            services.AddSignalR();
+            //添加身份验证
             services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
             {
                 options.Authority = "https://localhost:5000";
@@ -55,12 +58,13 @@ namespace PictureWhisper.WebAPI
 
             app.UseRouting();
 
-            app.UseAuthentication();//��֤
-            app.UseAuthorization();//��Ȩ
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotifyHub>("/hubs/notifyhub");
             });
         }
     }

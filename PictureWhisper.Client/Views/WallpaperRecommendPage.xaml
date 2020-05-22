@@ -7,37 +7,37 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:data="using:PictureWhisper.Client.ViewModels"
-    xmlns:resizer="using:PictureWhisper.Client.ItemResizers"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸推荐页面 -->
     <Grid Margin="5,5,5,5">
+        <!-- 壁纸列表 -->
         <ScrollViewer x:Name="RecommendWallpaperScrollViewer"
                       ViewChanged="RecommendWallpaperScrollViewer_ViewChanged">
-            <controls:WaterfallFlowView xmlns:controls="using:Marduk.Controls" x:Name="WaterfallFlowView" 
-                                        StackCount="3" DelayMeasure="True" SelectMode="None"
-                                        ItemSource="{x:Bind RecommendLVM.RecommendWallpapers, Mode=OneWay}">
-                <controls:WaterfallFlowView.Resizer>
-                    <resizer:RecommendWallpaperResizer/>
-                </controls:WaterfallFlowView.Resizer>
-                <controls:WaterfallFlowView.ItemContainerStyle>
-                    <Style TargetType="ContentControl">
-                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                    </Style>
-                </controls:WaterfallFlowView.ItemContainerStyle>
-                <controls:WaterfallFlowView.ItemTemplate>
+            <GridView x:Name="WallpaperGridView"
+                      ItemsSource="{x:Bind RecommendLVM.RecommendWallpapers, Mode=OneWay}"
+                      IsItemClickEnabled="True" 
+                      ItemClick="WallpaperGridView_ItemClick"
+                      SelectionMode="None">
+                <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
-                        <Button x:Name="ImageButton" Click="ImageButton_Click"
-                                Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
-                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                            <Image Source="{x:Bind Image, Mode=OneWay}" Stretch="Uniform" />
-                        </Button>
+                        <Grid>
+                            <Image Source="{x:Bind Image, Mode=OneWay}" Stretch="UniformToFill" />
+                        </Grid>
                     </DataTemplate>
-                </controls:WaterfallFlowView.ItemTemplate>
-            </controls:WaterfallFlowView>
+                </GridView.ItemTemplate>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!-- 启用瀑布流面板 -->
+                        <controls:StaggeredPanel DesiredColumnWidth="480"
+                                                 SizeChanged="WallpaperStaggeredPanel_SizeChanged"
+                                                 HorizontalAlignment="Left"
+                                                 ColumnSpacing="5" RowSpacing="5" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
         </ScrollViewer>
-
         <Button x:Name="RefreshButton" Click="RefreshButton_Click" Margin="10,10,10,10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}">

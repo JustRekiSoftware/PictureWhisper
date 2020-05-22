@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using PictureWhisper.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,23 @@ using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
 {
+    /// <summary>
+    /// 用户数据仓库
+    /// </summary>
     public class UserRepository : IUserRepository
     {
-        private DB_PictureWhisperContext context;
+        private DB_PictureWhisperContext context;//数据库连接实例
 
         public UserRepository(DB_PictureWhisperContext context)
         {
             this.context = context;
         }
 
+        /// <summary>
+        /// 根据Id获取用户
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <returns>获取成功返回用户信息，否则返回null</returns>
         public async Task<T_User> QueryAsync(int id)
         {
             var result = await context.Users.FindAsync(id);
@@ -35,38 +44,42 @@ namespace PictureWhisper.Domain.Concrete
             return null;
         }
 
+        /// <summary>
+        /// 搜索用户
+        /// </summary>
+        /// <param name="queryData">搜索关键字</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns>返回用户列表</returns>
         public async Task<List<T_User>> QueryAsync(string queryData, int page, int pageSize)
         {
             if (page <= 0 || pageSize <= 0)
             {
                 return null;
             }
-            ParameterExpression parameter = Expression.Parameter(typeof(T_User), "p");
-            Expression temp = null;
+            var query = context.Users.AsQueryable();
             var keywords = queryData.Split(' ').ToList();
-            foreach (var keyword in keywords)
+            IQueryable<T_User> keywordResult = null;
+            foreach (var keyword in keywords)//匹配搜索关键字
             {
-                MemberExpression member = Expression.PropertyOrField(parameter, "U_Name");
-                MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-                ConstantExpression constant = Expression.Constant(keyword, typeof(string));
-                if (temp == null)
+                var tmp = query.Where(p => p.U_Name.Contains(keyword));
+                if (keywordResult == null)
                 {
-                    temp = Expression.Call(member, method, constant);
+                    keywordResult = tmp;
                 }
-                else
-                {
-                    temp = Expression.And(temp, Expression.Call(member, method, constant));
-                }
+                keywordResult = keywordResult.Union(tmp);
             }
-            MemberExpression memberStatus = Expression.PropertyOrField(parameter, "U_Status");
-            ConstantExpression constantStatus = Expression.Constant((short)Status.正常, typeof(short));
-            temp = Expression.And(temp, Expression.Equal(memberStatus, constantStatus));
-            var lambda = Expression.Lambda<Func<T_User, bool>>(temp, new[] { parameter });
+            query = keywordResult;
 
-            return await context.Users.Where(lambda).Skip((page - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
+            return await query.Where(p => p.U_Status == (short)Status.正常)
+                .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
+        /// <summary>
+        /// 检查邮箱是否已注册
+        /// </summary>
+        /// <param name="email">注册邮箱</param>
+        /// <returns>已注册返回true，否则返回false</returns>
         public async Task<bool> CheckEmailAsync(string email)
         {
             var result = await context.Users.Where(p => p.U_Email == email).ToListAsync();
@@ -78,6 +91,11 @@ namespace PictureWhisper.Domain.Concrete
             return true;
         }
 
+        /// <summary>
+        /// 检查用户名是否已注册
+        /// </summary>
+        /// <param name="name">用户名</param>
+        /// <returns>已注册返回true，否则返回false</returns>
         public async Task<bool> CheckNameAsync(string name)
         {
             var result = await context.Users.Where(p => p.U_Name == name).ToListAsync();
@@ -89,6 +107,12 @@ namespace PictureWhisper.Domain.Concrete
             return true;
         }
 
+        /// <summary>
+        /// 用户登录检查
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <param name="password">密码</param>
+        /// <returns>登录成功返回登录信息，否则返回null</returns>
         public async Task<UserSigninDto> CheckSigninAsync(string email, string password)
         {
             var result = await context.Users.Where(p => p.U_Email == email
@@ -107,6 +131,11 @@ namespace PictureWhisper.Domain.Concrete
             }).FirstOrDefault();
         }
 
+        /// <summary>
+        /// 添加用户
+        /// </summary>
+        /// <param name="entity">用户信息</param>
+        /// <returns>注册成功返回登录信息，否则返回null</returns>
         public async Task<UserSigninDto> InsertAsync(T_User entity)
         {
             entity.U_Avatar = "default/avatar.png";
@@ -134,14 +163,20 @@ namespace PictureWhisper.Domain.Concrete
             };
         }
 
+        /// <summary>
+        /// 更新用户信息
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+        /// <returns>更新成功返回true，否则返回false</returns>
         public async Task<bool> UpdateAsync(int id, JsonPatchDocument<T_User> jsonPatch)
         {
             var target = await context.Users.FindAsync(id);
-            jsonPatch.ApplyTo(target);
-            context.Entry(target).State = EntityState.Modified;
+            jsonPatch.ApplyTo(target);//应用更新
+            context.Entry(target).State = EntityState.Modified;//标记为已修改
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync();//保存更改
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -151,6 +186,11 @@ namespace PictureWhisper.Domain.Concrete
             return true;
         }
 
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <returns>删除成功返回true，否则返回false</returns>
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await context.Users.FindAsync(id);
@@ -158,11 +198,11 @@ namespace PictureWhisper.Domain.Concrete
             {
                 return false;
             }
-            entity.U_Status = (short)Status.已注销;
-            context.Entry(entity).State = EntityState.Modified;
+            entity.U_Status = (short)Status.已注销;//状态修改为已注销
+            context.Entry(entity).State = EntityState.Modified;//标记为已修改
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync();//保存更改
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -170,6 +210,36 @@ namespace PictureWhisper.Domain.Concrete
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 发送密码修改验证码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="email">邮箱</param>
+        /// <returns>有该用户则返回用户Id和验证码，无该用户则返回null</returns>
+        public async Task<dynamic> SendIdentifyCodeAsync(int id, string email)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(p => p.U_Email == email);
+            if (user != null)
+            {
+                if (id != 0)
+                {
+                    var tmp = await context.Users.FindAsync(id);
+                    if (tmp.U_Email != email || user.U_ID != id)
+                    {
+                        return null;
+                    }
+                }
+                var code = await MailHelper.SendIdentifyCodeAsync(user.U_Name, email);
+                return new
+                {
+                    UserId = user.U_ID,
+                    Code = code
+                };
+            }
+
+            return null;
         }
     }
 }

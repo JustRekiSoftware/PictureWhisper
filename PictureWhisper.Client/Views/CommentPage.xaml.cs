@@ -24,7 +24,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 评论页面
     /// </summary>
     public sealed partial class CommentPage : Page
     {
@@ -38,20 +38,30 @@ namespace PictureWhisper.Client.Views
         {
             CommentLVM = new CommentListViewModel();
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;//启用缓存
         }
 
+        /// <summary>
+        /// 点击回复按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AllReplyHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             var comment = (CommentDto)((HyperlinkButton)sender).DataContext;
-            WallpaperMainPage.PageFrame.Navigate(typeof(ReplyPage), comment);
+            WallpaperMainPage.PageFrame.Navigate(typeof(ReplyPage), comment);//导航到回复页面
             WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton", 
-                "回复" + comment.PublisherInfo.U_Name);
+                comment.PublisherInfo.U_Name + "的评论");
         }
 
+        /// <summary>
+        /// 点击举报按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CommentReportButton_Click(object sender, RoutedEventArgs e)
         {
-            var comment = (CommentDto)((Button)sender).DataContext;
+            var comment = (CommentDto)((MenuFlyoutItem)sender).DataContext;
             var reportInfo = new T_Report();
             reportInfo.RPT_ReporterID = UserId;
             reportInfo.RPT_ReportedID = comment.CommentInfo.C_ID;
@@ -61,12 +71,17 @@ namespace PictureWhisper.Client.Views
                 ReportInfo = reportInfo,
                 MainPageName = "WallpaperMainPage"
             };
-            WallpaperMainPage.PageFrame.Navigate(typeof(ReportPage), param);
+            WallpaperMainPage.PageFrame.Navigate(typeof(ReportPage), param);//跳转到举报页面
         }
 
+        /// <summary>
+        /// 点击删除按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CommentDeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var comment = (CommentDto)((Button)sender).DataContext;
+            var comment = (CommentDto)((MenuFlyoutItem)sender).DataContext;
             var contentDialog = new ContentDialog
             {
                 Title = "删除评论",
@@ -97,6 +112,11 @@ namespace PictureWhisper.Client.Views
             await contentDialog.ShowAsync();
         }
 
+        /// <summary>
+        /// 滑动到底部自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CommentScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -106,6 +126,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击发表评论按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CommentSendButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
@@ -127,7 +152,7 @@ namespace PictureWhisper.Client.Views
                 var url = HttpClientHelper.baseUrl + "comment";
                 var content = new HttpStringContent(JObject.FromObject(comment).ToString());
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-                var resp = await client.PostAsync(new Uri(url), content);
+                var resp = await client.PostAsync(new Uri(url), content);//发表评论
                 if (!resp.IsSuccessStatusCode)
                 {
                     ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
@@ -137,12 +162,17 @@ namespace PictureWhisper.Client.Views
                 {
                     ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
                     CommentTextBox.Text = string.Empty;
-                    PageNum = 1;
-                    await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
+                    //PageNum = 1;
+                    //await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
                 }
             }
         }
 
+        /// <summary>
+        /// 点击用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void AvatarButton_Click(object sender, RoutedEventArgs e)
         {
             var comment = (CommentDto)((Button)sender).DataContext;
@@ -150,13 +180,32 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(UserMainPage), comment.PublisherInfo);
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageNum = 1;
+            await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
+        }
+
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (WallpaperMainPage.Page != null)
+            {
+                WallpaperMainPage.Page.HyperLinkButtonFocusChange("CommentHyperlinkButton");
+            }
             ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
             if (e.Parameter != null)
             {
                 var wallpaper = (T_Wallpaper)e.Parameter;
-                if (WallpaperInfo == null)
+                if (WallpaperInfo == null)//第一次进入
                 {
                     WallpaperInfo = wallpaper;
                     PageNum = 1;
@@ -164,7 +213,7 @@ namespace PictureWhisper.Client.Views
                 }
                 else
                 {
-                    if (WallpaperInfo.W_ID != wallpaper.W_ID)
+                    if (WallpaperInfo.W_ID != wallpaper.W_ID)//不同的壁纸评论
                     {
                         WallpaperInfo = wallpaper;
                         PageNum = 1;

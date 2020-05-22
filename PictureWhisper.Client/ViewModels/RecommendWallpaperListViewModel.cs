@@ -12,6 +12,9 @@ using Windows.UI.Xaml.Data;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 推荐壁纸的ViewModel
+    /// </summary>
     public class RecommendWallpaperListViewModel
     {
         public ObservableCollection<WallpaperDto> RecommendWallpapers { get; set; }
@@ -23,10 +26,16 @@ namespace PictureWhisper.Client.ViewModels
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
         }
 
+        /// <summary>
+        /// 获取推荐壁纸
+        /// </summary>
+        /// <param name="limit">获取数量</param>
+        /// <returns></returns>
         public async Task GetRecommendWallpapersAsync(int limit)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取推荐壁纸
                 var url = string.Format("{0}wallpaper/recommend/{1}/{2}",
                     HttpClientHelper.baseUrl, UserId, limit);
                 var response = await client.GetAsync(new Uri(url));
@@ -41,6 +50,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     //if (SQLiteHelper.IsWallpaperHistory(wallpaper.W_ID))
@@ -50,11 +60,17 @@ namespace PictureWhisper.Client.ViewModels
                     url = HttpClientHelper.baseUrl
                         + "download/picture/small/" + wallpaper.W_Location;
                     var image = await ImageHelper.GetImageAsync(client, url);
-                    this.RecommendWallpapers.Add(new WallpaperDto
+                    var wallpaperDto = new WallpaperDto
                     {
                         WallpaperInfo = wallpaper,
                         Image = image
-                    });
+                    };
+                    if (RecommendWallpapers.Where(p => p.WallpaperInfo.W_ID 
+                        == wallpaperDto.WallpaperInfo.W_ID).Count() > 0)
+                    {
+                        continue;
+                    }
+                    this.RecommendWallpapers.Add(wallpaperDto);
                 }
             }
         }

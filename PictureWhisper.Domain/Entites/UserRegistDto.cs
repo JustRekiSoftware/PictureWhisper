@@ -5,6 +5,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 用户注册信息
+    /// </summary>
     public class UserRegistDto
     {
         [MaxLength(32)]

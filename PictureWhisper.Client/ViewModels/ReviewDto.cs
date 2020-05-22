@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 审核结果的显示类
+    /// </summary>
     public class ReviewDto : BindableBase
     {
         private T_Review reviewInfo;

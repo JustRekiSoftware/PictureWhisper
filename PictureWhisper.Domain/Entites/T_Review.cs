@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 审核
+    /// </summary>
     [Table("T_Review")]
     public class T_Review
     {

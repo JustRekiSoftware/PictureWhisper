@@ -11,6 +11,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 举报列表的ViewModel
+    /// </summary>
     public class ReportListViewModel
     {
         public ObservableCollection<ReportDto> Reports { get; set; }
@@ -20,16 +23,18 @@ namespace PictureWhisper.Client.ViewModels
             Reports = new ObservableCollection<ReportDto>();
         }
 
-        public async Task GetReportsAsync(int page, int pageSize)
+        /// <summary>
+        /// 获取举报列表
+        /// </summary>
+        /// <param name="count">获取数量</param>
+        /// <returns></returns>
+        public async Task GetReportsAsync(int count)
         {
-            if (page == 1)
-            {
-                Reports.Clear();
-            }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = string.Format("{0}report/{1}/{2}",
-                    HttpClientHelper.baseUrl, page, pageSize);
+                //获取举报列表
+                var url = string.Format("{0}report/unreviewed/{1}",
+                    HttpClientHelper.baseUrl, count);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
                 {
@@ -42,6 +47,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var report in result)
                 {
                     int messgaeToId = 0;
@@ -135,46 +141,71 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取壁纸举报显示信息
+        /// </summary>
+        /// <param name="wallpaper">壁纸</param>
+        /// <returns>返回显示信息</returns>
         private string GetWallpaperDisplayText(T_Wallpaper wallpaper)
         {
             StringBuilder builder = new StringBuilder(128);
-            builder.AppendLine("标签");
+            builder.AppendLine("#标签");
             builder.AppendLine(wallpaper.W_Tag);
-            builder.AppendLine("图语");
+            builder.AppendLine("#图语");
             builder.AppendLine(wallpaper.W_Story);
 
             return builder.ToString();
         }
 
+        /// <summary>
+        /// 获取评论举报显示信息
+        /// </summary>
+        /// <param name="comment">评论</param>
+        /// <returns>返回显示信息</returns>
         private string GetCommentDisplayText(T_Comment comment)
         {
             StringBuilder builder = new StringBuilder(128);
-            builder.AppendLine("评论");
+            builder.AppendLine("#评论");
             builder.AppendLine(comment.C_Content);
 
             return builder.ToString();
         }
 
+        /// <summary>
+        /// 获取回复举报显示信息
+        /// </summary>
+        /// <param name="reply">回复</param>
+        /// <returns>返回显示信息</returns>
         private string GetReplyDisplayText(T_Reply reply)
         {
             StringBuilder builder = new StringBuilder(128);
-            builder.AppendLine("回复");
+            builder.AppendLine("#回复");
             builder.AppendLine(reply.RPL_Content);
 
             return builder.ToString();
         }
 
+        /// <summary>
+        /// 获取用户举报显示信息
+        /// </summary>
+        /// <param name="user">用户</param>
+        /// <returns>返回显示信息</returns>
         private string GetUserDisplayText(UserInfoDto user)
         {
             StringBuilder builder = new StringBuilder(128);
-            builder.AppendLine("昵称");
+            builder.AppendLine("#昵称");
             builder.AppendLine(user.U_Name);
-            builder.AppendLine("简介");
+            builder.AppendLine("#简介");
             builder.AppendLine(user.U_Info);
 
             return builder.ToString();
         }
 
+        /// <summary>
+        /// 获取用户头像下载地址
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <returns>返回用户头像下载地址</returns>
         private async Task<string> GetUserAvatarPath(int id)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())

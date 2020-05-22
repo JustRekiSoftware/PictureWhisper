@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using IdentityModel;
+using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Domain.Entities;
 using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
@@ -12,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Authentication.OnlineId;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,12 +29,11 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 更改密码页面
     /// </summary>
     public sealed partial class PasswordChangePage : Page
     {
-        private UserInfoDto UserInfo { get; set; }
-        private T_SigninInfo SigninInfo { get; set; }
+        private int UserId { get; set; }
         private string Code { get; set; }
         private string FromPage { get; set; }
 
@@ -41,28 +42,74 @@ namespace PictureWhisper.Client.Views
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 点击发送验证码按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SendIdentifyCodeButton_Click(object sender, RoutedEventArgs e)
         {
+            ErrorMessageTextBlock.Text = "错误信息：" + Environment.NewLine;
+            //验证邮箱是否输入、格式是否正确
+            if (EmailTextBox.Text != string.Empty 
+                && EmailTextBox.Text.Contains("@"))
+            {
+                ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ErrorMessageTextBlock.Text += "· 邮箱未输入" + Environment.NewLine;
+                ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
             SendIdentifyCodeButton.IsEnabled = false;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = HttpClientHelper.baseUrl + "user/identify/" + UserInfo.U_Name
-                    + "/" + SigninInfo.SI_Email;
-                var resp = await client.GetAsync(new Uri(url));
-                if (resp.IsSuccessStatusCode)
+                var url = HttpClientHelper.baseUrl + "user/identify/" + UserId
+                    + "/" + EmailTextBox.Text;
+                var resp = await client.GetAsync(new Uri(url));//发送获取验证码请求
+                if (resp.IsSuccessStatusCode)//获取成功
                 {
                     SendIdentifyCodeButton.Content = "已发送";
-                    Code = await resp.Content.ReadAsStringAsync();
+                    dynamic identifyInfo = JObject.Parse(await resp.Content.ReadAsStringAsync())
+                            .ToObject<dynamic>();
+                    if (UserId == 0)//忘记密码
+                    {
+                        UserId = (int)identifyInfo.userId;
+                    }
+                    else if (UserId != (int)identifyInfo.userId)//修改密码，邮箱非注册邮箱
+                    {
+                        ErrorMessageTextBlock.Text += "· 发送失败，请检查邮箱是否正确" + Environment.NewLine;
+                        ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                        return;
+                    }
+                    Code = (string)identifyInfo.code;//验证码
+                }
+                else
+                {
+                    ErrorMessageTextBlock.Text += "· 发送失败，请检查邮箱是否正确" + Environment.NewLine;
+                    ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                    return;
                 }
             }
-            await Task.Run(() =>
+            var count = 60;
+            while (count > 0)
             {
-                Thread.Sleep(60000);
-            });
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(1000);//等待1秒
+                });
+                SendIdentifyCodeButton.Content = count-- + "秒后可再次发送";
+            }
             SendIdentifyCodeButton.IsEnabled = true;
             SendIdentifyCodeButton.Content = "发送验证码到注册邮箱";
         }
 
+        /// <summary>
+        /// 点击完成按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMessageTextBlock.Text = "错误信息：" + Environment.NewLine;
@@ -72,16 +119,17 @@ namespace PictureWhisper.Client.Views
             }
             else
             {
-                if (Code == IdentifyCodeTextBox.Text)
+                if (Code == IdentifyCodeTextBox.Text)//验证码正确
                 {
+                    //检查输入是否正确
                     if (NewPwdTextBox.Password.TrimEnd() != string.Empty 
-                            && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
-                            && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
+                        && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
+                        && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
                     {
-                        var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Password.TrimEnd());
+                        var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Password.TrimEnd());//加密密码
                         using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                         {
-                            var url = HttpClientHelper.baseUrl + "user/" + SigninInfo.SI_UserID;
+                            var url = HttpClientHelper.baseUrl + "user/" + UserId;
                             var userOp = new List<dynamic>();
                             userOp.Add(new
                             {
@@ -95,8 +143,8 @@ namespace PictureWhisper.Client.Views
                             {
                                 Content = content
                             };
-                            var resp = await client.SendRequestAsync(request);
-                            if (resp.IsSuccessStatusCode)
+                            var resp = await client.SendRequestAsync(request);//发送修改密码请求
+                            if (resp.IsSuccessStatusCode)//修改成功
                             {
                                 if (UserMainPage.PageFrame.CanGoBack)
                                 {
@@ -125,12 +173,17 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击取消按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Code = string.Empty;
             NewPwdTextBox.Password = string.Empty;
             RepeatNewPwdtextBox.Password = string.Empty;
-            if (FromPage == "SigininPage")
+            if (FromPage == "SigninPage")
             {
                 var rootFrame = Window.Current.Content as Frame;
                 if (rootFrame.CanGoBack)
@@ -147,17 +200,20 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (UserMainPage.Page != null)
+            {
+                UserMainPage.Page.HyperLinkButtonFocusChange("PasswordChangeHyperlinkButton");
+            }
             if (e.Parameter != null)
             {
-                UserInfo = ((dynamic)e.Parameter).UserInfoDto;
-                FromPage = ((dynamic)e.Parameter).FromPage;
-                SigninInfo = SQLiteHelper.GetSigninInfo();
-                if (UserInfo.U_ID != SigninInfo.SI_UserID)
-                {
-                    return;
-                }
+                UserId = (int)((dynamic)e.Parameter).UserId;
+                FromPage = (string)((dynamic)e.Parameter).FromPage;
             }
             if (Code != null || Code != string.Empty)
             {

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 关注
+    /// </summary>
     [Table("T_Follow")]
     public class T_Follow
     {

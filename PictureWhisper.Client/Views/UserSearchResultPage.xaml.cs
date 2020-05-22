@@ -15,7 +15,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 用户搜索结果
     /// </summary>
     public sealed partial class UserSearchResultPage : Page
     {
@@ -32,6 +32,11 @@ namespace PictureWhisper.Client.Views
             NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
+        /// <summary>
+        /// 滑动到底部时自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UserScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -41,12 +46,22 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             PageNum = 1;
             await LoadSearchResultAsync(PageNum++);
         }
 
+        /// <summary>
+        /// 点击用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AvatarButton_Click(object sender, RoutedEventArgs e)
         {
             var userDto = (UserDto)((Button)sender).DataContext;
@@ -54,6 +69,11 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(UserMainPage), userDto.UserInfo);
         }
 
+        /// <summary>
+        /// 点击关注按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UIDFollowButton_Click(object sender, RoutedEventArgs e)
         {
             var userDto = (UserDto)((Button)sender).DataContext;
@@ -97,18 +117,19 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            if (userDto.IsFollow)
-            {
-                userDto.FollowButtonText = "已关注";
-            }
-            else
-            {
-                UserLVM.FillInfo();
-            }
+            UserLVM.FillInfo();
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (MainPage.Page != null)
+            {
+                MainPage.Page.HyperLinkButtonFocusChange("UserSearchResultHyperlinkButton");
+            }
             if (e.Parameter != null)
             {
                 UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
@@ -119,6 +140,11 @@ namespace PictureWhisper.Client.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 加载用户搜索结果
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <returns></returns>
         private async Task LoadSearchResultAsync(int page)
         {
             await UserLVM.GetSearchResultUsersAsync(Keyword, page, PageSize);

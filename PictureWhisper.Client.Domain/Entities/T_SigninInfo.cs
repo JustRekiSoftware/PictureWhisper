@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Client.Domain.Entities
 {
+    /// <summary>
+    /// 用户登录信息
+    /// </summary>
     [Table("T_SigninInfo")]
     public class T_SigninInfo
     {

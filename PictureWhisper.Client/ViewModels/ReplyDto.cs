@@ -10,6 +10,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 回复的显示类
+    /// </summary>
     public class ReplyDto : BindableBase
     {
         private T_Reply replyInfo;

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 设置页面
     /// </summary>
     public sealed partial class SettingPage : Page
     {
@@ -28,14 +28,19 @@ namespace PictureWhisper.Client.Views
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 点击自动设置壁纸切换按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void AutoSetWallpaperToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!StatusChange)
+            if (!StatusChange)//不响应自动切换
             {
                 return;
             }
             SettingInfo.STI_AutoSetWallpaper = !SettingInfo.STI_AutoSetWallpaper;
-            await SQLiteHelper.UpdateSettingInfoAsync(SettingInfo);
+            await SQLiteHelper.UpdateSettingInfoAsync(SettingInfo);//更新设置
             if (SettingInfo.STI_AutoSetWallpaper)
             {
                 await BackgroundTaskHelper.RegisterBackgroundTaskAsync(
@@ -43,18 +48,22 @@ namespace PictureWhisper.Client.Views
                     typeof(AutoSetWallpaperTask).Name,
                     new TimeTrigger(15, false),
                     null,
-                    true);
+                    true);//启动后台任务
                 AutoSetWallpaperTextBlock.Text = "后台任务已启动";
                 AutoSetWallpaperTextBlock.Visibility = Visibility.Visible;
             }
             else
             {
-                BackgroundTaskHelper.UnRegisterBackgroundTask(typeof(AutoSetWallpaperTask).Name);
+                BackgroundTaskHelper.UnRegisterBackgroundTask(typeof(AutoSetWallpaperTask).Name);//停止后台任务
                 AutoSetWallpaperTextBlock.Text = "后台任务已停止";
                 AutoSetWallpaperTextBlock.Visibility = Visibility.Visible;
             }
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             AutoSetWallpaperTextBlock.Visibility = Visibility.Collapsed;
@@ -63,18 +72,16 @@ namespace PictureWhisper.Client.Views
             {
                 SettingInfo = settingInfo;
             }
-            if (SettingInfo.STI_AutoSetWallpaper)
+            StatusChange = false;
+            if (SettingInfo.STI_AutoSetWallpaper)//切换初始值
             {
-                StatusChange = false;
                 AutoSetWallpaperToggleSwitch.IsOn = true;
-                StatusChange = true;
             }
             else
             {
-                StatusChange = false;
                 AutoSetWallpaperToggleSwitch.IsOn = false;
-                StatusChange = true;
             }
+            StatusChange = true;
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("图语");
             builder.AppendLine("JustReki Software");

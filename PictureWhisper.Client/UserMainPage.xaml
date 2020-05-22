@@ -8,54 +8,63 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 用户主页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- 导航栏 -->
         <Grid Grid.Row="0" Height="40">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!-- 左侧超链接导航 -->
             <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button x:Name="BackButton" Click="BackButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
                 <HyperlinkButton x:Name="UserInfoHyperlinkButton" Foreground="Gray"
                                  Click="UserInfoHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="用户信息" />
+                    <TextBlock Text="用户信息" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="PublishedWallpaperHyperlinkButton" Foreground="Gray"
                                  Click="PublishedWallpaperHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="我的发布" />
+                    <TextBlock Text="我的发布" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="FavoriteHyperlinkButton" Foreground="Gray"
                                  Click="FavoriteHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="我的收藏" />
+                    <TextBlock Text="我的收藏" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="FollowHyperlinkButton" Foreground="Gray"
                                  Click="FollowHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="我的关注" />
+                    <TextBlock Text="我的关注" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="PasswordChangeHyperlinkButton" Foreground="Gray"
                                  Click="PasswordChangeHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="修改密码" />
+                    <TextBlock Text="修改密码" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
                 <Button x:Name="CloseButton" Click="CloseButton_Click"
                         Width="40" Height="40" 
                         Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                     <SymbolIcon Symbol="Cancel" />
                 </Button>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
 
+        <!-- 页面内容 -->
         <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

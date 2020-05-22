@@ -8,12 +8,14 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 消息主页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- 导航栏 -->
         <Grid Grid.Row="0" Height="40">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -21,31 +23,37 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal"  Grid.Column="0">
+                <Button x:Name="BackButton" Click="BackButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
                 <HyperlinkButton x:Name="CommentToUserHyperlinkButton" Foreground="Gray"
                                  Click="CommentToUserHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="我收到的评论" />
+                    <TextBlock Text="我收到的评论" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="ReplyToUserHyperlinkButton" Foreground="Gray"
                                  Click="ReplyToUserHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="我收到的回复" />
+                    <TextBlock Text="我收到的回复" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="ReviewMessageHyperlinkButton" Foreground="Gray"
                                  Click="ReviewMessageHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="审核消息" />
+                    <TextBlock Text="审核消息" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
                 <Button x:Name="CloseButton" Click="CloseButton_Click"
                         Width="40" Height="40" 
                         Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                     <SymbolIcon Symbol="Cancel" />
                 </Button>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
 
+        <!-- 页面内容 -->
         <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

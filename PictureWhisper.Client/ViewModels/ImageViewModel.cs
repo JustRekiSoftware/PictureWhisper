@@ -8,6 +8,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 图片的ViewModel
+    /// </summary>
     public class ImageViewModel : BindableBase
     {
         private BitmapImage image;

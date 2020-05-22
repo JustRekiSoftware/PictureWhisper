@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 举报理由
+    /// </summary>
     [Table("T_ReportReason")]
     public class T_ReportReason
     {

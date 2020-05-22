@@ -6,6 +6,7 @@ using System.Text;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    //壁纸搜索排序条件的ViewModel
     public class WallpaperSearchOrderViewModel
     {
         public ObservableCollection<OrderbyInfo> OrderbyInfos { get; set; }
@@ -30,12 +31,15 @@ namespace PictureWhisper.Client.ViewModels
                 Value = "favorite"
             });
         }
+    }
 
-        public class OrderbyInfo
-        {
-            public string Text { get; set; }
+    /// <summary>
+    /// 排序条件信息
+    /// </summary>
+    public class OrderbyInfo
+    {
+        public string Text { get; set; }
 
-            public string Value { get; set; }
-        }
+        public string Value { get; set; }
     }
 }

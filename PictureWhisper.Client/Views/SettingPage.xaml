@@ -7,6 +7,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 设置页面 -->
     <StackPanel Margin="5,5,5,5">
         <StackPanel>
             <TextBlock Text="自动设置壁纸设置" FontSize="24" />

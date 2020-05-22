@@ -8,6 +8,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 搜索页面 -->
+    <!-- 搜索框 -->
     <StackPanel Margin="5,5,5,5"
                 Orientation="Vertical"
                 VerticalAlignment="Center"

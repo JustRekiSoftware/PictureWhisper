@@ -1,5 +1,6 @@
 ﻿using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
+using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 审核消息页面
     /// </summary>
     public sealed partial class MessageReviewPage : Page
     {
@@ -35,6 +36,11 @@ namespace PictureWhisper.Client.Views
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 滑动到底部自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ReviewScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -44,8 +50,31 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageNum = 1;
+            await ReviewLVM.GetReviewsAsync(UserId, PageNum++, PageSize);
+        }
+
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (NotifyHelper.NotifyTypes.Contains((short)NotifyMessageType.审核))
+            {
+                NotifyHelper.NotifyTypes.Remove((short)NotifyMessageType.审核);
+            }
+            if (MessageMainPage.Page != null)
+            {
+                MessageMainPage.Page.HyperLinkButtonFocusChange("ReviewMessageHyperlinkButton");
+            }
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             PageNum = 1;
             await ReviewLVM.GetReviewsAsync(UserId, PageNum++, PageSize);

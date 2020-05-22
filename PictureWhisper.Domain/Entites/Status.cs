@@ -4,6 +4,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 状态
+    /// </summary>
     public enum Status
     {
         正常,

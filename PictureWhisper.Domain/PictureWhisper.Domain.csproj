@@ -19,6 +19,8 @@
     <Compile Remove="Migrations\20200309011408_AddC_ReplyNum.Designer.cs" />
     <Compile Remove="Migrations\20200316064156_UpdateWallpaperToBindable.cs" />
     <Compile Remove="Migrations\20200316064156_UpdateWallpaperToBindable.Designer.cs" />
+    <Compile Remove="Migrations\20200511044130_UpdateWStoryLength.cs" />
+    <Compile Remove="Migrations\20200511044130_UpdateWStoryLength.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

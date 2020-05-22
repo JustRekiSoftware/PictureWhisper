@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace PictureWhisper.Client
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 审核主页面
     /// </summary>
     public sealed partial class ReviewMainPage : Page
     {
@@ -35,29 +35,56 @@ namespace PictureWhisper.Client
             Page = this;
         }
 
+        /// <summary>
+        /// 点击返回按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ContentFrame.CanGoBack)
+            {
+                ContentFrame.GoBack();
+            }
+        }
+
+        /// <summary>
+        /// 点击壁纸审核超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WallpaperReviewHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(typeof(WallpaperReviewPage), SigninInfo);
             HyperLinkButtonFocusChange("WallpaperReviewHyperlinkButton");
         }
 
+        /// <summary>
+        /// 点击举报处理超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReportReviewHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(typeof(ReportReviewPage), SigninInfo);
             HyperLinkButtonFocusChange("ReportReviewHyperlinkButton");
         }
 
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             SigninInfo = SQLiteHelper.GetSigninInfo();
-            if (SigninInfo.SI_Type == (short)UserType.审核人员)
+            if (SigninInfo.SI_Type == (short)UserType.审核人员)//审核人员自动导航到壁纸审核页面
             {
                 WallpaperReviewHyperlinkButton.Visibility = Visibility.Visible;
                 ReportReviewHyperlinkButton.Visibility = Visibility.Collapsed;
                 ContentFrame.Navigate(typeof(WallpaperReviewPage), SigninInfo);
                 HyperLinkButtonFocusChange("WallpaperReviewHyperlinkButton");
             }
-            else if (SigninInfo.SI_Type == (short)UserType.举报处理人员)
+            else if (SigninInfo.SI_Type == (short)UserType.举报处理人员)//举报处理人员自动导航到举报处理页面
             {
                 WallpaperReviewHyperlinkButton.Visibility = Visibility.Collapsed;
                 ReportReviewHyperlinkButton.Visibility = Visibility.Visible;
@@ -68,14 +95,20 @@ namespace PictureWhisper.Client
             {
                 var url = HttpClientHelper.baseUrl +
                     "download/picture/origin/" + SigninInfo.SI_Avatar;
-                ImageVM.Image = await ImageHelper.GetImageAsync(client, url);
+                ImageVM.Image = await ImageHelper.GetImageAsync(client, url);//获取头像
             }
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 超链接按钮焦点改变事件
+        /// </summary>
+        /// <param name="currentFocusName">当前高亮的超链接按钮名</param>
+        /// <param name="content">超链接按钮显示的内容，默认为null</param>
         public void HyperLinkButtonFocusChange(string currentFocusName, string content = null)
         {
             HyperlinkButton currentFocus;
+            //获取当前高亮的超链接按钮
             switch (currentFocusName)
             {
                 case "WallpaperReviewHyperlinkButton":
@@ -88,29 +121,31 @@ namespace PictureWhisper.Client
                     currentFocus = WallpaperReviewHyperlinkButton;
                     break;
             }
+            //显示当前高亮超链接按钮
             if (currentFocus.Visibility == Visibility.Collapsed)
             {
                 currentFocus.Visibility = Visibility.Visible;
-                if (content != null)
-                {
-                    currentFocus.Content = content;
-                }
             }
+            //更改超链接按钮内容
+            if (content != null)
+            {
+                currentFocus.Content = content;
+            }
+            //将上一次高亮超链接按钮的颜色更改为默认色
             if (LastFocus != null)
             {
-                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetGray());
+                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
             }
+            //将当前高亮超链接按钮保存为上一次高亮超链接按钮，并更改颜色为高亮色
             LastFocus = currentFocus;
             LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
         }
 
-        private async void SignoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
-            var rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(SigninPage));
-        }
-
+        /// <summary>
+        /// 点击用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UserButton_Click(object sender, RoutedEventArgs e)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
@@ -121,15 +156,14 @@ namespace PictureWhisper.Client
                 {
                     return;
                 }
-                var wallpaper = JObject.Parse(
-                    await response.Content.ReadAsStringAsync());
-                var result = wallpaper.ToObject<UserInfoDto>();
-                if (result == null)
+                var userInfoDto = JObject.Parse(
+                    await response.Content.ReadAsStringAsync()).ToObject<UserInfoDto>();
+                if (userInfoDto == null)
                 {
                     return;
                 }
                 var rootFrame = Window.Current.Content as Frame;
-                rootFrame.Navigate(typeof(UserMainPage), result);
+                rootFrame.Navigate(typeof(UserMainPage), userInfoDto);
             }
         }
     }

@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PictureWhisper.Client.Domain.Concrete
 {
+    /// <summary>
+    /// LocalDB数据库上下文
+    /// </summary>
     public class LocalDBContext : DbContext
     {
         public string DbPath { get; set; }
@@ -15,8 +18,6 @@ namespace PictureWhisper.Client.Domain.Concrete
             => options.UseSqlite("Data Source=" + DbPath);
 
         public DbSet<T_SigninInfo> SigninInfos { get; set; }
-
-        public DbSet<T_RecommendInfo> RecommendInfos { get; set; }
 
         public DbSet<T_HistoryInfo> HistoryInfos { get; set; }
 

@@ -9,10 +9,12 @@
     xmlns:data="using:PictureWhisper.Client.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 审核消息页面 -->
     <Grid Margin="5,5,5,5">
+        <!-- 审核消息列表 -->
         <ScrollViewer x:Name="ReviewScrollViewer"
                       VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled"
                       ViewChanged="ReviewScrollViewer_ViewChanged">
             <ListView ItemsSource="{x:Bind ReviewLVM.Reviews}"
                       SelectionMode="None">
@@ -22,6 +24,7 @@
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <!-- 审核消息显示模板 -->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:ReviewDto">
                         <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">
@@ -36,11 +39,18 @@
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind ReviewTitleText, Mode=OneWay}" Margin="10,0,0,0" />
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ReviewInfo.RV_Date, Mode=OneWay}" Margin="10,0,0,0" />
-                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ReviewDisplayText, Mode=OneWay}" Margin="10,10,0,5" />
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ReviewDisplayText, Mode=OneWay}"
+                                       Margin="10,10,0,5" TextWrapping="Wrap" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollViewer>
+        <Button x:Name="RefreshButton" HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" Margin="10,10,10,10"
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                Click="RefreshButton_Click">
+            <SymbolIcon Symbol="Refresh" />
+        </Button>
     </Grid>
 </Page>

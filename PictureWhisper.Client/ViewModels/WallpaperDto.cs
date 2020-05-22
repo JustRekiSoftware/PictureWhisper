@@ -9,6 +9,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 壁纸的显示类
+    /// </summary>
     public class WallpaperDto : BindableBase
     {
         private T_Wallpaper wallpaperInfo;

@@ -12,12 +12,13 @@ using Windows.UI.Xaml;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 评论列表的ViewModel
+    /// </summary>
     public class CommentListViewModel
     {
         public ObservableCollection<CommentDto> WallpaperComments { get; set; }
-
         public ObservableCollection<CommentDto> MessageComments { get; set; }
-
         private int UserId { get; set; }
 
         public CommentListViewModel()
@@ -27,6 +28,13 @@ namespace PictureWhisper.Client.ViewModels
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
         }
 
+        /// <summary>
+        /// 获取壁纸评论列表
+        /// </summary>
+        /// <param name="id">壁纸Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetWallpaperCommentsAsync(int id, int page, int pageSize)
         {
             if (page == 1)
@@ -35,6 +43,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取评论
                 var url = string.Format("{0}comment/wallpaper/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -49,6 +58,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //对每个评论补充显示信息
                 foreach (var comment in result)
                 {
                     url = HttpClientHelper.baseUrl + "user/" + comment.C_PublisherID;
@@ -76,6 +86,13 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取评论消息
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetMessageCommentsAsync(int id, int page, int pageSize)
         {
             if (page == 1)
@@ -84,6 +101,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取评论
                 var url = string.Format("{0}comment/message/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -98,6 +116,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充评论显示信息
                 foreach (var comment in result)
                 {
                     url = HttpClientHelper.baseUrl + "user/" + comment.C_PublisherID;

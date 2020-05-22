@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 点赞
+    /// </summary>
     [Table("T_Like")]
     public class T_Like
     {

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Client.Domain.Entities
 {
+    /// <summary>
+    /// 历史浏览记录
+    /// </summary>
     [Table("T_HistoryInfo")]
     public class T_HistoryInfo
     {

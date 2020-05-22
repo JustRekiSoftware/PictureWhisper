@@ -8,49 +8,58 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸主页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- 导航栏 -->
         <Grid Grid.Row="0" Height="40">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!-- 左侧超链接导航 -->
             <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button x:Name="BackButton" Click="BackButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
                 <HyperlinkButton x:Name="WallpaperDisplayHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperDisplayHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="壁纸" />
+                    <TextBlock Text="壁纸" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="WallpaperStoryHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperStoryHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="壁纸故事" />
+                    <TextBlock Text="壁纸故事" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="CommentHyperlinkButton" Foreground="Gray"
                                  Click="CommentHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="评论" />
+                    <TextBlock Text="评论" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="ReplyHyperlinkButton" Foreground="Gray"
                                  Click="ReplyHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock x:Name="ReplyHyperlinkButtonTextBlock" Text="回复" />
+                    <TextBlock x:Name="ReplyHyperlinkButtonTextBlock" Text="回复" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
                 <Button x:Name="CloseButton" Click="CloseButton_Click"
                         Width="40" Height="40" 
                         Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                     <SymbolIcon Symbol="Cancel" />
                 </Button>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
 
+        <!-- 页面内容 -->
         <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

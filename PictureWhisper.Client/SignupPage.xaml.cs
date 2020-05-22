@@ -15,7 +15,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 注册页面
     /// </summary>
     public sealed partial class SignupPage : Page
     {
@@ -29,23 +29,34 @@ namespace PictureWhisper.Client
             TagPickResult = new List<string>();
         }
 
+        /// <summary>
+        /// 页面加载后的事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             TagPickerProgressRing.IsActive = true;
             TagPickerProgressRing.Visibility = Visibility.Visible;
 
-            await WallpaperTypeLVM.GetWallpaperTypesAsync();
+            await WallpaperTypeLVM.GetWallpaperTypesAsync();//获取分区信息作为兴趣标签的选项
 
             TagPickerProgressRing.IsActive = false;
             TagPickerProgressRing.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 点击注册按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var userInfo = new T_User();
             ErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //检查格式是否正确，邮箱、用户名是否已使用
                 var checkUrl = HttpClientHelper.baseUrl + "user/email/" + EmailTextBox.Text;
                 if (EmailTextBox.Text != string.Empty && EmailTextBox.Text.Contains("@"))
                 {
@@ -91,13 +102,14 @@ namespace PictureWhisper.Client
                 {
                     ErrorMsgTextBlock.Text += "· 两次密码输入不同或未输入密码" + Environment.NewLine;
                 }
-                if (TagPickResult.Count != 0)
+                if (TagPickResult.Count != 0)//添加兴趣标签
                 {
                     var builder = new StringBuilder();
                     foreach (var tag in TagPickResult)
                     {
-                        builder.Append(tag + " ");
+                        builder.Append(tag + ",");
                     }
+                    builder.Remove(builder.Length - 1, 1);
                     userInfo.U_Tag = builder.ToString();
                 }
                 else
@@ -109,11 +121,12 @@ namespace PictureWhisper.Client
                     ErrorMsgTextBlock.Visibility = Visibility.Visible;
                     return;
                 }
+                //发送注册信息
                 var url = HttpClientHelper.baseUrl + "user";
                 var content = new HttpStringContent(JObject.FromObject(userInfo).ToString());
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
                 var response = await client.PostAsync(new Uri(url), content);
-                if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)//注册失败
                 {
                     var contentDialog = new ContentDialog
                     {
@@ -127,7 +140,7 @@ namespace PictureWhisper.Client
                     };
                     await contentDialog.ShowAsync();
                 }
-                else
+                else//注册成功后跳转到登录页面
                 {
                     var rootFrame = Window.Current.Content as Frame;
                     rootFrame.Navigate(typeof(SigninPage));
@@ -135,10 +148,15 @@ namespace PictureWhisper.Client
             }
         }
 
+        /// <summary>
+        /// 选择兴趣标签
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TagPicker_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as T_WallpaperType;
-            if (!TagPickResult.Contains(item.WT_Name))
+            if (!TagPickResult.Contains(item.WT_Name))//包含则添加
             {
                 TagPickResult.Add(item.WT_Name);
             }
@@ -148,6 +166,11 @@ namespace PictureWhisper.Client
             }
         }
 
+        /// <summary>
+        /// 点击登录超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SigninHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;

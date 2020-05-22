@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 用户信息的ViewModel
+    /// </summary>
     public class UserViewModel : BindableBase
     {
         private UserDto user;
@@ -24,6 +27,11 @@ namespace PictureWhisper.Client.ViewModels
             User = new UserDto();
         }
 
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <returns></returns>
         public async Task GetUserAsync(int id)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
@@ -46,12 +54,16 @@ namespace PictureWhisper.Client.ViewModels
                     "download/picture/origin/" + User.UserInfo.U_Avatar;
                 User.UserAvatar = await ImageHelper.GetImageAsync(client, url);
                 await GetIsFollowAsync(User.UserInfo.U_ID);
-                User.FollowButtonText = "关注（" + User.UserInfo.U_FollowerNum + "）";
-                User.FollowedTextBlockText = "ta的关注" 
-                    + Environment.NewLine + User.UserInfo.U_FollowedNum;
+                User.FollowButtonText = "+ 关注（" + FormatFollowNum(User.UserInfo.U_FollowerNum) + "）";
+                User.FollowedTextBlockText = FormatFollowNum(User.UserInfo.U_FollowedNum);
             }
         }
 
+        /// <summary>
+        /// 获取头像
+        /// </summary>
+        /// <param name="imagePath">头像下载路径</param>
+        /// <returns></returns>
         public async Task GetAvatarAsync(string imagePath)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
@@ -62,6 +74,11 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取是否已关注
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <returns></returns>
         public async Task GetIsFollowAsync(int id)
         {
             var userId = SQLiteHelper.GetSigninInfo().SI_UserID;
@@ -79,24 +96,32 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 补充用户关注信息
+        /// </summary>
         public void FillInfo()
         {
             User.FollowButtonText = "+  关注 " + FormatFollowNum(User.UserInfo.U_FollowerNum);
             User.FollowedTextBlockText = FormatFollowNum(User.UserInfo.U_FollowedNum);
         }
 
+        /// <summary>
+        /// 格式化关注数
+        /// </summary>
+        /// <param name="num">关注数</param>
+        /// <returns>返回格式化后的关注数</returns>
         public string FormatFollowNum(int num)
         {
             var numStr = num.ToString();
-            if (numStr.Length <= 3)
+            if (numStr.Length <= 3)//1000以内
             {
                 return numStr;
             }
-            else if (numStr.Length == 4)
+            else if (numStr.Length == 4)//10000以内
             {
                 return numStr[0] + "," + numStr.Substring(1);
             }
-            else
+            else//10000以上
             {
                 return numStr.Substring(0, numStr.Length - 4) + "." + numStr[numStr.Length - 4] + "万";
             }

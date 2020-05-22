@@ -9,6 +9,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 审核信息的ViewModel
+    /// </summary>
     public class ReviewViewModel : BindableBase
     {
         private BitmapImage image;

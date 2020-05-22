@@ -8,30 +8,40 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 审核主页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- 导航栏 -->
         <Grid Grid.Row="0" Height="40">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!-- 左侧超链接导航 -->
             <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button x:Name="BackButton" Click="BackButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
                 <HyperlinkButton x:Name="WallpaperReviewHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperReviewHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="壁纸审核" />
+                    <TextBlock Text="壁纸审核" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="ReportReviewHyperlinkButton" Foreground="Gray"
                                  Click="ReportReviewHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="举报审核" />
+                    <TextBlock Text="举报审核" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
+            
+            <!-- 右侧按钮导航 -->
             <StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
                 <Button x:Name="UserButton" Click="UserButton_Click"
                         Width="40" Height="40"
@@ -45,6 +55,7 @@
             </StackPanel>
         </Grid>
 
+        <!-- 页面内容 -->
         <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

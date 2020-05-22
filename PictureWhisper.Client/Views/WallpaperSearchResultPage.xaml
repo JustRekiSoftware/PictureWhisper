@@ -9,12 +9,14 @@
     xmlns:data="using:PictureWhisper.Client.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸搜索结果页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- 过滤条件 -->
         <StackPanel Grid.Row="0" HorizontalAlignment="Center">
             <StackPanel x:Name="SearchOddsStackPanel"
                         Orientation="Horizontal"
@@ -35,19 +37,21 @@
                 <TextBlock Text="展开/隐藏" />
             </HyperlinkButton>
         </StackPanel>
+        <!-- 壁纸列表 -->
         <ScrollViewer x:Name="WallpaperScrollViewer" Margin="0,5,0,10"
-                      HorizontalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Hidden" Grid.Row="1"
                       ViewChanged="WallpaperScrollViewer_ViewChanged">
             <GridView x:Name="WallpaperGridView" 
-                  IsItemClickEnabled="True" 
-                  ItemClick="WallpaperGridView_ItemClick"
-                  SelectionMode="None"
-                  ItemsSource="{x:Bind WallpaperLVM.SearchResultWallpapers}">
+                      IsItemClickEnabled="True" 
+                      ItemClick="WallpaperGridView_ItemClick"
+                      SelectionMode="None"
+                      ItemsSource="{x:Bind WallpaperLVM.SearchResultWallpapers}">
+                <!-- 壁纸显示模板 -->
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
                         <Image Source="{x:Bind Image}" Width="320" Height="180" 
-                               Stretch="UniformToFill" Margin="20,20,20,20" />
+                               Stretch="UniformToFill" Margin="5,5,5,5" />
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

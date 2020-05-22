@@ -33,7 +33,7 @@ namespace PictureWhisper.Client
                 using (var db = new LocalDBContext())
                 {
                     db.DbPath = SQLiteHelper.DbPath;
-                    db.Database.Migrate();
+                    db.Database.Migrate();//当数据库不存在时创建数据库
                 }
             }
             catch (NotSupportedException)
@@ -70,7 +70,7 @@ namespace PictureWhisper.Client
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    AppViewBackButtonVisibility.Collapsed;
+                    AppViewBackButtonVisibility.Collapsed;//关闭标题栏的返回按钮
             }
 
             if (e.PrelaunchActivated == false)
@@ -81,53 +81,66 @@ namespace PictureWhisper.Client
                     // configuring the new page by passing required information as a navigation
                     // parameter
 
-                    HttpClientHelper.StartUpdateAccessTokenTask();
+                    HttpClientHelper.StartUpdateAccessTokenTask();//启动AccessToken自动更新
 
-                    var result = SQLiteHelper.GetSigninInfo();
+                    var result = SQLiteHelper.GetSigninInfo();//获取已登录用户
                     if (result == null || result.SI_Status != (short)Status.正常)
                     {
-                        rootFrame.Navigate(typeof(SigninPage), e.Arguments);
+                        rootFrame.Navigate(typeof(SigninPage), e.Arguments);//没有已登录用户或用户状态错误则要求重新登录
                     }
-                    else
+                    else//自动登录
                     {
                         using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                         {
+                            //登录
                             var url = HttpClientHelper.baseUrl + "user/signin/"
                                 + result.SI_Email + "/" + result.SI_Password;
                             var resp = await client.GetAsync(new Uri(url));
-                            var userSigninDto = JObject.Parse(await resp.Content.ReadAsStringAsync())
-                                    .ToObject<UserSigninDto>();
-                            if (resp.IsSuccessStatusCode)
+                            if (resp.IsSuccessStatusCode)//登录成功
                             {
+                                var userSigninDto = JObject.Parse(await resp.Content.ReadAsStringAsync())
+                                    .ToObject<UserSigninDto>();
                                 result.SI_Avatar = userSigninDto.U_Avatar;
                                 result.SI_Type = userSigninDto.U_Type;
+                                if (userSigninDto.U_Status != (short)Status.正常)//用户状态不正常，则要求重新登录
+                                {
+                                    result.SI_Status = userSigninDto.U_Status;
+                                    rootFrame.Navigate(typeof(SigninPage), false);
+                                }
                                 if (result.SI_Type == (short)UserType.注册用户)
                                 {
                                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                                 }
-                                else
+                                else//非注册用户跳转到审核页面
                                 {
                                     rootFrame.Navigate(typeof(ReviewMainPage), e.Arguments);
                                 }
                             }
-                            else
+                            else//登录失败
                             {
-                                result.SI_Status = userSigninDto.U_Status;
                                 rootFrame.Navigate(typeof(SigninPage), false);
                             }
-                            await SQLiteHelper.UpdateSigninInfoAsync(result);
+                            await SQLiteHelper.UpdateSigninInfoAsync(result);//更新用户登录信息
                         }
                     }
                     var settingInfo = SQLiteHelper.GetSettingInfo();
-                    if (settingInfo == null)
+                    if (settingInfo == null)//当设置信息为空时，添加默认设置信息
                     {
                         settingInfo = new T_SettingInfo();
                         settingInfo.STI_AutoSetWallpaper = false;
+                        settingInfo.STI_LastCheckMessageDate = DateTime.Now;
                         await SQLiteHelper.AddSettingInfoAsync(settingInfo);
                     }
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+                Window.Current.Closed += async (sender, args) =>
+                {
+                    if (NotifyHelper.connected)
+                    {
+                        await NotifyHelper.SignOutAsync();//关闭应用并且消息提示已连接时，向服务端发送注销请求
+                    }
+                };
             }
         }
 

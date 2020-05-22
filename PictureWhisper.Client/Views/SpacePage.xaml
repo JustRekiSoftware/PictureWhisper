@@ -8,6 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 动态页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,6 +21,7 @@
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
             <FontIcon x:Name="PrevFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
         </Button>
+        <!-- 壁纸 -->
         <Button x:Name="WallpaperImageButton" Grid.Row="1" HorizontalAlignment="Center"
                 Click="WallpaperImageButton_Click" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
             <Image x:Name="WallpaperImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="UniformToFill" />

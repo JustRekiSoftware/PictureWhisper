@@ -26,15 +26,14 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 举报处理页面
     /// </summary>
     public sealed partial class ReportReviewPage : Page
     {
         private ReportListViewModel ReportLVM { get; set; }
         private int CurrentIndex { get; set; }
         private ReviewViewModel ReviewVM { get; set; }
-        private readonly int PageSize = 20;
-        private int PageNum { get; set; }
+        private readonly int Count = 10;
         private int UserId { get; set; }
 
         public ReportReviewPage()
@@ -44,36 +43,56 @@ namespace PictureWhisper.Client.Views
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 点击审核通过按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void PassButton_Click(object sender, RoutedEventArgs e)
         {
             await SendReviewInfoAsync(true);
         }
 
+        /// <summary>
+        /// 点击审核不通过按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void NotPassButton_Click(object sender, RoutedEventArgs e)
         {
             await SendReviewInfoAsync(false);
         }
 
+        /// <summary>
+        /// 点击上一个或刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentIndex == 0)
+            if (CurrentIndex == 0)//刷新
             {
-                PageNum = 1;
-                await LoadReportsAsync(PageNum++);
+                ReportLVM.Reports.Clear();
+                await LoadReportsAsync();
             }
-            if (CurrentIndex > 0)
+            if (CurrentIndex > 0)//上一个
             {
                 PrevFontIcon.Glyph = "\xE76B";
                 CurrentIndex--;
                 ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
                 ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
             }
-            if (CurrentIndex == 0)
+            if (CurrentIndex == 0)//当前显示的举报信息为第一条时，将上一个按钮变为刷新按钮
             {
                 PrevFontIcon.Glyph = "\xE72C";
             }
         }
 
+        /// <summary>
+        /// 点击下一个按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentIndex < ReportLVM.Reports.Count - 1)
@@ -82,31 +101,70 @@ namespace PictureWhisper.Client.Views
                 ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
                 ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
             }
-            if (CurrentIndex > ReportLVM.Reports.Count - 5)
+            if (CurrentIndex > ReportLVM.Reports.Count - 5)//当要到列表末尾时自动加载
             {
-                await LoadReportsAsync(PageNum++);
+                CurrentIndex++;
+                ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
+                await LoadReportsAsync();
+            }
+            if (CurrentIndex > 0)
+            {
+                PrevFontIcon.Glyph = "\xE70E";
             }
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
-            PageNum = 1;
+            ReportLVM.Reports.Clear();
             CurrentIndex = 0;
-            await LoadReportsAsync(PageNum++);
-            if (ReportLVM.Reports.Count > CurrentIndex)
+            await LoadReportsAsync();
+            if (ReportLVM.Reports.Count == 0)
+            {
+                PrevButton.Visibility = Visibility.Collapsed;
+                NextButton.Visibility = Visibility.Collapsed;
+            }
+            else
             {
                 ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
                 ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
+                PrevButton.Visibility = Visibility.Visible;
+                NextButton.Visibility = Visibility.Visible;
             }
             base.OnNavigatedTo(e);
         }
 
-        private async Task LoadReportsAsync(int page)
+        /// <summary>
+        /// 加载举报信息
+        /// </summary>
+        /// <returns></returns>
+        private async Task LoadReportsAsync()
         {
-            await ReportLVM.GetReportsAsync(page, PageSize);
+            if (ReportLVM.Reports.Count == 0)
+            {
+                await ReportLVM.GetReportsAsync(5);
+            }
+            else
+            {
+                await ReportLVM.GetReportsAsync(Count);
+            }
+            if (CurrentIndex < ReportLVM.Reports.Count)
+            {
+                ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
+                ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
+            }
         }
 
+        /// <summary>
+        /// 发送审核信息
+        /// </summary>
+        /// <param name="isPass"></param>
+        /// <returns></returns>
         private async Task SendReviewInfoAsync(bool isPass)
         {
             if (ReportLVM.Reports.Count == 0)
@@ -123,7 +181,8 @@ namespace PictureWhisper.Client.Views
                     .Reports[CurrentIndex].ReportInfo.RPT_ID,
                 RV_Type = (short)ReviewType.举报审核,
                 RV_Result = isPass,
-                RV_MsgToReporterID = 0,
+                RV_MsgToReporterID = ReportLVM
+                    .Reports[CurrentIndex].ReportInfo.RPT_ReporterID,
                 RV_MsgToReportedID = ReportLVM
                     .Reports[CurrentIndex].MessageToId
             };
@@ -132,18 +191,19 @@ namespace PictureWhisper.Client.Views
                 var url = HttpClientHelper.baseUrl + "review";
                 var content = new HttpStringContent(JObject.FromObject(reviewInfo).ToString());
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-                var resp = await client.PostAsync(new Uri(url), content);
+                var resp = await client.PostAsync(new Uri(url), content);//发送审核信息
                 if (!resp.IsSuccessStatusCode)
                 {
                     ErrorMessageTextBlock.Text += "· 发送失败" + Environment.NewLine;
                     ErrorMessageTextBlock.Visibility = Visibility.Visible;
                 }
-                else
+                else//发送成功后从当前列表中删除该举报信息
                 {
                     ReportLVM.Reports.Remove(ReportLVM
                         .Reports[CurrentIndex]);
                     if (ReportLVM.Reports.Count == 0)
                     {
+                        CurrentIndex = 0;
                         ReviewVM.Image = new BitmapImage();
                         ReviewVM.ReportDto = new ReportDto();
                         return;
@@ -154,9 +214,9 @@ namespace PictureWhisper.Client.Views
                         ReviewVM.Image = ReportLVM.Reports[CurrentIndex].Image;
                         ReviewVM.ReportDto = ReportLVM.Reports[CurrentIndex];
                     }
-                    if (CurrentIndex > ReportLVM.Reports.Count - 5)
+                    if (CurrentIndex > ReportLVM.Reports.Count - 5)//当要到列表末尾时自动加载
                     {
-                        await LoadReportsAsync(PageNum++);
+                        await LoadReportsAsync();
                     }
                     ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
                 }

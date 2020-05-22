@@ -8,42 +8,60 @@
     mc:Ignorable="d"
     xmlns:data="using:PictureWhisper.Domain.Entites"
     xmlns:imagedata="using:PictureWhisper.Client.ViewModels"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 按壁纸分区查看壁纸页面 -->
+    <Page.Resources>
+        <SolidColorBrush x:Key="NavigationViewTopPaneBackground"
+                         Color="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+    </Page.Resources>
+    
     <Grid Margin="5,5,5,5">
-        <GridView x:Name="WallpaperTypeGridView" IsItemClickEnabled="True"
-                  ItemClick="WallpaperTypeGridView_ItemClick"
-                  ItemsSource="{x:Bind WallpaperTypeLVM.WallpaperTypes}"
-                  Visibility="Visible">
-            <GridView.ItemTemplate>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 分区切换导航 -->
+        <controls:NavigationView Grid.Row="0" PaneDisplayMode="Top" x:Name="TypeNavigationView"
+                        MenuItemsSource="{x:Bind WallpaperTypeLVM.WallpaperTypes}"
+                        ItemInvoked="TypeNavigationView_ItemInvoked"
+                        HorizontalAlignment="Center"
+                        IsSettingsVisible="False" IsBackButtonVisible="Collapsed">
+            <controls:NavigationView.MenuItemContainerStyle>
+                <Style TargetType="controls:NavigationViewItem">
+                    <Setter Property="BorderBrush" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                </Style>
+            </controls:NavigationView.MenuItemContainerStyle>
+            <!-- 分区显示模板 -->
+            <controls:NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="data:T_WallpaperType">
-                    <Border Margin="5,5,0,0" Width="200" Height="200"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="{x:Bind WT_Name}" FontSize="28" 
-                                   VerticalAlignment="Center" HorizontalAlignment="Center" />
-                    </Border>
+                    <TextBlock Text="{x:Bind WT_Name, Mode=OneWay}" />
                 </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-        <ScrollViewer x:Name="WallpaperScrollViewer" Margin="0,5,0,10"
-                      HorizontalScrollBarVisibility="Hidden"
+            </controls:NavigationView.MenuItemTemplate>
+        </controls:NavigationView>
+        <!-- 壁纸列表 -->
+        <ScrollViewer x:Name="WallpaperScrollViewer" Margin="0,5,0,10" Grid.Row="1"
+                      HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Hidden"
-                      ViewChanged="WallpaperScrollViewer_ViewChanged"
-                      Visibility="Collapsed">
+                      ViewChanged="WallpaperScrollViewer_ViewChanged">
             <GridView x:Name="WallpaperGridView" 
                       IsItemClickEnabled="True" 
                       ItemClick="WallpaperGridView_ItemClick"
                       SelectionMode="None"
                       ItemsSource="{x:Bind WallpaperLVM.TypeResultWallpapers}">
+                <!-- 壁纸显示模板 -->
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="imagedata:WallpaperDto">
-                        <Image Source="{x:Bind Image}" Width="320" Height="180" 
-                               Stretch="UniformToFill" Margin="10,10,10,10" />
+                        <Image Source="{x:Bind Image, Mode=OneWay}" Width="320" Height="180" 
+                               Stretch="UniformToFill" Margin="5,5,5,5" />
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>
         </ScrollViewer>
-        <Button x:Name="RefreshButton" HorizontalAlignment="Right" 
+        <Button x:Name="RefreshButton" HorizontalAlignment="Right" Grid.Row="1"
                 VerticalAlignment="Bottom" Margin="10,10,10,10"
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
                 Click="RefreshButton_Click">

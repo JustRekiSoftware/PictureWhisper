@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 用户
+    /// </summary>
     [Table("T_User")]
     public class T_User
     {

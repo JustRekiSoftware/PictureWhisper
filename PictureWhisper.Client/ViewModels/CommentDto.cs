@@ -10,6 +10,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 评论的显示类
+    /// </summary>
     public class CommentDto : BindableBase
     {
         private T_Comment commentInfo;

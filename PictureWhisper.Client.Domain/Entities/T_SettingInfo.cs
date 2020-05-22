@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Client.Domain.Entities
 {
+    /// <summary>
+    /// 用户设置信息
+    /// </summary>
     [Table("T_SettingInfo")]
     public class T_SettingInfo : BindableBase
     {
@@ -23,6 +26,14 @@ namespace PictureWhisper.Client.Domain.Entities
         {
             get { return autoSetWallpaper; }
             set { SetProperty(ref autoSetWallpaper, value); }
+        }
+
+        private DateTime lastCheckMessageDate;
+        [Required]
+        public DateTime STI_LastCheckMessageDate
+        {
+            get { return lastCheckMessageDate; }
+            set { SetProperty(ref lastCheckMessageDate, value); }
         }
     }
 }

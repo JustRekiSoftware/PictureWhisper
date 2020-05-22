@@ -22,7 +22,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 壁纸页面
     /// </summary>
     public sealed partial class WallpaperPage : Page
     { 
@@ -38,6 +38,11 @@ namespace PictureWhisper.Client.Views
             NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
+        /// <summary>
+        /// 点击举报按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WallpaperReportButton_Click(object sender, RoutedEventArgs e)
         {
             var reportInfo = new T_Report();
@@ -52,6 +57,11 @@ namespace PictureWhisper.Client.Views
             WallpaperMainPage.PageFrame.Navigate(typeof(ReportPage), param);
         }
 
+        /// <summary>
+        /// 点击删除按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WallpaperDeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var contentDialog = new ContentDialog
@@ -87,12 +97,17 @@ namespace PictureWhisper.Client.Views
             await contentDialog.ShowAsync();
         }
 
+        /// <summary>
+        /// 点击点赞按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void LikeButton_Click(object sender, RoutedEventArgs e)
         {
             IsLike = !IsLike;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                if (IsLike)
+                if (IsLike)//点赞
                 {
                     var url = HttpClientHelper.baseUrl + "like";
                     var likeInfo = new T_Like();
@@ -110,7 +125,7 @@ namespace PictureWhisper.Client.Views
                         WallpaperVM.Wallpaper.WallpaperInfo.W_LikeNum++;
                     }
                 }
-                else
+                else//取消点赞
                 {
                     var url = HttpClientHelper.baseUrl + "like/" + UserId + "/" +
                         WallpaperVM.Wallpaper.WallpaperInfo.W_ID;
@@ -125,6 +140,7 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
+            //更新点赞按钮颜色
             if (IsLike)
             {
                 LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
@@ -135,12 +151,17 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击收藏按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void FavoriteButton_Click(object sender, RoutedEventArgs e)
         {
             IsFavorite = !IsFavorite;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                if (IsFavorite)
+                if (IsFavorite)//收藏
                 {
                     var url = HttpClientHelper.baseUrl + "favorite";
                     var favoriteInfo = new T_Favorite();
@@ -158,7 +179,7 @@ namespace PictureWhisper.Client.Views
                         WallpaperVM.Wallpaper.WallpaperInfo.W_FavoriteNum++;
                     }
                 }
-                else
+                else//取消收藏
                 {
                     var url = HttpClientHelper.baseUrl + "favorite/" + UserId + "/" +
                         WallpaperVM.Wallpaper.WallpaperInfo.W_ID;
@@ -173,6 +194,7 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
+            //更新收藏按钮颜色
             if (IsFavorite)
             {
                 FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
@@ -183,6 +205,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击下载按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             var fileName = WallpaperVM.Wallpaper.WallpaperInfo.W_Location
@@ -197,6 +224,12 @@ namespace PictureWhisper.Client.Views
             await SaveWallpaperToLocalAsync(saveFile, url);
         }
 
+        /// <summary>
+        /// 保存壁纸到本地
+        /// </summary>
+        /// <param name="saveFile">保存文件信息</param>
+        /// <param name="url">壁纸下载地址</param>
+        /// <returns></returns>
         private async Task SaveWallpaperToLocalAsync(StorageFile saveFile, string url)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
@@ -206,6 +239,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 缓存壁纸到本地
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private async Task TempSaveWallpaperToLocalAsync(string url)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
@@ -222,9 +260,14 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击设置壁纸按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WallpaperSetButton_Click(object sender, RoutedEventArgs e)
         {
-            if (UserProfilePersonalizationSettings.IsSupported() == true)
+            if (UserProfilePersonalizationSettings.IsSupported() == true)//支持设置壁纸
             {
                 var current = UserProfilePersonalizationSettings.Current;
                 var url = HttpClientHelper.baseUrl + "download/picture/origin/"
@@ -233,10 +276,9 @@ namespace PictureWhisper.Client.Views
                 //必须放在LocalFolder里才能正确设置壁纸
                 var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp.png");
                 var file = await StorageFile.GetFileFromPathAsync(path);
-                await current.TrySetWallpaperImageAsync(file);
-                MoreButtonFlyout.Hide();
+                await current.TrySetWallpaperImageAsync(file);//设置壁纸
             }
-            else
+            else//不支持设置壁纸
             {
                 var contentDialog = new ContentDialog
                 {
@@ -252,14 +294,27 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PublisherAvatarButton_Click(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(UserMainPage), WallpaperVM.Wallpaper.PublisherInfo);
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (WallpaperMainPage.Page != null)
+            {
+                WallpaperMainPage.Page.HyperLinkButtonFocusChange("WallpaperDisplayHyperlinkButton");
+            }
             WallpaperDeleteButton.Visibility = Visibility.Collapsed;
             if (e.Parameter != null)
             {
@@ -268,6 +323,7 @@ namespace PictureWhisper.Client.Views
                 UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
                 using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                 {
+                    //更新点赞按钮的颜色
                     var url = HttpClientHelper.baseUrl + "like/" + UserId + "/" +
                         WallpaperVM.Wallpaper.WallpaperInfo.W_ID;
                     var resp = await client.GetAsync(new Uri(url));
@@ -287,6 +343,7 @@ namespace PictureWhisper.Client.Views
                     {
                         IsLike = false;
                     }
+                    //更新收藏按钮的颜色
                     url = HttpClientHelper.baseUrl + "favorite/" + UserId + "/" +
                         WallpaperVM.Wallpaper.WallpaperInfo.W_ID;
                     resp = await client.GetAsync(new Uri(url));
@@ -306,6 +363,7 @@ namespace PictureWhisper.Client.Views
                     {
                         IsFavorite = false;
                     }
+                    //获取发布者信息
                     url = HttpClientHelper.baseUrl + "user/" +
                         WallpaperVM.Wallpaper.WallpaperInfo.W_PublisherID;
                     WallpaperVM.Wallpaper.PublisherInfo =

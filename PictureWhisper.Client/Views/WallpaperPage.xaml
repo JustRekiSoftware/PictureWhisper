@@ -8,6 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -15,36 +16,27 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Image x:Name="WallpaperImage" Source="{x:Bind WallpaperVM.Wallpaper.Image, Mode=OneWay}" 
-               Stretch="UniformToFill" Grid.Row="0"
-               HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <!-- 壁纸 -->
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled">
+            <Image x:Name="WallpaperImage" Source="{x:Bind WallpaperVM.Wallpaper.Image, Mode=OneWay}" 
+               Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </ScrollViewer>
         <Button x:Name="MoreButton" Grid.Row="0" Margin="10,10,10,10"
                 HorizontalAlignment="Right" VerticalAlignment="Top">
             <Button.Content>
                 <SymbolIcon Symbol="More" />
             </Button.Content>
             <Button.Flyout>
-                <Flyout x:Name="MoreButtonFlyout">
-                    <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter">
-                            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                            <Setter Property="IsTabStop" Value="True"/>
-                            <Setter Property="TabNavigation" Value="Cycle"/>
-                        </Style>
-                    </Flyout.FlyoutPresenterStyle>
-                    <StackPanel>
-                        <Button x:Name="WallpaperReportButton" Content="举报" 
-                            Click="WallpaperReportButton_Click" />
-                        <Button x:Name="WallpaperSetButton" Content="设置为壁纸" 
-                            Click="WallpaperSetButton_Click" />
-                        <Button x:Name="WallpaperDeleteButton" Content="删除" 
-                            Click="WallpaperDeleteButton_Click" Visibility="Collapsed" />
-                    </StackPanel>
-                </Flyout>
+                <MenuFlyout LightDismissOverlayMode="On">
+                    <MenuFlyoutItem Text="举报" Click="WallpaperReportButton_Click" />
+                    <MenuFlyoutItem Text="设置为壁纸" Click="WallpaperSetButton_Click" />
+                    <MenuFlyoutItem x:Name="WallpaperDeleteButton" Text="删除" Click="WallpaperDeleteButton_Click"
+                                    Visibility="Collapsed" />
+                </MenuFlyout>
             </Button.Flyout>
         </Button>
 
+        <!-- 壁纸信息 -->
         <StackPanel Grid.Row="1">
             <TextBlock Text="标题" FontSize="20" Margin="5,5,5,5" />
             <TextBlock Text="{x:Bind WallpaperVM.Wallpaper.WallpaperInfo.W_Title, Mode=OneWay}" 

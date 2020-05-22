@@ -9,45 +9,55 @@
     Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 主页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
+        
+        <!-- 导航栏 -->
         <Grid Grid.Row="0" Height="40">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             
+            <!-- 左侧超链接导航 -->
             <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button x:Name="BackButton" Click="BackButton_Click"
+                        Width="40" Height="40"
+                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
                 <HyperlinkButton x:Name="WallpaperRecommendHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperRecommendHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="推荐" />
+                    <TextBlock Text="推荐" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="WallpaperTypeHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperTypeHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="分区" />
+                    <TextBlock Text="分区" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="SpaceHyperlinkButton" Foreground="Gray"
                                  Click="SpaceHyperlinkButton_Click"
                                  Margin="10,0,0,0">
-                    <TextBlock Text="动态" />
+                    <TextBlock Text="动态" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="WallpaperSearchResultHyperlinkButton" Foreground="Gray"
                                  Click="WallpaperSearchResultHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock x:Name="WallpaperSearchResultHyperlinkButtonTextBlock" Text="壁纸搜索" />
+                    <TextBlock x:Name="WallpaperSearchResultHyperlinkButtonTextBlock" Text="壁纸搜索" FontSize="18" />
                 </HyperlinkButton>
                 <HyperlinkButton x:Name="UserSearchResultHyperlinkButton" Foreground="Gray"
                                  Click="UserSearchResultHyperlinkButton_Click"
                                  Margin="10,0,0,0" Visibility="Collapsed">
-                    <TextBlock x:Name="UserSearchResultHyperlinkButtonTextBlock" Text="用户搜索" />
+                    <TextBlock x:Name="UserSearchResultHyperlinkButtonTextBlock" Text="用户搜索" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
+            
+            <!-- 右侧按钮导航 -->
             <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <Button x:Name="AddButton" Click="AddButton_Click"
                         Width="40" Height="40" 
@@ -81,6 +91,7 @@
             </StackPanel>
         </Grid>
 
+        <!-- 页面内容 -->
         <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

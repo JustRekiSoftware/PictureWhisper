@@ -16,6 +16,10 @@
     <Compile Remove="Migrations\20200412110035_FirstMigration.Designer.cs" />
     <Compile Remove="Migrations\20200412110819_InitialCreate.cs" />
     <Compile Remove="Migrations\20200412110819_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200412114840_InitailCreate.cs" />
+    <Compile Remove="Migrations\20200412114840_InitailCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200518153454_AddLastCheckMessageDate.cs" />
+    <Compile Remove="Migrations\20200518153454_AddLastCheckMessageDate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

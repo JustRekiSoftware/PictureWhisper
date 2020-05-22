@@ -6,48 +6,89 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸发布页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"
-                x:Name="CloseButton" Click="CloseButton_Click"
-                Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <SymbolIcon Symbol="Cancel" />
-        </Button>
-        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!-- 壁纸 -->
+        <StackPanel Grid.Row="0" Grid.Column="0"
+                    x:Name="ImageStackPanel" Visibility="Visible"  
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image  x:Name="UploadImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="Uniform" Visibility="Collapsed" />
             <Button x:Name="UploadPictureButton" Content="上传图片" Visibility="Visible"
-                    Click="UploadPictureButton_Click" Background="{StaticResource SystemAccentColor}" />
+                    Click="UploadPictureButton_Click" Background="{StaticResource SystemAccentColor}"
+                    HorizontalAlignment="Center" Margin="0,10,0,0" />
             <TextBlock x:Name="UploadErrorMsgTextBlock" Margin="10,10,10,10" 
                        Foreground="red" Visibility="Collapsed" />
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+        <!-- 图语Markdown输入 -->
+        <Grid Grid.Row="0" Grid.Column="0"
+              x:Name="StoryGrid" Visibility="Collapsed">
+            <TextBox x:Name="HiddenStoryTextBox" Header="图语" 
+                     PlaceholderText="使用Markdown输入图语"
+                     MaxLength="1024" AcceptsReturn="True" IsSpellCheckEnabled="False"
+                     TextWrapping="Wrap" Margin="10,10,0,0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </Grid>
+        <!-- 一般信息输入区域 -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,0"
+                    x:Name="InputStackPanel" Visibility="Visible" VerticalAlignment="Center">
             <TextBox x:Name="TitleTextBox" Header="标题" PlaceholderText="输入标题" 
-                     MaxLength="128" AcceptsReturn="True"
+                     MaxLength="128" AcceptsReturn="True" IsSpellCheckEnabled="False"
                      TextWrapping="Wrap" Margin="10,0,0,0" />
             <ComboBox x:Name="TypeComboBox" ItemsSource="{x:Bind WallpaperTypeLVM.WallpaperTypes}"
-                      Width="100" Header="分区" Margin="10,5,0,0"
+                      MinWidth="100" Header="分区" Margin="10,10,0,0"
                       DisplayMemberPath="WT_Name" SelectedValuePath="WT_ID" />
             <TextBox x:Name="TagTextBox" Header="标签" PlaceholderText="输入标签（使用逗号分隔）" 
-                     MaxLength="128" Height="70" AcceptsReturn="True"
+                     MaxLength="128" Height="70" AcceptsReturn="True" IsSpellCheckEnabled="False"
                      TextWrapping="Wrap" Margin="10,10,0,0" />
-            <TextBox x:Name="StoryTextBox" Header="图语" PlaceholderText="输入图语"
-                     MaxLength="1024" Height="100" AcceptsReturn="True"
-                     TextWrapping="Wrap" Margin="10,10,0,0" />
+            <TextBox x:Name="StoryTextBox" Header="图语" PlaceholderText="使用Markdown输入图语"
+                     MaxLength="1024" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="False"
+                     Text="{x:Bind HiddenStoryTextBox.Text, Mode=OneWay}"
+                     TextWrapping="Wrap" Margin="10,10,0,0" GotFocus="StoryTextBox_GotFocus"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
             <Button x:Name="ConfirmButton" Content="投稿" HorizontalAlignment="Center"
                     Click="ConfirmButton_Click" Margin="10,10,10,10"
                     Background="{StaticResource SystemAccentColor}" />
             <TextBlock x:Name="PublishErrorMsgTextBlock" Margin="0,10,10,10" 
                        Foreground="red" Visibility="Collapsed" />
+        </StackPanel>
+        <!-- 图语Markdown显示 -->
+        <Grid Grid.Row="0" Grid.Column="1"
+              x:Name="MarkdownGrid" Visibility="Collapsed"
+              Margin="10,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Markdown图语" />
+            <ScrollViewer Grid.Row="1" Margin="0,5,0,0"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Visible">
+                <controls:MarkdownTextBlock Header1Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                            Text="{x:Bind HiddenStoryTextBox.Text, Mode=OneWay}"
+                                            SchemeList="companyportal,randomscheme"
+                                            UriPrefix="ms-appx://" />
+            </ScrollViewer>
+        </Grid>
+        <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0"
+                    Grid.Row="1" Grid.ColumnSpan="2">
+            <Button x:Name="MarkdownInputConfirmButton" Content="输入完成" 
+                    Click="MarkdownInputConfirmButton_Click"
+                    Background="{ThemeResource SystemAccentColor}"
+                    Visibility="Collapsed" />
         </StackPanel>
     </Grid>
 </Page>

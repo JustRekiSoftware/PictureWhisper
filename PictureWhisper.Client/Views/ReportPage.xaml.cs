@@ -24,7 +24,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 举报页面
     /// </summary>
     public sealed partial class ReportPage : Page
     {
@@ -39,9 +39,15 @@ namespace PictureWhisper.Client.Views
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 点击提交按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMessageTextBlock.Text = "错误信息：" + Environment.NewLine;
+            //检查输入是否正确
             if (ReportTypeComboBox.SelectedValue != null)
             {
                 ReportInfo.RPT_Reason = (short)ReportTypeComboBox.SelectedValue;
@@ -56,7 +62,7 @@ namespace PictureWhisper.Client.Views
                 var url = HttpClientHelper.baseUrl + "report";
                 var content = new HttpStringContent(JObject.FromObject(ReportInfo).ToString());
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-                var resp = await client.PostAsync(new Uri(url), content);
+                var resp = await client.PostAsync(new Uri(url), content);//发送举报信息
                 if (!resp.IsSuccessStatusCode)
                 {
                     ErrorMessageTextBlock.Text += "· 发送失败" + Environment.NewLine;
@@ -74,11 +80,20 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击取消按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             BackToMainPage();
         }
 
+        /// <summary>
+        /// 跳转到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null)
@@ -95,6 +110,9 @@ namespace PictureWhisper.Client.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 返回到主页面
+        /// </summary>
         private void BackToMainPage()
         {
             switch (MainPageName)
@@ -115,6 +133,12 @@ namespace PictureWhisper.Client.Views
                     if (MessageMainPage.PageFrame.CanGoBack)
                     {
                         MessageMainPage.PageFrame.GoBack();
+                    }
+                    break;
+                default:
+                    if (WallpaperMainPage.PageFrame.CanGoBack)
+                    {
+                        WallpaperMainPage.PageFrame.GoBack();
                     }
                     break;
             }

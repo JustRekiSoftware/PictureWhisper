@@ -8,6 +8,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 登录页面 -->
+    <!-- 登录框 -->
     <StackPanel Margin="10,10,10,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

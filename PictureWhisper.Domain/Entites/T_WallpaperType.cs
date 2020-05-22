@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 壁纸分区
+    /// </summary>
     [Table("T_WallpaperType")]
     public class T_WallpaperType
     {

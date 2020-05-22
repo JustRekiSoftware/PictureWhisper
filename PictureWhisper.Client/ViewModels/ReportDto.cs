@@ -9,6 +9,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 举报的显示类
+    /// </summary>
     public class ReportDto : BindableBase
     {
         private T_Report reportInfo;

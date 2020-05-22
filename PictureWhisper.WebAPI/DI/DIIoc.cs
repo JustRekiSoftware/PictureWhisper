@@ -5,11 +5,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Concrete;
+using Microsoft.AspNetCore.SignalR;
+using PictureWhisper.WebAPI.Hubs;
 
 namespace PictureWhisper.WebAPI.DI
 {
+    /// <summary>
+    /// 数据仓库依赖注入
+    /// </summary>
     public class DIIoc
     {
+        /// <summary>
+        /// 执行依赖注入，将数据仓库注入控制器
+        /// </summary>
+        /// <param name="services">依赖注入服务</param>
         public static void Injection(IServiceCollection services)
         {
             //Transient：每一次调用服务都会创建一个新的实例

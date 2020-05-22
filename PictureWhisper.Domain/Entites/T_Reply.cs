@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 回复
+    /// </summary>
     [Table("T_Relpy")]
     public class T_Reply : BindableBase
     {

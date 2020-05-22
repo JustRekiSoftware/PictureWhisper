@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 壁纸
+    /// </summary>
     [Table("T_Wallpaper")]
     public class T_Wallpaper : BindableBase
     {
@@ -46,7 +49,7 @@ namespace PictureWhisper.Domain.Entites
 
         private string story;
         [Required]
-        [MaxLength(1024)]
+        [MaxLength(3072)]
         public string W_Story
         {
             get { return story; }

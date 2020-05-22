@@ -10,30 +10,37 @@ using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 壁纸列表的ViewModel
+    /// </summary>
     public class WallpaperListViewModel
     {
         public ObservableCollection<WallpaperDto> SearchResultWallpapers { get; set; }
-
         public ObservableCollection<WallpaperDto> TypeResultWallpapers { get; set; }
-
-        public ObservableCollection<WallpaperDto> ReviewWallpapers { get; set; }
-
+        public ObservableCollection<WallpaperDto> UnReviewedWallpapers { get; set; }
         public ObservableCollection<WallpaperDto> PublishedWallpapers { get; set; }
-
         public ObservableCollection<WallpaperDto> FavoriteWallpapers { get; set; }
-
         public ObservableCollection<WallpaperDto> SpaceWallpapers { get; set; }
 
         public WallpaperListViewModel()
         {
             SearchResultWallpapers = new ObservableCollection<WallpaperDto>();
             TypeResultWallpapers = new ObservableCollection<WallpaperDto>();
-            ReviewWallpapers = new ObservableCollection<WallpaperDto>();
+            UnReviewedWallpapers = new ObservableCollection<WallpaperDto>();
             PublishedWallpapers = new ObservableCollection<WallpaperDto>();
             FavoriteWallpapers = new ObservableCollection<WallpaperDto>();
             SpaceWallpapers = new ObservableCollection<WallpaperDto>();
         }
 
+        /// <summary>
+        /// 获取壁纸搜索结果
+        /// </summary>
+        /// <param name="queryData">搜索关键字</param>
+        /// <param name="filterData">分区条件</param>
+        /// <param name="orderData">排序条件</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetSearchResultWallpapersAsync(string queryData,
             short filterData, string orderData, int page, int pageSize)
         {
@@ -43,6 +50,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸列表
                 var url = string.Format("{0}wallpaper/query/{1}/{2}/{3}/{4}/{5}",
                     HttpClientHelper.baseUrl, queryData, filterData, orderData, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -57,6 +65,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充壁纸信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl 
@@ -71,6 +80,13 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取分区壁纸
+        /// </summary>
+        /// <param name="type">分区Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetTypeResultWallpapersAsync(short type, int page, int pageSize)
         {
             if (page == 1)
@@ -79,6 +95,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸列表
                 var url = string.Format("{0}wallpaper/type/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, type, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -93,6 +110,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl
@@ -107,16 +125,18 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
-        public async Task GetReviewWallpapersAsync(int page, int pageSize)
+        /// <summary>
+        /// 获取未审核壁纸
+        /// </summary>
+        /// <param name="count">获取数量</param>
+        /// <returns></returns>
+        public async Task GetUnReviewedWallpapersAsync(int count)
         {
-            if (page == 1)
-            {
-                ReviewWallpapers.Clear();
-            }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var url = string.Format("{0}wallpaper/review/{1}/{2}",
-                    HttpClientHelper.baseUrl, page, pageSize);
+                //获取壁纸列表
+                var url = string.Format("{0}wallpaper/unreviewed/{1}",
+                    HttpClientHelper.baseUrl, count);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
                 {
@@ -129,12 +149,13 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl
                         + "download/picture/origin/" + wallpaper.W_Location;
                     var image = await ImageHelper.GetImageAsync(client, url);
-                    this.ReviewWallpapers.Add(new WallpaperDto
+                    this.UnReviewedWallpapers.Add(new WallpaperDto
                     {
                         WallpaperInfo = wallpaper,
                         Image = image
@@ -143,6 +164,13 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取已发布壁纸
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetPublishedWallpapersAsync(int id, int page, int pageSize)
         {
             if (page == 1)
@@ -151,6 +179,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸列表
                 var url = string.Format("{0}wallpaper/published/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -165,6 +194,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl
@@ -179,6 +209,13 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取收藏壁纸
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetFavoriteWallpapersAsync(int id, int page, int pageSize)
         {
             if (page == 1)
@@ -187,6 +224,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸列表
                 var url = string.Format("{0}wallpaper/favorite/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -201,6 +239,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl
@@ -215,6 +254,13 @@ namespace PictureWhisper.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// 获取用户动态
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="page">页数</param>
+        /// <param name="pageSize">每页数量</param>
+        /// <returns></returns>
         public async Task GetSpaceWallpapersAsync(int id, int page, int pageSize)
         {
             if (page == 1)
@@ -223,6 +269,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸列表
                 var url = string.Format("{0}wallpaper/space/{1}/{2}/{3}",
                     HttpClientHelper.baseUrl, id, page, pageSize);
                 var response = await client.GetAsync(new Uri(url));
@@ -237,6 +284,7 @@ namespace PictureWhisper.Client.ViewModels
                 {
                     return;
                 }
+                //补充显示信息
                 foreach (var wallpaper in result)
                 {
                     url = HttpClientHelper.baseUrl

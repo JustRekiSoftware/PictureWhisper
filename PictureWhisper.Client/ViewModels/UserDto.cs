@@ -9,6 +9,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 用户信息的显示类
+    /// </summary>
     public class UserDto : BindableBase
     {
         private UserInfoDto userInfo;

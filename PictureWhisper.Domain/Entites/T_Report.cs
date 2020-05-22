@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 举报
+    /// </summary>
     [Table("T_Report")]
     public class T_Report : BindableBase
     {

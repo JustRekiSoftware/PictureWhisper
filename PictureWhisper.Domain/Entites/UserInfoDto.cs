@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 用于平常获取的用户信息
+    /// </summary>
     public class UserInfoDto : BindableBase
     {
         private int id;

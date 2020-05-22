@@ -25,7 +25,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 关注页面
     /// </summary>
     public sealed partial class FollowPage : Page
     {
@@ -41,6 +41,11 @@ namespace PictureWhisper.Client.Views
             NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
+        /// <summary>
+        /// 滑动到底部自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UserScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -50,6 +55,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击用户
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UserGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var userDto = (UserDto)e.ClickedItem;
@@ -57,12 +67,22 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(UserMainPage), userDto.UserInfo);
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             PageNum = 1;
             await LoadFollowUsersAsync(PageNum++);
         }
 
+        /// <summary>
+        /// 点击用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AvatarButton_Click(object sender, RoutedEventArgs e)
         {
             var userDto = (UserDto)((Button)sender).DataContext;
@@ -70,6 +90,11 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(UserMainPage), userDto.UserInfo);
         }
 
+        /// <summary>
+        /// 点击关注按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UIDFollowButton_Click(object sender, RoutedEventArgs e)
         {
             var userDto = (UserDto)((Button)sender).DataContext;
@@ -80,7 +105,7 @@ namespace PictureWhisper.Client.Views
             userDto.IsFollow = !userDto.IsFollow;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                if (userDto.IsFollow)
+                if (userDto.IsFollow)//关注
                 {
                     var url = HttpClientHelper.baseUrl + "follow";
                     var followInfo = new T_Follow();
@@ -98,7 +123,7 @@ namespace PictureWhisper.Client.Views
                         userDto.UserInfo.U_FollowerNum++;
                     }
                 }
-                else
+                else//取消关注
                 {
                     var url = HttpClientHelper.baseUrl + "follow/" + UserId + "/" +
                         userDto.UserInfo.U_ID;
@@ -113,18 +138,19 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            if (userDto.IsFollow)
-            {
-                userDto.FollowButtonText = "已关注";
-            }
-            else
-            {
-                UserLVM.FillInfo();
-            }
+            UserLVM.FillInfo();//补充关注信息
         }
 
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (UserMainPage.Page != null)
+            {
+                UserMainPage.Page.HyperLinkButtonFocusChange("FollowHyperlinkButton");
+            }
             if (e.Parameter != null)
             {
                 UserId = (int)e.Parameter;
@@ -134,6 +160,11 @@ namespace PictureWhisper.Client.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 加载关注用户
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <returns></returns>
         private async Task LoadFollowUsersAsync(int page)
         {
             await UserLVM.GetFollowUsersAsync(UserId, page, PageSize);

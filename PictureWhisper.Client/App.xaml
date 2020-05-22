@@ -5,6 +5,7 @@
     xmlns:local="using:PictureWhisper.Client">
 
     <Application.Resources>
+        <!-- 添加WinUI -->
         <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
     </Application.Resources>
 </Application>

@@ -8,12 +8,14 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 用户页面 -->
     <Grid Margin="5,5,5,5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <!-- 头像 -->
         <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Ellipse Width="200" Height="200">
                 <Ellipse.Fill>
@@ -33,27 +35,15 @@
                 <SymbolIcon Symbol="More" />
             </Button.Content>
             <Button.Flyout>
-                <Flyout>
-                    <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter">
-                            <Setter Property="ScrollViewer.HorizontalScrollMode" 
-                                    Value="Disabled" />
-                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" 
-                                    Value="Disabled" />
-                            <Setter Property="IsTabStop" Value="True"/>
-                            <Setter Property="TabNavigation" Value="Cycle"/>
-                        </Style>
-                    </Flyout.FlyoutPresenterStyle>
-                    <StackPanel>
-                        <Button x:Name="UserReportButton" Content="举报" 
-                                Click="UserReportButton_Click" />
-                        <Button x:Name="UserDeleteButton" Content="删除账号" 
-                                Click="UserDeleteButton_Click" 
-                                Visibility="Collapsed" />
-                    </StackPanel>
-                </Flyout>
+                <MenuFlyout LightDismissOverlayMode="On">
+                    <MenuFlyoutItem Text="举报" Click="UserReportButton_Click" />
+                    <MenuFlyoutItem x:Name="UserDeleteButton" Text="删除账号" 
+                                    Click="UserDeleteButton_Click"
+                                    Visibility="Collapsed" />
+                </MenuFlyout>
             </Button.Flyout>
         </Button>
+        <!-- 用户信息 -->
         <StackPanel x:Name="UserInfoDisplayStackPanel"
                     Grid.Column="1" HorizontalAlignment="Center" 
                     VerticalAlignment="Center" Width="300">
@@ -77,13 +67,15 @@
                     Click="UIDSignoutButton_Click"  Background="{StaticResource SystemAccentColor}"
                     Visibility="Collapsed" Width="300" />
         </StackPanel>
+        <!-- 用户信息编辑框 -->
         <StackPanel x:Name="UserInfoEditStackPanel"
                     Grid.Column="1" HorizontalAlignment="Center" 
                     VerticalAlignment="Center" Width="300"
                     Visibility="Collapsed">
-            <TextBox Header="昵称" x:Name="NameTextBox" Text="{x:Bind UserVM.User.UserInfo.U_Name, Mode=OneWay}" MaxLength="16" />
+            <TextBox Header="昵称" x:Name="NameTextBox" Text="{x:Bind UserVM.User.UserInfo.U_Name, Mode=OneWay}"
+                     MaxLength="16" IsSpellCheckEnabled="False" />
             <TextBox Header="简介" x:Name="InfoTextBox" Text="{x:Bind UserVM.User.UserInfo.U_Info, Mode=OneWay}" 
-                     Margin="0,10,0,0" AcceptsReturn="True" Height="70" 
+                     Margin="0,10,0,0" AcceptsReturn="True" Height="70" IsSpellCheckEnabled="False"
                      TextWrapping="Wrap" MaxLength="128" />
             <TextBlock x:Name="EditErrorMsgTextBlock" Margin="0,10,0,0" 
                        Foreground="red" Visibility="Collapsed" />

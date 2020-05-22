@@ -6,12 +6,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 壁纸故事页面 -->
     <StackPanel Margin="5,5,5,5"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
 
-        <TextBlock Text="{x:Bind WallpaperInfo.W_Story}" TextWrapping="Wrap" />
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Visible">
+            <controls:MarkdownTextBlock Header1Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                        Text="{x:Bind WallpaperVM.Wallpaper.WallpaperInfo.W_Story, Mode=OneWay}"
+                                        SchemeList="companyportal,randomscheme"
+                                        UriPrefix="ms-appx://" />
+        </ScrollViewer>
     </StackPanel>
 </Page>

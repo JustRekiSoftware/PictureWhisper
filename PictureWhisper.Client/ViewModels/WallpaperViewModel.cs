@@ -12,6 +12,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 壁纸的ViewModel
+    /// </summary>
     public class WallpaperViewModel : BindableBase
     {
         private WallpaperDto wallpaper;
@@ -26,10 +29,16 @@ namespace PictureWhisper.Client.ViewModels
             Wallpaper = new WallpaperDto();
         }
 
+        /// <summary>
+        /// 获取壁纸
+        /// </summary>
+        /// <param name="id">壁纸Id</param>
+        /// <returns></returns>
         public async Task GetWallpaperAsync(int id)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸
                 var url = HttpClientHelper.baseUrl + "wallpaper/" + id;
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
@@ -44,6 +53,7 @@ namespace PictureWhisper.Client.ViewModels
                     return;
                 }
                 Wallpaper.WallpaperInfo = result;
+                //获取显示信息
                 url = HttpClientHelper.baseUrl + 
                     "download/picture/origin/" + Wallpaper.WallpaperInfo.W_Location;
                 Wallpaper.Image = await ImageHelper.GetImageAsync(client, url);

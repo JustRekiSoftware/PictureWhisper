@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 壁纸搜索结果页面
     /// </summary>
     public sealed partial class WallpaperSearchResultPage : Page
     {
@@ -27,9 +27,14 @@ namespace PictureWhisper.Client.Views
             WallpaperTypeLVM = new WallpaperTypeListViewModel();
             WallpaperSearchOrderLVM = new WallpaperSearchOrderViewModel();
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;//启用缓存
         }
 
+        /// <summary>
+        /// 点击壁纸
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WallpaperGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var wallpaperDto = (WallpaperDto)e.ClickedItem;
@@ -37,6 +42,11 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(WallpaperMainPage), wallpaperDto.WallpaperInfo);
         }
 
+        /// <summary>
+        /// 滑动到底部时自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WallpaperScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -46,12 +56,22 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             PageNum = 1;
             await LoadSearchResultAsync(PageNum++);
         }
 
+        /// <summary>
+        /// 改变分区筛选条件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.RemovedItems.Count == 1)
@@ -61,6 +81,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 改变排序筛选条件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OrderbyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.RemovedItems.Count == 1)
@@ -70,6 +95,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击显示/隐藏搜索条件超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HideSearchOddsHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             if (SearchOddsStackPanel.Visibility == Visibility.Visible)
@@ -82,8 +112,16 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (MainPage.Page != null)
+            {
+                MainPage.Page.HyperLinkButtonFocusChange("WallpaperSearchResultHyperlinkButton");
+            }
             if (e.Parameter != null)
             {
                 Keyword = (string)e.Parameter;
@@ -98,13 +136,18 @@ namespace PictureWhisper.Client.Views
                 {
                     WallpaperTypeLVM.WallpaperTypes.Add(wallpaperType);
                 }
-                TypeComboBox.SelectedIndex = WallpaperTypeLVM.WallpaperTypes.Count - 1;
+                TypeComboBox.SelectedIndex = WallpaperTypeLVM.WallpaperTypes.Count - 1;//最后一个分区筛选条件为全部
                 OrderbyComboBox.SelectedIndex = 0;
                 await LoadSearchResultAsync(PageNum++);
             }
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 加载搜索结果
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <returns></returns>
         private async Task LoadSearchResultAsync(int page)
         {
             await WallpaperLVM.GetSearchResultWallpapersAsync(Keyword,

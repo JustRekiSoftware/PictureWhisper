@@ -6,6 +6,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 收藏
+    /// </summary>
     [Table("T_Favorite")]
     public class T_Favorite
     {

@@ -11,18 +11,26 @@ using PictureWhisper.Domain.Entites;
 
 namespace PictureWhisper.WebAPI.Controllers
 {
+    /// <summary>
+    /// 举报理由控制器
+    /// </summary>
     [Route("api/report/reason")]
     [Authorize]
     [ApiController]
     public class ReportReasonController : ControllerBase
     {
-        private IReportReasonRepository reportReasonRepo;
+        private IReportReasonRepository reportReasonRepo;//举报理由数据仓库
 
         public ReportReasonController(IReportReasonRepository repo)
         {
             reportReasonRepo = repo;
         }
 
+        /// <summary>
+        /// 根据Id获取举报理由
+        /// </summary>
+        /// <param name="id">举报理由Id</param>
+        /// <returns>获取成功，则返回举报理由；失败则返回404</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> GetReportReasonAsync(short id)
         {
@@ -35,6 +43,10 @@ namespace PictureWhisper.WebAPI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 获取举报理由列表
+        /// </summary>
+        /// <returns>获取成功，则返回举报理由列表；失败则翻悔04</returns>
         [HttpGet]
         public async Task<ActionResult<List<T_ReportReason>>> GetReportReasonsAsync()
         {
@@ -47,6 +59,11 @@ namespace PictureWhisper.WebAPI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 添加举报理由
+        /// </summary>
+        /// <param name="entity">举报理由信息</param>
+        /// <returns>添加成功返回200；失败返回404</returns>
         [HttpPost]
         public async Task<IActionResult> PostReportReasonAsync(T_ReportReason entity)
         {
@@ -59,6 +76,12 @@ namespace PictureWhisper.WebAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// 更新举报理由
+        /// </summary>
+        /// <param name="id">举报理由Id</param>
+        /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+        /// <returns>更新成功，则返回204；失败则返回404</returns>
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchReportReasonAsync(short id, 
             [FromBody] JsonPatchDocument<T_ReportReason> jsonPatch)
@@ -72,6 +95,11 @@ namespace PictureWhisper.WebAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// 删除举报理由
+        /// </summary>
+        /// <param name="id">举报理由Id</param>
+        /// <returns>删除成功返回200；否则返回404</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReportReasonAsync(short id)
         {

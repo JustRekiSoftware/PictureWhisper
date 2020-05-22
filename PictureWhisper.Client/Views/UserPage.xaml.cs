@@ -18,7 +18,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 用户页面
     /// </summary>
     public sealed partial class UserPage : Page
     {
@@ -29,24 +29,28 @@ namespace PictureWhisper.Client.Views
         {
             UserVM = new UserViewModel();
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;//启用缓存
         }
 
+        /// <summary>
+        /// 点击上传头像按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UploadAvatarButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".bmp");
-
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
+            StorageFile file = await picker.PickSingleFileAsync();//获取文件
+            var fileSize = file == null ? 0.0 : (await file.GetBasicPropertiesAsync()).Size;
+            if (fileSize > 0 && fileSize <= 2097152)//文件大小限制
             {
-                UserVM.User.UserAvatar = await ImageHelper.FromFileAsync(file);
+                UserVM.User.UserAvatar = await ImageHelper.FromFileAsync(file);//显示头像
                 using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                 {
                     using (var stream = await file.OpenReadAsync())
@@ -61,8 +65,8 @@ namespace PictureWhisper.Client.Views
                             FileName = file.Name
                         };
                         form.Add(fileContent);
-                        var resp = await client.PostAsync(new Uri(url), form);
-                        if (resp.IsSuccessStatusCode)
+                        var resp = await client.PostAsync(new Uri(url), form);//上传头像
+                        if (resp.IsSuccessStatusCode)//成功后修改头像的下载路径
                         {
                             var imagePath = await resp.Content.ReadAsStringAsync();
                             url = HttpClientHelper.baseUrl + "user/" + UserVM.User.UserInfo.U_ID;
@@ -80,10 +84,12 @@ namespace PictureWhisper.Client.Views
                                 Content = content
                             };
                             resp = await client.SendRequestAsync(request);
-                            if (resp.IsSuccessStatusCode)
+                            if (resp.IsSuccessStatusCode)//修改成功后再次获取头像，确保修改成功
                             {
                                 await UserVM.GetAvatarAsync(imagePath);
                             }
+                            UploadErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                            UploadErrorMsgTextBlock.Text = string.Empty;
                         }
                         else
                         {
@@ -96,7 +102,7 @@ namespace PictureWhisper.Client.Views
             else
             {
                 UploadErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
-                UploadErrorMsgTextBlock.Text += "· 获取图片失败" + Environment.NewLine;
+                UploadErrorMsgTextBlock.Text += "· 获取图片失败或图片大于2M" + Environment.NewLine;
             }
             if (UploadErrorMsgTextBlock.Text.Contains("·"))
             {
@@ -104,6 +110,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击关注按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UIDFollowButton_Click(object sender, RoutedEventArgs e)
         {
             if (UserId == UserVM.User.UserInfo.U_ID)
@@ -113,7 +124,7 @@ namespace PictureWhisper.Client.Views
             UserVM.User.IsFollow = !UserVM.User.IsFollow;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                if (UserVM.User.IsFollow)
+                if (UserVM.User.IsFollow)//关注
                 {
                     var url = HttpClientHelper.baseUrl + "follow";
                     var followInfo = new T_Follow();
@@ -131,7 +142,7 @@ namespace PictureWhisper.Client.Views
                         UserVM.User.UserInfo.U_FollowerNum++;
                     }
                 }
-                else
+                else//取消关注
                 {
                     var url = HttpClientHelper.baseUrl + "follow/" + UserId + "/" +
                         UserVM.User.UserInfo.U_ID;
@@ -146,26 +157,30 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            if (UserVM.User.IsFollow)
-            {
-                UserVM.User.FollowButtonText = "已关注";
-            }
-            else
-            {
-                UserVM.FillInfo();
-            }
+            UserVM.FillInfo();//补充显示信息
         }
 
+        /// <summary>
+        /// 点击修改信息按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UIDEditInfoButton_Click(object sender, RoutedEventArgs e)
         {
             UserInfoEditStackPanel.Visibility = Visibility.Visible;
             UserInfoDisplayStackPanel.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 点击完成按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             var userOp = new List<dynamic>();
             EditErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
+            //检查输入是否正确
             if (NameTextBox.Text == string.Empty)
             {
                 EditErrorMsgTextBlock.Text = "· 未输入昵称" + Environment.NewLine;
@@ -206,7 +221,7 @@ namespace PictureWhisper.Client.Views
                 {
                     Content = content
                 };
-                var resp = await client.SendRequestAsync(request);
+                var resp = await client.SendRequestAsync(request);//发送更新请求
                 if (resp.IsSuccessStatusCode)
                 {
                     UserVM.User.UserInfo.U_Name = NameTextBox.Text;
@@ -222,6 +237,11 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击取消按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             UserInfoEditStackPanel.Visibility = Visibility.Collapsed;
@@ -230,6 +250,11 @@ namespace PictureWhisper.Client.Views
             InfoTextBox.Text = UserVM.User.UserInfo.U_Info;
         }
 
+        /// <summary>
+        /// 点击举报按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UserReportButton_Click(object sender, RoutedEventArgs e)
         {
             var reportInfo = new T_Report();
@@ -244,6 +269,11 @@ namespace PictureWhisper.Client.Views
             UserMainPage.PageFrame.Navigate(typeof(ReportPage), param);
         }
 
+        /// <summary>
+        /// 点击删除账号按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UserDeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var contentDialog = new ContentDialog
@@ -278,6 +308,11 @@ namespace PictureWhisper.Client.Views
             await contentDialog.ShowAsync();
         }
 
+        /// <summary>
+        /// 点击注销登录按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void UIDSignoutButton_Click(object sender, RoutedEventArgs e)
         {
             await SQLiteHelper.RemoveSigninInfoAsync(SQLiteHelper.GetSigninInfo());
@@ -286,22 +321,22 @@ namespace PictureWhisper.Client.Views
             rootFrame.Navigate(typeof(SigninPage));
         }
 
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (UserMainPage.Page != null)
+            {
+                UserMainPage.Page.HyperLinkButtonFocusChange("UserInfoHyperlinkButton");
+            }
             if (e.Parameter != null)
             {
                 UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
                 UserVM.User.UserInfo = (UserInfoDto)e.Parameter;
                 await UserVM.GetAvatarAsync(UserVM.User.UserInfo.U_Avatar);
                 UserVM.FillInfo();
-                if (UserVM.User.IsFollow)
-                {
-                    UserVM.User.FollowButtonText = "已关注";
-                }
-                else
-                {
-                    UserVM.FillInfo();
-                }
             }
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             UploadErrorMsgTextBlock.Visibility = Visibility.Collapsed;
@@ -311,11 +346,13 @@ namespace PictureWhisper.Client.Views
             UIDEditInfoButton.Visibility = Visibility.Collapsed;
             UserDeleteButton.Visibility = Visibility.Collapsed;
             UIDSignoutButton.Visibility = Visibility.Collapsed;
+            UploadAvatarButton.Visibility = Visibility.Collapsed;
             if (UserId == UserVM.User.UserInfo.U_ID)
             {
                 UIDEditInfoButton.Visibility = Visibility.Visible;
                 UserDeleteButton.Visibility = Visibility.Visible;
                 UIDSignoutButton.Visibility = Visibility.Visible;
+                UploadAvatarButton.Visibility = Visibility.Visible;
             }
             base.OnNavigatedTo(e);
         }

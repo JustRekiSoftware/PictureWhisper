@@ -9,7 +9,9 @@
     xmlns:data="using:PictureWhisper.Client.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 关注页面 -->
     <Grid Margin="5,5,5,5">
+        <!-- 关注列表 -->
         <ScrollViewer x:Name="UserScrollViewer" Margin="0,5,0,10"
                       HorizontalScrollBarVisibility="Hidden"
                       VerticalScrollBarVisibility="Hidden"
@@ -23,6 +25,7 @@
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <!-- 用户显示模板 -->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:UserDto">
                         <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">

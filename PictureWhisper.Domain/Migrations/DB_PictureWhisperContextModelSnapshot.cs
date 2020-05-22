@@ -15,7 +15,7 @@ namespace PictureWhisper.Domain.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -317,8 +317,8 @@ namespace PictureWhisper.Domain.Migrations
 
                     b.Property<string>("W_Story")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1024)")
-                        .HasMaxLength(1024);
+                        .HasColumnType("nvarchar(3072)")
+                        .HasMaxLength(3072);
 
                     b.Property<string>("W_Tag")
                         .IsRequired()

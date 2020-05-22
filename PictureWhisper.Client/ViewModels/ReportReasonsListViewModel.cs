@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 举报理由列表的ViewModel
+    /// </summary>
     public class ReportReasonsListViewModel
     {
         public ObservableCollection<T_ReportReason> ReportReasons { get; set; }
@@ -20,11 +23,16 @@ namespace PictureWhisper.Client.ViewModels
             ReportReasons = new ObservableCollection<T_ReportReason>();
         }
 
+        /// <summary>
+        /// 获取举报理由列表
+        /// </summary>
+        /// <returns></returns>
         public async Task GetReportReasonsAsync()
         {
             ReportReasons.Clear();
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取举报理由列表
                 var url = string.Format("{0}report/reason",
                     HttpClientHelper.baseUrl);
                 var response = await client.GetAsync(new Uri(url));

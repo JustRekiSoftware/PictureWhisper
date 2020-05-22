@@ -9,10 +9,12 @@
     xmlns:data="using:PictureWhisper.Client.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- 评论消息页面 -->
     <Grid Margin="5,5,5,5">
+        <!-- 评论消息列表 -->
         <ScrollViewer x:Name="CommentScrollViewer"
                       VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled"
                       ViewChanged="CommentScrollViewer_ViewChanged">
             <ListView ItemsSource="{x:Bind CommentLVM.MessageComments}"
                       SelectionMode="None">
@@ -22,6 +24,7 @@
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <!-- 评论消息模板 -->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="data:CommentDto">
                         <Grid Margin="5,5,5,5" BorderBrush="LightGray" BorderThickness="0,0,0,1">
@@ -53,28 +56,15 @@
                                     <SymbolIcon Symbol="More" />
                                 </Button.Content>
                                 <Button.Flyout>
-                                    <Flyout>
-                                        <Flyout.FlyoutPresenterStyle>
-                                            <Style TargetType="FlyoutPresenter">
-                                                <Setter Property="ScrollViewer.HorizontalScrollMode" 
-                                                                Value="Disabled"/>
-                                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" 
-                                                                Value="Disabled"/>
-                                                <Setter Property="IsTabStop" Value="True"/>
-                                                <Setter Property="TabNavigation" Value="Cycle"/>
-                                            </Style>
-                                        </Flyout.FlyoutPresenterStyle>
-                                        <StackPanel>
-                                            <Button x:Name="CommentReportButton" Content="举报" 
-                                                            Click="CommentReportButton_Click" />
-                                            <Button x:Name="CommentDeleteButton" Content="删除" 
-                                                            Click="CommentDeleteButton_Click" 
-                                                            Visibility="{x:Bind DeleteButtonVisibility, Mode=OneWay}" />
-                                        </StackPanel>
-                                    </Flyout>
+                                    <MenuFlyout LightDismissOverlayMode="On">
+                                        <MenuFlyoutItem Text="举报" Click="CommentReportButton_Click" />
+                                        <MenuFlyoutItem Text="删除" Click="CommentDeleteButton_Click"
+                                                        Visibility="{x:Bind DeleteButtonVisibility, Mode=OneWay}" />
+                                    </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind CommentInfo.C_Content, Mode=OneWay}" Margin="10,10,0,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind CommentInfo.C_Content, Mode=OneWay}" 
+                                       Margin="10,10,0,0" TextWrapping="Wrap" />
                             <HyperlinkButton Grid.Row="2" Grid.Column="1" x:Name="ReplyHyperlinkButton" 
                                                  Click="ReplyHyperlinkButton_Click"
                                                  Margin="10,10,0,0">
@@ -85,5 +75,11 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollViewer>
+        <Button x:Name="RefreshButton" HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" Margin="10,10,10,10"
+                Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                Click="RefreshButton_Click">
+            <SymbolIcon Symbol="Refresh" />
+        </Button>
     </Grid>
 </Page>

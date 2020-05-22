@@ -11,6 +11,9 @@ using PictureWhisper.Domain.Entites;
 
 namespace PictureWhisper.Client.ViewModels
 {
+    /// <summary>
+    /// 壁纸分区列表的ViewModel
+    /// </summary>
     public class WallpaperTypeListViewModel
     {
         public ObservableCollection<T_WallpaperType> WallpaperTypes { get; set; }
@@ -20,6 +23,10 @@ namespace PictureWhisper.Client.ViewModels
             WallpaperTypes = new ObservableCollection<T_WallpaperType>();
         }
 
+        /// <summary>
+        /// 获取壁纸分区
+        /// </summary>
+        /// <returns></returns>
         public async Task GetWallpaperTypesAsync()
         {
             if (WallpaperTypes.Count != 0)
@@ -28,6 +35,7 @@ namespace PictureWhisper.Client.ViewModels
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
+                //获取壁纸分区列表
                 var url = HttpClientHelper.baseUrl + "wallpaper/type";
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
+    /// <summary>
+    /// 用户登录信息
+    /// </summary>
     public class UserSigninDto
     {
         public int U_ID { get; set; }

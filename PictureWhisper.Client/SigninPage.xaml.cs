@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace PictureWhisper.Client
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 登录页面
     /// </summary>
     public sealed partial class SigninPage : Page
     {
@@ -24,9 +24,15 @@ namespace PictureWhisper.Client
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// 点击登录按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
+            //输入格式验证
             if (EmailTextBox.Text == string.Empty 
                 || !EmailTextBox.Text.Contains("@"))
             {
@@ -43,17 +49,18 @@ namespace PictureWhisper.Client
             }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
-                var pwd = EncryptHelper.SHA256Encrypt(PwdPasswordBox.Password.TrimEnd());
+                //登录
+                var pwd = EncryptHelper.SHA256Encrypt(PwdPasswordBox.Password.TrimEnd());//加密登录密码
                 var url = HttpClientHelper.baseUrl + "user/signin/"
                     + EmailTextBox.Text + "/" + pwd;
                 var resp = await client.GetAsync(new Uri(url));
-                if (resp.IsSuccessStatusCode)
+                if (resp.IsSuccessStatusCode)//登录成功
                 {
                     var userSigninDto = JObject.Parse(await resp.Content.ReadAsStringAsync())
                             .ToObject<UserSigninDto>();
                     var rootFrame = Window.Current.Content as Frame;
                     var signinInfo = SQLiteHelper.GetSigninInfo();
-                    if (signinInfo != null)
+                    if (signinInfo != null)//更新登录信息
                     {
                         signinInfo.SI_UserID = userSigninDto.U_ID;
                         signinInfo.SI_Email = EmailTextBox.Text;
@@ -63,7 +70,7 @@ namespace PictureWhisper.Client
                         signinInfo.SI_Status = userSigninDto.U_Status;
                         await SQLiteHelper.UpdateSigninInfoAsync(signinInfo);
                     }
-                    else
+                    else//添加登录信息
                     {
                         signinInfo = new T_SigninInfo
                         {
@@ -77,15 +84,16 @@ namespace PictureWhisper.Client
                         await SQLiteHelper.AddSigninInfoAsync(signinInfo);
                     }
                     var settingInfo = SQLiteHelper.GetSettingInfo();
-                    if (settingInfo == null)
+                    if (settingInfo == null)//添加默认设置信息
                     {
                         settingInfo = new T_SettingInfo();
                         settingInfo.STI_AutoSetWallpaper = false;
+                        settingInfo.STI_LastCheckMessageDate = DateTime.Now;
                         await SQLiteHelper.AddSettingInfoAsync(settingInfo);
                     }
                     else
                     {
-                        if (settingInfo.STI_AutoSetWallpaper)
+                        if (settingInfo.STI_AutoSetWallpaper)//启用自动设置壁纸
                         {
                             await BackgroundTaskHelper
                                 .RegisterBackgroundTaskAsync(
@@ -96,7 +104,7 @@ namespace PictureWhisper.Client
                                 true);
                         }
                     }
-                    if (userSigninDto.U_Type == (short)UserType.注册用户)
+                    if (userSigninDto.U_Type == (short)UserType.注册用户)//页面跳转
                     {
                         rootFrame.Navigate(typeof(MainPage));
                     }
@@ -105,7 +113,7 @@ namespace PictureWhisper.Client
                         rootFrame.Navigate(typeof(ReviewMainPage));
                     }
                 }
-                else
+                else//登录失败
                 {
                     var contentDialog = new ContentDialog
                     {
@@ -122,44 +130,43 @@ namespace PictureWhisper.Client
             }
         }
 
+        /// <summary>
+        /// 点击注册超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SignupHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(SignupPage));
         }
 
-        private async void ForgotPwdHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 点击忘记密码超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ForgotPwdHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            dynamic param = new
             {
-                var userId = SQLiteHelper.GetSigninInfo().SI_UserID;
-                var url = HttpClientHelper.baseUrl + "user/query/" + userId;
-                var resp = await client.GetAsync(new Uri(url));
-                if (resp.IsSuccessStatusCode)
-                {
-                    var userInfo = JObject.Parse(await resp.Content.ReadAsStringAsync())
-                            .ToObject<UserInfoDto>();
-                    dynamic param = new
-                    {
-                        UserInfoDto = userInfo,
-                        FromPage = "SigninPage"
-                    };
-                    var rootFrame = Window.Current.Content as Frame;
-                    rootFrame.Navigate(typeof(PasswordChangePage), param);
-                }
-                else
-                {
-                    return;
-                }
-            }
+                UserId = 0,
+                FromPage = "SigninPage"
+            };//配置跳转参数
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(PasswordChangePage), param);
         }
 
+        /// <summary>
+        /// 跳转到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null && (string)e.Parameter != string.Empty)
             {
                 var signinSuccess = (bool)e.Parameter;
-                if (!signinSuccess)
+                if (!signinSuccess)//自动登录失败
                 {
                     var contentDialog = new ContentDialog
                     {

@@ -24,7 +24,7 @@ using Windows.Web.Http.Headers;
 namespace PictureWhisper.Client.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 回复页面
     /// </summary>
     public sealed partial class ReplyPage : Page
     {
@@ -42,6 +42,11 @@ namespace PictureWhisper.Client.Views
             NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
+        /// <summary>
+        /// 滑动到底部自动加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ReplyScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollViewer = (ScrollViewer)sender;
@@ -51,9 +56,14 @@ namespace PictureWhisper.Client.Views
             }
         }
 
+        /// <summary>
+        /// 点击回复的举报按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReplyReportButton_Click(object sender, RoutedEventArgs e)
         {
-            var reply = (ReplyDto)((Button)sender).DataContext;
+            var reply = (ReplyDto)((MenuFlyoutItem)sender).DataContext;
             var reportInfo = new T_Report();
             reportInfo.RPT_ReporterID = UserId;
             reportInfo.RPT_ReportedID = reply.ReplyInfo.RPL_ID;
@@ -66,9 +76,14 @@ namespace PictureWhisper.Client.Views
             WallpaperMainPage.PageFrame.Navigate(typeof(ReportPage), param);
         }
 
+        /// <summary>
+        /// 点击回复的删除按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ReplyDeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var reply = (ReplyDto)((Button)sender).DataContext;
+            var reply = (ReplyDto)((MenuFlyoutItem)sender).DataContext;
             var contentDialog = new ContentDialog
             {
                 Title = "删除回复",
@@ -99,6 +114,11 @@ namespace PictureWhisper.Client.Views
             await contentDialog.ShowAsync();
         }
 
+        /// <summary>
+        /// 点击回复的回复超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReplyHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             var reply = (ReplyDto)((HyperlinkButton)sender).DataContext;
@@ -106,9 +126,15 @@ namespace PictureWhisper.Client.Views
             ReplyTextBox.PlaceholderText = "@" + ReplyTo.PublisherInfo.U_Name + ": ";
         }
 
+        /// <summary>
+        /// 点击发表回复按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ReplySendButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
+            //检查输入是否正确
             if (ReplyTextBox.Text == string.Empty)
             {
                 ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;
@@ -130,7 +156,7 @@ namespace PictureWhisper.Client.Views
                 var content = new HttpStringContent(JObject.FromObject(reply).ToString());
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
                 var resp = await client.PostAsync(new Uri(url), content);
-                if (!resp.IsSuccessStatusCode)
+                if (!resp.IsSuccessStatusCode)//发送失败显示错误提示
                 {
                     ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
                     ErrorMsgTextBlock.Visibility = Visibility.Visible;
@@ -139,12 +165,17 @@ namespace PictureWhisper.Client.Views
                 {
                     ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
                     ReplyTextBox.Text = string.Empty;
-                    PageNum = 1;
-                    await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
+                    //PageNum = 1;
+                    //await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
                 }
             }
         }
 
+        /// <summary>
+        /// 点击评论的举报按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CommentReportButton_Click(object sender, RoutedEventArgs e)
         {
             var reportInfo = new T_Report();
@@ -159,6 +190,11 @@ namespace PictureWhisper.Client.Views
             WallpaperMainPage.PageFrame.Navigate(typeof(ReportPage), param);
         }
 
+        /// <summary>
+        /// 点击评论的删除按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CommentDeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var contentDialog = new ContentDialog
@@ -194,14 +230,38 @@ namespace PictureWhisper.Client.Views
             await contentDialog.ShowAsync();
         }
 
+        /// <summary>
+        /// 点击评论的回复超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReplyCommentHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             ReplyTo = null;
             ReplyTextBox.PlaceholderText = "有什么想说的？";
         }
 
+        /// <summary>
+        /// 点击刷新按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageNum = 1;
+            await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
+        }
+
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (WallpaperMainPage.Page != null)
+            {
+                WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton");
+            }
             ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
             if (e.Parameter != null)
             {
@@ -212,17 +272,27 @@ namespace PictureWhisper.Client.Views
                     PageNum = 1;
                     await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
                 }
-                UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             }
+            UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// 点击评论的用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CommentUserButton_Click(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(UserMainPage), CommentDto.PublisherInfo);
         }
 
+        /// <summary>
+        /// 点击回复的用户头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReplyUserButton_Click(object sender, RoutedEventArgs e)
         {
             var reply = (ReplyDto)((Button)sender).DataContext;
