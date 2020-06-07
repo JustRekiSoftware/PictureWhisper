@@ -5,10 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
 
 namespace PictureWhisper.Client.ViewModels
 {
@@ -65,7 +62,7 @@ namespace PictureWhisper.Client.ViewModels
                         WallpaperInfo = wallpaper,
                         Image = image
                     };
-                    if (RecommendWallpapers.Where(p => p.WallpaperInfo.W_ID 
+                    if (RecommendWallpapers.Where(p => p.WallpaperInfo.W_ID
                         == wallpaperDto.WallpaperInfo.W_ID).Count() > 0)
                     {
                         continue;

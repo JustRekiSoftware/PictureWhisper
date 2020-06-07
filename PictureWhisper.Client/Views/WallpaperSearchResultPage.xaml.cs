@@ -1,5 +1,6 @@
 ﻿using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -132,7 +133,7 @@ namespace PictureWhisper.Client.Views
                     WT_ID = 0,
                     WT_Name = "全部"
                 };
-                if (!WallpaperTypeLVM.WallpaperTypes.Contains(wallpaperType))
+                if (WallpaperTypeLVM.WallpaperTypes.FirstOrDefault(p => p.WT_Name == "全部") == null)
                 {
                     WallpaperTypeLVM.WallpaperTypes.Add(wallpaperType);
                 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PictureWhisper.WebAPI.Controllers
 {
@@ -83,7 +80,7 @@ namespace PictureWhisper.WebAPI.Controllers
         /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
         /// <returns>更新成功，则返回204；失败则返回404</returns>
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchReportReasonAsync(short id, 
+        public async Task<IActionResult> PatchReportReasonAsync(short id,
             [FromBody] JsonPatchDocument<T_ReportReason> jsonPatch)
         {
             var result = await reportReasonRepo.UpdateAsync(id, jsonPatch);

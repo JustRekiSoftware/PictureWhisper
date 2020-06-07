@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PictureWhisper.Domain.Entites
+﻿namespace PictureWhisper.Domain.Entites
 {
     /// <summary>
     /// 审核类型

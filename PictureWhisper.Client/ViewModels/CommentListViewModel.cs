@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Helper;
-using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
@@ -79,7 +76,7 @@ namespace PictureWhisper.Client.ViewModels
                         PublisherAvatar = image,
                         DeleteButtonVisibility = UserId == comment.C_PublisherID ?
                             Visibility.Visible : Visibility.Collapsed,
-                        AllReplyHyperlinkButtonDisplayText = comment.C_ReplyNum > 0 ? 
+                        AllReplyHyperlinkButtonDisplayText = comment.C_ReplyNum > 0 ?
                             "查看" + comment.C_ReplyNum + "条回复" : "回复"
                     });
                 }

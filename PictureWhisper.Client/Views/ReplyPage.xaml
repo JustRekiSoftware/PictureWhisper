@@ -79,7 +79,8 @@
                 </Grid>
                 <!-- 回复列表 -->
                 <ListView ItemsSource="{x:Bind ReplyLVM.CommentReplys, Mode=OneWay}"
-                          SelectionMode="None" Grid.Row="1" Padding="0,5,0,0" BorderThickness="0,1,0,0">
+                          SelectionMode="None" Grid.Row="1" Margin="0,5,0,0" 
+                          BorderBrush="LightGray" BorderThickness="0,1,0,0">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -146,11 +147,11 @@
         </Button>
         
         <TextBox x:Name="ReplyTextBox" PlaceholderText="有什么想说的？" Height="70" 
-                 AcceptsReturn="True" TextWrapping="Wrap" Grid.Row="2" Grid.Column="0" />
+                 AcceptsReturn="True" TextWrapping="Wrap" Grid.Row="1" Grid.Column="0" />
         <TextBlock x:Name="ErrorMsgTextBlock" Margin="0,10,10,10" 
-                       Foreground="red" Visibility="Collapsed" Grid.Row="2" Grid.Column="0" />
+                       Foreground="red" Visibility="Collapsed" Grid.Row="1" Grid.Column="0" />
         <Button x:Name="ReplySendButton" Content="发表回复" Height="70"
-                Grid.Row="2" Grid.Column="1" Click="ReplySendButton_Click"
+                Grid.Row="1" Grid.Column="1" Click="ReplySendButton_Click"
                 Background="{StaticResource SystemAccentColor}" />
     </Grid>
 </Page>

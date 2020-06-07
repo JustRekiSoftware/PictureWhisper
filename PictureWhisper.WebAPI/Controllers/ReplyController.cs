@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using PictureWhisper.WebAPI.Hubs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PictureWhisper.WebAPI.Controllers
 {
@@ -61,9 +58,9 @@ namespace PictureWhisper.WebAPI.Controllers
             var result = await replyRepo.InsertAsync(entity);
             if (result)
             {
-                if (NotifyHub.ConnectionIdCollect.ContainsKey(entity.RPL_ReceiverID))
+                if (NotifyHub.ConnectionIdDict.ContainsKey(entity.RPL_ReceiverID))
                 {
-                    var connectionId = NotifyHub.ConnectionIdCollect[entity.RPL_ReceiverID];
+                    var connectionId = NotifyHub.ConnectionIdDict[entity.RPL_ReceiverID];
                     await hubContext.Clients.Client(connectionId)
                         .SendAsync("NotifyNewMessage", (short)NotifyMessageType.回复);
                 }

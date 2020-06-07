@@ -336,6 +336,7 @@ namespace PictureWhisper.Client.Views
                 UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
                 UserVM.User.UserInfo = (UserInfoDto)e.Parameter;
                 await UserVM.GetAvatarAsync(UserVM.User.UserInfo.U_Avatar);
+                await UserVM.GetIsFollowAsync(UserVM.User.UserInfo.U_ID);
                 UserVM.FillInfo();
             }
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;

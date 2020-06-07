@@ -3,12 +3,7 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels
 {
@@ -54,7 +49,7 @@ namespace PictureWhisper.Client.ViewModels
                 }
                 Wallpaper.WallpaperInfo = result;
                 //获取显示信息
-                url = HttpClientHelper.baseUrl + 
+                url = HttpClientHelper.baseUrl +
                     "download/picture/origin/" + Wallpaper.WallpaperInfo.W_Location;
                 Wallpaper.Image = await ImageHelper.GetImageAsync(client, url);
                 url = HttpClientHelper.baseUrl + "user/" + Wallpaper.WallpaperInfo.W_PublisherID;

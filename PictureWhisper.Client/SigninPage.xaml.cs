@@ -33,7 +33,7 @@ namespace PictureWhisper.Client
         {
             ErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
             //输入格式验证
-            if (EmailTextBox.Text == string.Empty 
+            if (EmailTextBox.Text == string.Empty
                 || !EmailTextBox.Text.Contains("@"))
             {
                 ErrorMsgTextBlock.Text += "· 邮箱未输入或邮箱格式不正确" + Environment.NewLine;

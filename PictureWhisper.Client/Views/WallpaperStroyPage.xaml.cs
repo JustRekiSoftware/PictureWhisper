@@ -34,7 +34,7 @@ namespace PictureWhisper.Client.Views
             if (e.Parameter != null)
             {
                 var wallpaper = (T_Wallpaper)e.Parameter;
-                if (WallpaperVM.Wallpaper.WallpaperInfo == null 
+                if (WallpaperVM.Wallpaper.WallpaperInfo == null
                     || WallpaperVM.Wallpaper.WallpaperInfo.W_ID != wallpaper.W_ID)
                 {
                     WallpaperVM.Wallpaper.WallpaperInfo = wallpaper;

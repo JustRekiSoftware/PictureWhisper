@@ -1,8 +1,5 @@
 ﻿using IdentityServer4.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PictureWhisper.IdentityServer
 {
@@ -18,9 +15,9 @@ namespace PictureWhisper.IdentityServer
                 new Client
                 {
                     ClientId = "PictureWhisperClient",//客户端识别名
-                    AccessTokenLifetime = 600,//Token有效时间
+                    AccessTokenLifetime = 6000,//Token有效时间
                     AllowedGrantTypes = GrantTypes.ClientCredentials,//使用客户端认证进行身份验证
-                    ClientSecrets = new List<Secret>//加密验证
+                    ClientSecrets = new List<Secret>//加密验证信息
                     {
                         new Secret("SnVzdFJla2kgU29mdHdhcmU=".Sha256())
                     },

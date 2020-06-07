@@ -1,0 +1,581 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PictureWhisper.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="T:PictureWhisper.WebAPI.Controllers.CommentController">
+            <summary>
+            评论控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.CommentController.GetCommentsAsync(System.Int32)">
+            <summary>
+            根据Id获取评论
+            </summary>
+            <param name="id">评论Id</param>
+            <returns>获取成功，则返回评论；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.CommentController.GetCommentsAsync(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取评论列表
+            </summary>
+            <param name="type">获取类型</param>
+            <param name="id">壁纸Id或用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>获取成功，则返回评论列表；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.CommentController.PostCommentAsync(PictureWhisper.Domain.Entites.T_Comment)">
+            <summary>
+            发表评论
+            </summary>
+            <param name="entity">评论信息</param>
+            <returns>发表成功，则通知消息并返回200；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.CommentController.DeleteCommentAsync(System.Int32)">
+            <summary>
+            删除评论
+            </summary>
+            <param name="id">评论Id</param>
+            <returns>删除成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.DownloadController">
+            <summary>
+            下载控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.DownloadController.DownloadDefaultPictureAsync(System.String,System.String)">
+            <summary>
+            下载默认图片
+            </summary>
+            <param name="quality">图片质量</param>
+            <param name="name">图片名</param>
+            <returns>返回图片字节数组</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.DownloadController.DownloadPictureAsync(System.String,System.Int32,System.String,System.String)">
+            <summary>
+            下载图片
+            </summary>
+            <param name="quality">图片质量</param>
+            <param name="id">用户Id</param>
+            <param name="type">图片类型</param>
+            <param name="name">图片名</param>
+            <returns>返回图片字节数组</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.DownloadController.DownloadTodayPictureAsync(System.String,System.String)">
+            <summary>
+            下载今日图片
+            </summary>
+            <param name="quality">图片质量</param>
+            <param name="name">图片名</param>
+            <returns>返回图片字节数组</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.FavoriteController">
+            <summary>
+            收藏控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FavoriteController.CheckFavoriteAsync(System.Int32,System.Int32)">
+            <summary>
+            检查是否已收藏
+            </summary>
+            <param name="favoritorId">用户Id</param>
+            <param name="wallpaperId">壁纸Id</param>
+            <returns>已收藏，则返回true；否则返回false</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FavoriteController.PostFavoriteAsync(PictureWhisper.Domain.Entites.T_Favorite)">
+            <summary>
+            收藏
+            </summary>
+            <param name="entity">收藏信息</param>
+            <returns>收藏成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FavoriteController.DeleteFavoriteAsync(System.Int32,System.Int32)">
+            <summary>
+            取消收藏
+            </summary>
+            <param name="favoritorId">用户Id</param>
+            <param name="wallpaperId">壁纸Id</param>
+            <returns>取消成功，则返回200；否则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.FollowController">
+            <summary>
+            关注控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FollowController.CheckFollowAsync(System.Int32,System.Int32)">
+            <summary>
+            检查是否已关注
+            </summary>
+            <param name="followerId">关注者Id</param>
+            <param name="followedId">被关注者Id</param>
+            <returns>已关注，则返回true；否则返回false</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FollowController.GetFollowsAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取关注列表
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>获取成功，则返回关注列表；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FollowController.PostFollowAsync(PictureWhisper.Domain.Entites.T_Follow)">
+            <summary>
+            关注
+            </summary>
+            <param name="entity">关注信息</param>
+            <returns>关注成功，返回200；否则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.FollowController.DeleteFollowAsync(System.Int32,System.Int32)">
+            <summary>
+            取消关注
+            </summary>
+            <param name="followerId">关注者Id</param>
+            <param name="followedId">被关注者Id</param>
+            <returns>取消成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.LikeController">
+            <summary>
+            点赞控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.LikeController.CheckLikeAsync(System.Int32,System.Int32)">
+            <summary>
+            检查是否已点赞
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="wallpaperId">壁纸Id</param>
+            <returns>已点赞，则返回true；否则返回false</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.LikeController.PostLikeAsync(PictureWhisper.Domain.Entites.T_Like)">
+            <summary>
+            点赞
+            </summary>
+            <param name="entity">点赞信息</param>
+            <returns>点赞成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.LikeController.DeleteLikeAsync(System.Int32,System.Int32)">
+            <summary>
+            取消点赞
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="wallpaperId">壁纸Id</param>
+            <returns>取消成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.ReplyController">
+            <summary>
+            回复控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReplyController.GetReplysAsync(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取回复列表
+            </summary>
+            <param name="type">获取类型</param>
+            <param name="id">评论Id或用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页大小</param>
+            <returns>获取成功，则返回回复列表；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReplyController.PostReplyAsync(PictureWhisper.Domain.Entites.T_Reply)">
+            <summary>
+            发表回复
+            </summary>
+            <param name="entity">回复信息</param>
+            <returns>发表成功，则返回200；失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReplyController.DeleteReplyAsync(System.Int32)">
+            <summary>
+            删除回复
+            </summary>
+            <param name="id">回复Id</param>
+            <returns>删除成功则返回200；失败，则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.ReportController">
+            <summary>
+            举报控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportController.GetReportAsync(System.Int32)">
+            <summary>
+            根据Id获取举报记录
+            </summary>
+            <param name="id">举报Id</param>
+            <returns>获取成功，则返回举报记录；否则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportController.GetUnReviewedReportsAsync(System.Int32)">
+            <summary>
+            获取未处理举报记录列表
+            </summary>
+            <param name="count">获取数量</param>
+            <returns>获取成功，则返回举报记录列表；否则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportController.PostReportAsync(PictureWhisper.Domain.Entites.T_Report)">
+            <summary>
+            添加举报信息
+            </summary>
+            <param name="entity">举报信息</param>
+            <returns>添加成功，则返回200；失败则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.ReportReasonController">
+            <summary>
+            举报理由控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportReasonController.GetReportReasonAsync(System.Int16)">
+            <summary>
+            根据Id获取举报理由
+            </summary>
+            <param name="id">举报理由Id</param>
+            <returns>获取成功，则返回举报理由；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportReasonController.GetReportReasonsAsync">
+            <summary>
+            获取举报理由列表
+            </summary>
+            <returns>获取成功，则返回举报理由列表；失败则翻悔04</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportReasonController.PostReportReasonAsync(PictureWhisper.Domain.Entites.T_ReportReason)">
+            <summary>
+            添加举报理由
+            </summary>
+            <param name="entity">举报理由信息</param>
+            <returns>添加成功返回200；失败返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportReasonController.PatchReportReasonAsync(System.Int16,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{PictureWhisper.Domain.Entites.T_ReportReason})">
+            <summary>
+            更新举报理由
+            </summary>
+            <param name="id">举报理由Id</param>
+            <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+            <returns>更新成功，则返回204；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportReasonController.DeleteReportReasonAsync(System.Int16)">
+            <summary>
+            删除举报理由
+            </summary>
+            <param name="id">举报理由Id</param>
+            <returns>删除成功返回200；否则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.ReviewController">
+            <summary>
+            审核控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReviewController.GetReviewsAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            根据审核人员Id获取审核记录列表
+            </summary>
+            <param name="id">审核人员Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>获取成功，则返回审核记录列表；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReviewController.GetReviewMessageAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            根据用户Id获取审核记录列表
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>获取成功，则返回审核记录列表；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReviewController.PostReviewAsync(PictureWhisper.Domain.Entites.T_Review)">
+            <summary>
+            审核壁纸或处理举报信息
+            </summary>
+            <param name="entity">审核信息</param>
+            <returns>添加成功，则返回200；失败则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.UploadController">
+            <summary>
+            上传控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UploadController.UploadPictureAsync(System.Int32,System.String)">
+            <summary>
+            上传图片
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="type">上传类型</param>
+            <returns>上传成功，则返回下载路径；上传失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UploadController.UploadTodayPictureAsync">
+            <summary>
+            上传今日壁纸
+            </summary>
+            <returns>上传成功，则返回下载路径；上传失败，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UploadController.UploadDefaultPictureAsync(System.String)">
+            <summary>
+            上传默认图片
+            </summary>
+            <param name="name">文件名</param>
+            <returns>上传成功，则返回下载路径；上传失败，则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.UserController">
+            <summary>
+            用户控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.GetUserAsync(System.Int32)">
+            <summary>
+            根据Id获取用户
+            </summary>
+            <param name="id">用户Id</param>
+            <returns>若获取到，则返回用户信息；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.GetUsersAsync(System.String,System.Int32,System.Int32)">
+            <summary>
+            搜索用户
+            </summary>
+            <param name="queryData">搜索关键字</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回用户列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.CheckEmailAsync(System.String)">
+            <summary>
+            检查邮箱是否已注册
+            </summary>
+            <param name="email">注册邮箱</param>
+            <returns>若已注册，则返回404；未注册则返回200</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.CheckNameAsync(System.String)">
+            <summary>
+            检查用户名是否已注册
+            </summary>
+            <param name="name">用户名</param>
+            <returns>若已注册，则返回404；未注册则返回200</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.CheckSigninAsync(System.String,System.String)">
+            <summary>
+            用户登录
+            </summary>
+            <param name="email">邮箱</param>
+            <param name="password">密码</param>
+            <returns>若登录成功，则返回用户登录信息；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.PostUserAsync(PictureWhisper.Domain.Entites.UserRegistDto)">
+            <summary>
+            用户注册
+            </summary>
+            <param name="userRegistDto">用户注册信息</param>
+            <returns>注册成功，则返回用户登录信息；注册失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.PatchUserAsync(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{PictureWhisper.Domain.Entites.T_User})">
+            <summary>
+            更新用户信息
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+            <returns>更新成功，则返回204；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.DeleteUserAsync(System.Int32)">
+            <summary>
+            删除用户
+            </summary>
+            <param name="id">用户Id</param>
+            <returns>删除成功，则返回200；删除失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.UserController.SendIdentifyCodeAsync(System.Int32,System.String)">
+            <summary>
+            发送密码修改验证码
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="email">邮箱</param>
+            <returns>发送成功返回用户Id和验证码，否则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.WallpaperController">
+            <summary>
+            壁纸控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetWallpaperAsync(System.Int32)">
+            <summary>
+            根据壁纸Id获取壁纸
+            </summary>
+            <param name="id">壁纸Id</param>
+            <returns>若获取到，则返回壁纸信息；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetWallpapersAsync(System.String,System.Int16,System.String,System.Int32,System.Int32)">
+            <summary>
+            搜索壁纸
+            </summary>
+            <param name="queryData">搜索关键字</param>
+            <param name="filterData">壁纸分区</param>
+            <param name="orderData">排序条件</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetTypeWallpapersAsync(System.Int16,System.Int32,System.Int32)">
+            <summary>
+            根据壁纸分区获取壁纸
+            </summary>
+            <param name="type">壁纸分区Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetRecommendWallpapersAsync(System.Int32,System.Int32)">
+            <summary>
+            获取推荐壁纸
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="count">获取数量</param>
+            <returns>若获取到，则返回壁纸列表；若未获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetUnReviewedWallpapersAsync(System.Int32)">
+            <summary>
+            获取未审核的壁纸
+            </summary>
+            <param name="count">每获取数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetPublishedWallpapersAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取用户发布的壁纸
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetFavoriteWallpapersAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取用户收藏的壁纸
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetSpaceWallpapersAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取动态
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="page">页数</param>
+            <param name="pageSize">每页数量</param>
+            <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetTodayWallpapersAsync">
+            <summary>
+            获取今日壁纸的下载路径
+            </summary>
+            <returns>若获取到，则返回壁纸下载路径；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.PostWallpaperAsync(PictureWhisper.Domain.Entites.T_Wallpaper)">
+            <summary>
+            发布壁纸
+            </summary>
+            <param name="entity">壁纸信息</param>
+            <returns>发布成功则返回200；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.DeleteWallpaperAsync(System.Int32)">
+            <summary>
+            删除壁纸
+            </summary>
+            <param name="id">壁纸Id</param>
+            <returns>删除成功则返回200；失败则返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Controllers.WallpaperTypeController">
+            <summary>
+            壁纸分区控制器
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperTypeController.GetWallpaperTypeAsync(System.Int16)">
+            <summary>
+            根据Id获取壁纸分区
+            </summary>
+            <param name="id">壁纸分区Id</param>
+            <returns>若找到，则返回壁纸分区信息；没找到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperTypeController.GetWallpaperTypesAsync">
+            <summary>
+            获取壁纸分区
+            </summary>
+            <returns>若获取到，则返回壁纸分区列表；没获取到，则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperTypeController.PostWallpaperTypeAsync(PictureWhisper.Domain.Entites.T_WallpaperType)">
+            <summary>
+            添加壁纸分区
+            </summary>
+            <param name="entity">壁纸分区信息</param>
+            <returns>添加成功返回200；不成功返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperTypeController.PatchWallpaperTypeAsync(System.Int16,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{PictureWhisper.Domain.Entites.T_WallpaperType})">
+            <summary>
+            更新壁纸分区
+            </summary>
+            <param name="id">壁纸分区Id</param>
+            <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+            <returns>更新成功，则返回204；失败则返回404</returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperTypeController.DeleteWallpaperTypeAsync(System.Int16)">
+            <summary>
+            删除壁纸分区
+            </summary>
+            <param name="id">壁纸分区Id</param>
+            <returns>删除成功，返回204；失败返回404</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.DI.DIIoc">
+            <summary>
+            数据仓库依赖注入
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.DI.DIIoc.Injection(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            执行依赖注入，将数据仓库注入控制器
+            </summary>
+            <param name="services">依赖注入服务</param>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Helpers.UploadHelper">
+            <summary>
+            上传文件帮助类
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Helpers.UploadHelper.SavePictureAsync(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            保存图片
+            </summary>
+            <param name="directory">图片保存目录</param>
+            <param name="path">图片保存路径</param>
+            <param name="file">图片文件</param>
+            <returns></returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Helpers.UploadHelper.RandomName(System.Int32)">
+            <summary>
+            随机生成文件名
+            </summary>
+            <param name="count">文件名长度，默认为20</param>
+            <returns>返回文件名</returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Hubs.NotifyHub">
+            <summary>
+            SignalR消息通知中心
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.NotifyHub.SignIn(System.Int32)">
+            <summary>
+            上线时记录连接信息
+            </summary>
+            <param name="id">用户Id</param>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.NotifyHub.SignOut(System.Int32)">
+            <summary>
+            下线时删除连接信息
+            </summary>
+            <param name="id">用户Id</param>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.NotifyHub.CheckNewMessageAsync(System.Int32,System.DateTime)">
+            <summary>
+            检查新消息
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

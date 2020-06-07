@@ -5,7 +5,6 @@ using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.WebAPI.Hubs
@@ -16,7 +15,7 @@ namespace PictureWhisper.WebAPI.Hubs
     public class NotifyHub : Hub
     {
         private static object syncRoot = new object();//同步锁
-        public static Dictionary<int, string> ConnectionIdCollect { get; set; } 
+        public static Dictionary<int, string> ConnectionIdDict { get; set; }
             = new Dictionary<int, string>();//记录已连接用户
         private DB_PictureWhisperContext context;
 
@@ -33,13 +32,13 @@ namespace PictureWhisper.WebAPI.Hubs
         {
             lock (syncRoot)//上锁
             {
-                if (ConnectionIdCollect.ContainsKey(id))//掉线后再次连接
+                if (ConnectionIdDict.ContainsKey(id))//掉线后再次连接
                 {
-                    ConnectionIdCollect[id] = Context.ConnectionId;//更新连接信息
+                    ConnectionIdDict[id] = Context.ConnectionId;//更新连接信息
                 }
                 else
                 {
-                    ConnectionIdCollect.Add(id, Context.ConnectionId);//添加连接信息
+                    ConnectionIdDict.Add(id, Context.ConnectionId);//添加连接信息
                 }
             }
         }
@@ -50,7 +49,7 @@ namespace PictureWhisper.WebAPI.Hubs
         /// <param name="id">用户Id</param>
         public void SignOut(int id)
         {
-            ConnectionIdCollect.Remove(id);
+            ConnectionIdDict.Remove(id);
         }
 
         /// <summary>

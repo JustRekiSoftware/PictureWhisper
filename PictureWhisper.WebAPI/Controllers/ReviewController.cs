@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using PictureWhisper.WebAPI.Hubs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PictureWhisper.WebAPI.Controllers
 {
@@ -78,15 +75,15 @@ namespace PictureWhisper.WebAPI.Controllers
             var result = await reviewRepo.InsertAsync(entity);
             if (result)
             {
-                if (NotifyHub.ConnectionIdCollect.ContainsKey(entity.RV_MsgToReportedID))
+                if (NotifyHub.ConnectionIdDict.ContainsKey(entity.RV_MsgToReportedID))
                 {
-                    var connectionId = NotifyHub.ConnectionIdCollect[entity.RV_MsgToReportedID];
+                    var connectionId = NotifyHub.ConnectionIdDict[entity.RV_MsgToReportedID];
                     await hubContext.Clients.Client(connectionId)
                         .SendAsync("NotifyNewMessage", (short)NotifyMessageType.回复);
                 }
-                if (NotifyHub.ConnectionIdCollect.ContainsKey(entity.RV_MsgToReporterID))
+                if (NotifyHub.ConnectionIdDict.ContainsKey(entity.RV_MsgToReporterID))
                 {
-                    var connectionId = NotifyHub.ConnectionIdCollect[entity.RV_MsgToReporterID];
+                    var connectionId = NotifyHub.ConnectionIdDict[entity.RV_MsgToReporterID];
                     await hubContext.Clients.Client(connectionId)
                         .SendAsync("NotifyNewMessage", (short)NotifyMessageType.回复);
                 }

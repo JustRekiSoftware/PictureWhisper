@@ -1,12 +1,6 @@
-﻿using System;
+﻿using PictureWhisper.Domain.Entites;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
-using Newtonsoft.Json.Linq;
-using PictureWhisper.Domain.Entites;
 
 namespace PictureWhisper.Domain.Abstract
 {

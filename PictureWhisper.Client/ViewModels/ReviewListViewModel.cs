@@ -1,10 +1,7 @@
-﻿using Microsoft.Toolkit.Parsers.Markdown.Blocks;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Helper;
 using PictureWhisper.Domain.Entites;
-using SQLitePCL;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

@@ -25,7 +25,7 @@ namespace PictureWhisper.Client.Views
     /// 壁纸页面
     /// </summary>
     public sealed partial class WallpaperPage : Page
-    { 
+    {
         private WallpaperViewModel WallpaperVM { get; set; }
         private int UserId { get; set; }
         private bool IsLike { get; set; }
@@ -221,7 +221,10 @@ namespace PictureWhisper.Client.Views
             fileSavePicker.FileTypeChoices.Add("图像文件", new List<string>() { ".png" });
             fileSavePicker.SuggestedFileName = fileName;
             var saveFile = await fileSavePicker.PickSaveFileAsync();
-            await SaveWallpaperToLocalAsync(saveFile, url);
+            if (saveFile != null)
+            {
+                await SaveWallpaperToLocalAsync(saveFile, url);
+            }
         }
 
         /// <summary>

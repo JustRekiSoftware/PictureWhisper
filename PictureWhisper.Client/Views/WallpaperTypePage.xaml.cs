@@ -1,6 +1,7 @@
-﻿using PictureWhisper.Client.ViewModels;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
-using System.Linq;
+using System.Drawing;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -81,6 +82,7 @@ namespace PictureWhisper.Client.Views
             WallpaperType = WallpaperTypeLVM.WallpaperTypes[0].WT_ID;
             TypeNavigationView.SelectedItem = WallpaperTypeLVM.WallpaperTypes[0];
             await LoadTypeResultAsync(PageNum++);
+            ChangeDesiredWidth(WallpaperAdaptiveGridView.ActualWidth);
             base.OnNavigatedTo(e);
         }
 
@@ -105,6 +107,51 @@ namespace PictureWhisper.Client.Views
             WallpaperType = wallpaperType.WT_ID;
             PageNum = 1;
             await LoadTypeResultAsync(PageNum++);
+            ChangeDesiredWidth(WallpaperAdaptiveGridView.ActualWidth);
+        }
+
+        /// <summary>
+        /// WallpaperAdaptiveGridView的大小改变时的事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WallpaperAdaptiveGridView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeDesiredWidth(e.NewSize.Width);
+        }
+
+        /// <summary>
+        /// 改变WallpaperAdaptiveGridView的物品期望宽度
+        /// </summary>
+        /// <param name="width">WallpaperAdaptiveGridView的宽度</param>
+        public void ChangeDesiredWidth(double width)
+        {
+            var colCount = 1;
+            //计算列数
+            if (width >= 1900)
+            {
+                colCount = 5;
+            }
+            else if (width >= 1400)
+            {
+                colCount = 4;
+            }
+            else if (width >= 1000)
+            {
+                colCount = 3;
+            }
+            else if (width >= 600)
+            {
+                colCount = 2;
+            }
+            if (WallpaperLVM.TypeResultWallpapers.Count > 0
+                && colCount > WallpaperLVM.TypeResultWallpapers.Count)//要显示的物品少于列数
+            {
+                colCount = WallpaperLVM.TypeResultWallpapers.Count;
+            }
+            var desiredWidth = width / colCount;
+            WallpaperAdaptiveGridView.ItemHeight = desiredWidth * (1080.0 / 1920.0);
+            WallpaperAdaptiveGridView.DesiredWidth = desiredWidth;
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using PictureWhisper.Domain.Abstract;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace PictureWhisper.Domain.Entites
 {
@@ -12,7 +9,7 @@ namespace PictureWhisper.Domain.Entites
     public class UserInfoDto : BindableBase
     {
         private int id;
-        public int U_ID 
+        public int U_ID
         {
             get { return id; }
             set { SetProperty(ref id, value); }

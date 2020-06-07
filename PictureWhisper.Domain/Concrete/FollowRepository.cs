@@ -4,7 +4,6 @@ using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
@@ -87,7 +86,7 @@ namespace PictureWhisper.Domain.Concrete
                 return false;
             }
             var user = await context.Users.FindAsync(entity.FLW_FollowedID);
-            if (user.U_Status == (short)Status.已删除 
+            if (user.U_Status == (short)Status.已删除
                 || user.U_Status == (short)Status.已注销)
             {
                 return false;

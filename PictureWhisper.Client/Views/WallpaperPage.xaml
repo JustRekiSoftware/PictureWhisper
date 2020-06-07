@@ -22,7 +22,8 @@
                Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </ScrollViewer>
         <Button x:Name="MoreButton" Grid.Row="0" Margin="10,10,10,10"
-                HorizontalAlignment="Right" VerticalAlignment="Top">
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Button.Content>
                 <SymbolIcon Symbol="More" />
             </Button.Content>

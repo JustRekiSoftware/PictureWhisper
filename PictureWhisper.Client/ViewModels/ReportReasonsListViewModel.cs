@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Helper;
-using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels

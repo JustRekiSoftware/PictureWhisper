@@ -1,25 +1,11 @@
-﻿using IdentityModel;
-using Newtonsoft.Json.Linq;
-using PictureWhisper.Client.Domain.Entities;
+﻿using Newtonsoft.Json.Linq;
 using PictureWhisper.Client.Helper;
-using PictureWhisper.Domain.Entites;
-using PictureWhisper.Domain.Helpers;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Security.Authentication.OnlineId;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
@@ -50,15 +36,22 @@ namespace PictureWhisper.Client.Views
         private async void SendIdentifyCodeButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMessageTextBlock.Text = "错误信息：" + Environment.NewLine;
+            var userInfo = SQLiteHelper.GetSigninInfo();
             //验证邮箱是否输入、格式是否正确
-            if (EmailTextBox.Text != string.Empty 
+            if (EmailTextBox.Text != string.Empty
                 && EmailTextBox.Text.Contains("@"))
             {
                 ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
             }
+            else if (userInfo.SI_Email != EmailTextBox.Text)
+            {
+                ErrorMessageTextBlock.Text += "· 邮箱输入错误" + Environment.NewLine;
+                ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
             else
             {
-                ErrorMessageTextBlock.Text += "· 邮箱未输入" + Environment.NewLine;
+                ErrorMessageTextBlock.Text += "· 邮箱未输入或格式不正确" + Environment.NewLine;
                 ErrorMessageTextBlock.Visibility = Visibility.Visible;
                 return;
             }
@@ -122,7 +115,7 @@ namespace PictureWhisper.Client.Views
                 if (Code == IdentifyCodeTextBox.Text)//验证码正确
                 {
                     //检查输入是否正确
-                    if (NewPwdTextBox.Password.TrimEnd() != string.Empty 
+                    if (NewPwdTextBox.Password.TrimEnd() != string.Empty
                         && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
                         && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
                     {

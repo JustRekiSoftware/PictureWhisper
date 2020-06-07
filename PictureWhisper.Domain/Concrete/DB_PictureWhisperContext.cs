@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Entites;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
 {

@@ -4,8 +4,6 @@ using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
@@ -68,7 +66,7 @@ namespace PictureWhisper.Client.ViewModels
                 //补充壁纸信息
                 foreach (var wallpaper in result)
                 {
-                    url = HttpClientHelper.baseUrl 
+                    url = HttpClientHelper.baseUrl
                         + "download/picture/small/" + wallpaper.W_Location;
                     var image = await ImageHelper.GetImageAsync(client, url);
                     this.SearchResultWallpapers.Add(new WallpaperDto

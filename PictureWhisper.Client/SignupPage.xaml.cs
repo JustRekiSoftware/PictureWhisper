@@ -92,7 +92,7 @@ namespace PictureWhisper.Client
                     ErrorMsgTextBlock.Text += "· 昵称未输入" + Environment.NewLine;
                 }
                 if (PwdPasswordBox.Password.TrimEnd()
-                    == PwdRepeatPasswordBox.Password.TrimEnd() 
+                    == PwdRepeatPasswordBox.Password.TrimEnd()
                     && PwdPasswordBox.Password.TrimEnd() != string.Empty)
                 {
                     userInfo.U_Password =

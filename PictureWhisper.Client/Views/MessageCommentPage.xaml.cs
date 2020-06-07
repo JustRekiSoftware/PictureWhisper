@@ -3,18 +3,8 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -54,7 +44,7 @@ namespace PictureWhisper.Client.Views
                     .ToObject<T_Wallpaper>();
                 rootFrame.Navigate(typeof(WallpaperMainPage), wallpaper);
                 WallpaperMainPage.PageFrame.Navigate(typeof(ReplyPage), comment);//跳转到回复页面
-                WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton", 
+                WallpaperMainPage.Page.HyperLinkButtonFocusChange("ReplyHyperlinkButton",
                     comment.PublisherInfo.U_Name + "的评论");
             }
         }

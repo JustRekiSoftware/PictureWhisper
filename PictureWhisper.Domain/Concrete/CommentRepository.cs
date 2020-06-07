@@ -97,7 +97,7 @@ namespace PictureWhisper.Domain.Concrete
             {
                 return false;
             }
-            var replies = await context.Replies.Where(p => p.RPL_CommentID == entity.C_ID 
+            var replies = await context.Replies.Where(p => p.RPL_CommentID == entity.C_ID
                 && p.RPL_Status == (short)Status.正常).ToListAsync();
             foreach (var reply in replies)
             {

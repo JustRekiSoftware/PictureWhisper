@@ -23,7 +23,7 @@ namespace PictureWhisper.Client.Helper
         public async static Task<HttpClient> GetAuthorizedHttpClientAsync()
         {
             var client = new HttpClient();
-            if (accessToken == string.Empty || 
+            if (accessToken == string.Empty ||
                 (DateTime.Now - lastAuthorize).TotalSeconds > expireTime)//验证信息为空或已过期
             {
                 accessToken = await GetAccessTokenAsync();//获取AccessToken
@@ -52,12 +52,12 @@ namespace PictureWhisper.Client.Helper
                 }
                 var tokenResponse = await client
                     .RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-                {
-                    Address = disco.TokenEndpoint,//Token请求地址
-                    ClientId = "PictureWhisperClient",
-                    ClientSecret = "SnVzdFJla2kgU29mdHdhcmU=",
-                    Scope = "PictureWhisperWebAPI"
-                });// 请求Token
+                    {
+                        Address = disco.TokenEndpoint,//Token请求地址
+                        ClientId = "PictureWhisperClient",
+                        ClientSecret = "SnVzdFJla2kgU29mdHdhcmU=",
+                        Scope = "PictureWhisperWebAPI"
+                    });// 请求Token
                 if (tokenResponse.IsError)
                 {
                     return string.Empty;

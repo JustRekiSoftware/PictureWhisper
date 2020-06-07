@@ -1,11 +1,8 @@
 ﻿using PictureWhisper.Client.BackgroundTask;
-using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.Domain.Entities;
-using System;
-using System.IO;
+using PictureWhisper.Client.Helper;
 using System.Text;
 using Windows.ApplicationModel.Background;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;

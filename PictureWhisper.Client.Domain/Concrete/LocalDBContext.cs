@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Client.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace PictureWhisper.Client.Domain.Concrete
 {

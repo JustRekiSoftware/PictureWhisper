@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace PictureWhisper.Client.Domain.Entities
 {
@@ -14,7 +11,7 @@ namespace PictureWhisper.Client.Domain.Entities
     {
         [Key]
         public int SI_ID { get; set; }
-        
+
         public int SI_UserID { get; set; }
 
         [MaxLength(32)]

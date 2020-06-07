@@ -1,11 +1,6 @@
 ﻿using IdentityModel.Client;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace TestConsoleClient
 {
@@ -44,7 +39,7 @@ namespace TestConsoleClient
                 return;
             }
 
-            Console.WriteLine(tokenResponse.AccessToken);
+            Console.WriteLine("Bearer " + tokenResponse.AccessToken);
 
             // call api
             //var clientApi = new HttpClient();

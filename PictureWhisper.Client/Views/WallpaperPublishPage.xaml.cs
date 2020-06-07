@@ -219,23 +219,6 @@ namespace PictureWhisper.Client.Views
             HiddenStoryTextBox.SelectionLength = length;
         }
 
-        //private void CloseButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (StoryGridVisible)
-        //    {
-        //        ImageStackPanel.Visibility = Visibility.Visible;
-        //        StoryGrid.Visibility = Visibility.Collapsed;
-        //        InputStackPanel.Visibility = Visibility.Visible;
-        //        MarkdownGrid.Visibility = Visibility.Collapsed;
-        //        StoryGridVisible = false;
-        //        return;
-        //    }
-        //    if (MainPage.PageFrame.CanGoBack)
-        //    {
-        //        MainPage.PageFrame.GoBack();
-        //    }
-        //}
-
         /// <summary>
         /// 导航到该页面时的事件
         /// </summary>

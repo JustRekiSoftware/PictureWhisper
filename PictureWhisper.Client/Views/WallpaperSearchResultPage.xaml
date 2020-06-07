@@ -50,7 +50,7 @@
                 <!-- 壁纸显示模板 -->
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
-                        <Image Source="{x:Bind Image}" Width="320" Height="180" 
+                        <Image Source="{x:Bind Image}"  Width="320" Height="180"
                                Stretch="UniformToFill" Margin="5,5,5,5" />
                     </DataTemplate>
                 </GridView.ItemTemplate>

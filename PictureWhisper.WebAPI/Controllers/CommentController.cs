@@ -75,13 +75,13 @@ namespace PictureWhisper.WebAPI.Controllers
             var result = await commentRepo.InsertAsync(entity);
             if (result)
             {
-                if (NotifyHub.ConnectionIdCollect.ContainsKey(entity.C_ReceiverID))
+                if (NotifyHub.ConnectionIdDict.ContainsKey(entity.C_ReceiverID))
                 {
-                    var connectionId = NotifyHub.ConnectionIdCollect[entity.C_ReceiverID];
+                    var connectionId = NotifyHub.ConnectionIdDict[entity.C_ReceiverID];
                     await hubContext.Clients.Client(connectionId)
                         .SendAsync("NotifyNewMessage", (short)NotifyMessageType.评论);
                 }
-                
+
                 return Ok();
             }
 

@@ -1,16 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using PictureWhisper.Domain.Abstract;
+using PictureWhisper.Domain.Entites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using PictureWhisper.Domain.Abstract;
-using PictureWhisper.Domain.Entites;
-using PictureWhisper.Domain.Helpers;
 
 namespace PictureWhisper.WebAPI.Controllers
 {

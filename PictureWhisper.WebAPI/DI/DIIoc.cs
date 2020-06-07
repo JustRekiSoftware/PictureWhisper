@@ -1,12 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Concrete;
-using Microsoft.AspNetCore.SignalR;
-using PictureWhisper.WebAPI.Hubs;
 
 namespace PictureWhisper.WebAPI.DI
 {

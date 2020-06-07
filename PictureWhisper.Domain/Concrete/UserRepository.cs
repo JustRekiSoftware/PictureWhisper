@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using PictureWhisper.Domain.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete

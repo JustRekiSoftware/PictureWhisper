@@ -4,8 +4,6 @@ using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Client.ViewModels
@@ -153,7 +151,7 @@ namespace PictureWhisper.Client.ViewModels
                 }
                 else
                 {
-                    user.FollowButtonText = "+  关注 " + FormatFollowNum(user.UserInfo.U_FollowerNum);
+                    user.FollowButtonText = "+ 关注（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
                 }
                 user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
             }
@@ -165,7 +163,7 @@ namespace PictureWhisper.Client.ViewModels
                 }
                 else
                 {
-                    user.FollowButtonText = "+  关注 " + FormatFollowNum(user.UserInfo.U_FollowerNum);
+                    user.FollowButtonText = "+ 关注（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
                 }
                 user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
             }

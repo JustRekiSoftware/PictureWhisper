@@ -1,7 +1,5 @@
 ﻿using PictureWhisper.Domain.Entites;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PictureWhisper.Domain.Helper
 {

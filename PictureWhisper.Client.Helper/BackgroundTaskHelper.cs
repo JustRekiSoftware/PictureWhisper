@@ -79,12 +79,12 @@ namespace PictureWhisper.Client.Helper
 
         private static void DefualtOnProgress(BackgroundTaskRegistration sender, BackgroundTaskProgressEventArgs args)
         {
-            
+
         }
 
         private static void DefualtOnCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
         {
-            
+
         }
     }
 }

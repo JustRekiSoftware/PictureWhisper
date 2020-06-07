@@ -3,18 +3,8 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
@@ -56,7 +46,19 @@ namespace PictureWhisper.Client.Views
             {
                 ErrorMessageTextBlock.Text += "· 未选择举报信息";
             }
-            ReportInfo.RPT_Additional = AddtionalTextBox.Text;
+            if (AddtionalTextBox.Text != string.Empty)
+            {
+                ReportInfo.RPT_Additional = AddtionalTextBox.Text;
+            }
+            else
+            {
+                ErrorMessageTextBlock.Text += "· 未输入补充信息";
+            }
+            if (ErrorMessageTextBlock.Text.Contains("·"))
+            {
+                ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
                 var url = HttpClientHelper.baseUrl + "report";
@@ -73,10 +75,6 @@ namespace PictureWhisper.Client.Views
                     ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
                     BackToMainPage();
                 }
-            }
-            if (ErrorMessageTextBlock.Text.Contains("·"))
-            {
-                ErrorMessageTextBlock.Visibility = Visibility.Visible;
             }
         }
 

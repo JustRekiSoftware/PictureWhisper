@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Org.BouncyCastle.Asn1.Cms;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
 using PictureWhisper.Domain.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace PictureWhisper.Domain.Concrete
@@ -37,7 +33,7 @@ namespace PictureWhisper.Domain.Concrete
             {
                 return null;
             }
-            if (result.W_Status == (short)Status.正常 
+            if (result.W_Status == (short)Status.正常
                 || result.W_Status == (short)Status.未审核)
             {
                 return result;
@@ -55,7 +51,7 @@ namespace PictureWhisper.Domain.Concrete
         /// <param name="page">页数</param>
         /// <param name="pageSize">每页数量</param>
         /// <returns>成功搜索到结果返回壁纸列表，否则返回null</returns>
-        public async Task<List<T_Wallpaper>> QueryAsync(string queryData, 
+        public async Task<List<T_Wallpaper>> QueryAsync(string queryData,
             short filterData, string orderData, int page, int pageSize)
         {
             if (page <= 0 || pageSize <= 0)
@@ -128,7 +124,7 @@ namespace PictureWhisper.Domain.Concrete
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await context.Wallpapers.FindAsync(id);
-            if(entity == null)
+            if (entity == null)
             {
                 return false;
             }
@@ -185,7 +181,7 @@ namespace PictureWhisper.Domain.Concrete
         public async Task<List<T_Wallpaper>> GetRecommendWallpaperAsync(int id, int count)
         {
             var result = new List<T_Wallpaper>();
-            result.AddRange(await GetNeighborRecommendAsync(id, count));//基于用户的协同过滤推荐
+            result.AddRange(await GetNeighborRecommendAsync(id, count));//协同过滤推荐
             var adWallpaper = await GetAdRecommendAsync(id);
             if (adWallpaper != null)
             {
@@ -228,7 +224,7 @@ namespace PictureWhisper.Domain.Concrete
             foreach (var user in users)//计算邻近用户
             {
                 var tags = user.U_Tag.Split(',').ToList();
-                var score = (double)tags.Intersect(targetTags).Count() 
+                var score = (double)tags.Intersect(targetTags).Count()
                     / (double)tags.Union(targetTags).Count();//计算用户间的Jaccard系数
                 scores.Add(score);
             }
@@ -262,7 +258,7 @@ namespace PictureWhisper.Domain.Concrete
             var targetUser = await context.Users.FindAsync(id);
             var targetTags = targetUser.U_Tag.Split(',').ToList();//获取目标用户兴趣标签
             targetTags.RemoveAll(p => p == string.Empty);
-            var adWallpapers = await context.Wallpapers.Where(p => p.W_Tag.Contains("广告") 
+            var adWallpapers = await context.Wallpapers.Where(p => p.W_Tag.Contains("广告")
                 && p.W_Status != (short)Status.已删除).ToListAsync();
             if (adWallpapers.Count == 0)
             {
@@ -274,7 +270,7 @@ namespace PictureWhisper.Domain.Concrete
             {
                 var tags = wallpaper.W_Tag.Split(',').ToList();//获取壁纸标签
                 tags.Remove("广告");
-                var score = (double)tags.Intersect(targetTags).Count() 
+                var score = (double)tags.Intersect(targetTags).Count()
                     / (double)tags.Union(targetTags).Count();//计算Jaccard系数
                 scores.Add(score);
             }

@@ -174,7 +174,7 @@ namespace PictureWhisper.Domain.Concrete
             }
             catch (DbUpdateConcurrencyException)
             {
-                
+
             }
         }
     }

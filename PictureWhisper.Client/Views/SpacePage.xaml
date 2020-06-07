@@ -24,7 +24,9 @@
         <!-- 壁纸 -->
         <Button x:Name="WallpaperImageButton" Grid.Row="1" HorizontalAlignment="Center"
                 Click="WallpaperImageButton_Click" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <Image x:Name="WallpaperImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="UniformToFill" />
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                <Image x:Name="WallpaperImage" Source="{x:Bind ImageVM.Image, Mode=OneWay}" Stretch="Uniform" />
+            </ScrollViewer>
         </Button>
         <Button x:Name="NextButton" Grid.Row="2" 
                 HorizontalAlignment="Center" Click="NextButton_Click"
