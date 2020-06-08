@@ -19,9 +19,10 @@ namespace PictureWhisper.Domain.Abstract
         /// <summary>
         /// 获取未处理的举报信息
         /// </summary>
+        /// <param name="userId">举报处理人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns></returns>
-        Task<List<T_Report>> GetUnReviewedReportsAsync(int count);
+        Task<List<T_Report>> GetUnReviewedReportsAsync(int userId, int count);
 
         /// <summary>
         /// 添加举报信息

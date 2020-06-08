@@ -47,6 +47,10 @@ namespace PictureWhisper.WebAPI.Helpers
                             (int)(image.Height / scale), null, IntPtr.Zero);
                         smallImage.Save(pathSmall, ImageFormat.Png);
                     }
+                    else
+                    {
+                        image.Save(pathSmall, ImageFormat.Png);
+                    }
                     image.Save(pathOrigin, ImageFormat.Png);
                 }
             });

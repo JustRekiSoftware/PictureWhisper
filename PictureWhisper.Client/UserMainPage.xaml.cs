@@ -182,7 +182,7 @@ namespace PictureWhisper.Client
             //将上一次高亮超链接按钮的颜色更改为默认色
             if (LastFocus != null)
             {
-                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
             //将当前高亮超链接按钮保存为上一次高亮超链接按钮，并更改颜色为高亮色
             LastFocus = currentFocus;

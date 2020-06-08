@@ -36,7 +36,7 @@ namespace PictureWhisper.Client.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WallpaperGridView_ItemClick(object sender, ItemClickEventArgs e)
+        private void WallpaperAdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var wallpaperDto = (WallpaperDto)e.ClickedItem;
             var rootFrame = Window.Current.Content as Frame;
@@ -141,6 +141,7 @@ namespace PictureWhisper.Client.Views
                 OrderbyComboBox.SelectedIndex = 0;
                 await LoadSearchResultAsync(PageNum++);
             }
+            ChangeDesiredWidth(WallpaperAdaptiveGridView.ActualWidth);
             base.OnNavigatedTo(e);
         }
 
@@ -153,6 +154,50 @@ namespace PictureWhisper.Client.Views
         {
             await WallpaperLVM.GetSearchResultWallpapersAsync(Keyword,
                 (short)TypeComboBox.SelectedValue, (string)OrderbyComboBox.SelectedValue, page, PageSize);
+        }
+
+        /// <summary>
+        /// WallpaperAdaptiveGridView的大小改变时的事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WallpaperAdaptiveGridView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeDesiredWidth(e.NewSize.Width);
+        }
+
+        /// <summary>
+        /// 改变WallpaperAdaptiveGridView的物品期望宽度
+        /// </summary>
+        /// <param name="width">WallpaperAdaptiveGridView的宽度</param>
+        public void ChangeDesiredWidth(double width)
+        {
+            var colCount = 1;
+            //计算列数
+            if (width >= 1900)
+            {
+                colCount = 5;
+            }
+            else if (width >= 1400)
+            {
+                colCount = 4;
+            }
+            else if (width >= 1000)
+            {
+                colCount = 3;
+            }
+            else if (width >= 600)
+            {
+                colCount = 2;
+            }
+            if (WallpaperLVM.SearchResultWallpapers.Count > 0
+                && colCount > WallpaperLVM.SearchResultWallpapers.Count)//要显示的物品少于列数
+            {
+                colCount = WallpaperLVM.SearchResultWallpapers.Count;
+            }
+            var desiredWidth = width / colCount;
+            WallpaperAdaptiveGridView.ItemHeight = desiredWidth * (1080.0 / 1920.0);
+            WallpaperAdaptiveGridView.DesiredWidth = desiredWidth;
         }
     }
 }

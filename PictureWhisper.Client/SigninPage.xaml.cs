@@ -5,6 +5,7 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
 using System;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,6 +32,94 @@ namespace PictureWhisper.Client
         /// <param name="e"></param>
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
+            await SigninNow();
+        }
+
+        /// <summary>
+        /// 点击注册超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SignupHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(SignupPage));
+        }
+
+        /// <summary>
+        /// 点击忘记密码超链接按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ForgotPwdHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            dynamic param = new
+            {
+                UserId = 0,
+                FromPage = "SigninPage"
+            };//配置跳转参数
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(PasswordChangePage), param);
+        }
+
+        /// <summary>
+        /// 跳转到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter != null && (string)e.Parameter != string.Empty)
+            {
+                var signinSuccess = (bool)e.Parameter;
+                if (!signinSuccess)//自动登录失败
+                {
+                    var contentDialog = new ContentDialog
+                    {
+                        Title = "登录失败",
+                        Content = "登录失败，密码已修改或账号已注销",
+                        PrimaryButtonText = "确定"
+                    };
+                    contentDialog.PrimaryButtonClick += (_sender, _e) =>
+                    {
+                        contentDialog.Hide();
+                    };
+                    await contentDialog.ShowAsync();
+                }
+            }
+            base.OnNavigatedTo(e);
+        }
+
+        /// <summary>
+        /// 拦截邮箱输入框回车事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void EmailTextBox_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                await SigninNow();
+            }
+        }
+
+        /// <summary>
+        /// 拦截密码输入框回车事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void PwdPasswordBox_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                await SigninNow();
+            }
+        }
+
+        /// <summary>
+        /// 执行登录
+        /// </summary>
+        private async Task SigninNow()
+        {
             ErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
             //输入格式验证
             if (EmailTextBox.Text == string.Empty
@@ -47,6 +136,7 @@ namespace PictureWhisper.Client
                 ErrorMsgTextBlock.Visibility = Visibility.Visible;
                 return;
             }
+            ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
                 //登录
@@ -128,60 +218,6 @@ namespace PictureWhisper.Client
                     await contentDialog.ShowAsync();
                 }
             }
-        }
-
-        /// <summary>
-        /// 点击注册超链接按钮
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SignupHyperlinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            var rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(SignupPage));
-        }
-
-        /// <summary>
-        /// 点击忘记密码超链接按钮
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ForgotPwdHyperlinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            dynamic param = new
-            {
-                UserId = 0,
-                FromPage = "SigninPage"
-            };//配置跳转参数
-            var rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(PasswordChangePage), param);
-        }
-
-        /// <summary>
-        /// 跳转到该页面的事件
-        /// </summary>
-        /// <param name="e"></param>
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if (e.Parameter != null && (string)e.Parameter != string.Empty)
-            {
-                var signinSuccess = (bool)e.Parameter;
-                if (!signinSuccess)//自动登录失败
-                {
-                    var contentDialog = new ContentDialog
-                    {
-                        Title = "登录失败",
-                        Content = "登录失败，密码已修改或账号已注销",
-                        PrimaryButtonText = "确定"
-                    };
-                    contentDialog.PrimaryButtonClick += (_sender, _e) =>
-                    {
-                        contentDialog.Hide();
-                    };
-                    await contentDialog.ShowAsync();
-                }
-            }
-            base.OnNavigatedTo(e);
         }
     }
 }

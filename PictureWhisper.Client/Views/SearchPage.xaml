@@ -17,7 +17,7 @@
 
         <StackPanel Margin="10,10,10,0" Orientation="Horizontal">
             <TextBox x:Name="SearchTextBox" PlaceholderText="输入关键词（使用空格分隔）"
-                     Width="500" />
+                     Width="500" MaxLength="128" KeyDown="SearchTextBox_KeyDown" />
             <Button x:Name="ConfirmButton"
                     Click="ConfirmButton_Click"
                     Background="{StaticResource ApplicationPageBackgroundThemeBrush}">

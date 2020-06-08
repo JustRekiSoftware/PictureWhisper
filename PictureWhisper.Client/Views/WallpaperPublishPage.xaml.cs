@@ -6,6 +6,7 @@ using System;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
@@ -23,6 +24,7 @@ namespace PictureWhisper.Client.Views
         private ImageViewModel ImageVM { get; set; }
         private string ImageCloudPath { get; set; }
         private int UserId { get; set; }
+        private string Todo { get; set; }
         private bool StoryGridVisible { get; set; }
 
         public WallpaperPublishPage()
@@ -56,7 +58,7 @@ namespace PictureWhisper.Client.Views
                     using (var stream = await file.OpenReadAsync())
                     {
                         var url = HttpClientHelper.baseUrl
-                        + "upload/picture/" + UserId + "/wallpaper";
+                            + "upload/picture/" + UserId + "/wallpaper";
                         var form = new HttpMultipartFormDataContent();
                         var fileContent = new HttpStreamContent(stream);
                         fileContent.Headers.ContentDisposition = new HttpContentDispositionHeaderValue("form-data")
@@ -69,7 +71,6 @@ namespace PictureWhisper.Client.Views
                         if (resp.IsSuccessStatusCode)
                         {
                             ImageCloudPath = await resp.Content.ReadAsStringAsync();
-                            //UploadPictureButton.Visibility = Visibility.Collapsed;
                             UploadImage.Visibility = Visibility.Visible;
                             UploadErrorMsgTextBlock.Visibility = Visibility.Collapsed;
                             UploadErrorMsgTextBlock.Text = string.Empty;
@@ -132,6 +133,10 @@ namespace PictureWhisper.Client.Views
             if (TagTextBox.Text != string.Empty)
             {
                 wallpaper.W_Tag = TagTextBox.Text;
+                if (Todo == "AdWallpaperUpload" && !wallpaper.W_Tag.Contains("广告"))//上传广告壁纸时，自动在标签中加入广告
+                {
+                    wallpaper.W_Tag += ",广告";
+                }
             }
             else
             {
@@ -150,6 +155,7 @@ namespace PictureWhisper.Client.Views
                 PublishErrorMsgTextBlock.Visibility = Visibility.Visible;
                 return;
             }
+            PublishErrorMsgTextBlock.Visibility = Visibility.Collapsed;
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
                 var url = HttpClientHelper.baseUrl + "wallpaper";
@@ -166,9 +172,25 @@ namespace PictureWhisper.Client.Views
                     };
                     contentDialog.PrimaryButtonClick += (_sender, _e) =>
                     {
-                        if (MainPage.PageFrame.CanGoBack)
+                        if (Todo == "AdWallpaperUpload")//广告壁纸上传则清空输入区域
                         {
-                            MainPage.PageFrame.GoBack();
+                            ImageVM.Image = new BitmapImage();
+                            ImageCloudPath = string.Empty;
+                            PublishErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                            UploadImage.Visibility = Visibility.Collapsed;
+                            UploadPictureButton.Content = "上传壁纸";
+                            TitleTextBox.Text = string.Empty;
+                            TypeComboBox.SelectedIndex = -1;
+                            TagTextBox.Text = string.Empty;
+                            StoryTextBox.Text = string.Empty;
+                            HiddenStoryTextBox.Text = string.Empty;
+                        }
+                        else
+                        {
+                            if (MainPage.PageFrame.CanGoBack)
+                            {
+                                MainPage.PageFrame.GoBack();
+                            }
                         }
                         contentDialog.Hide();
                     };
@@ -227,12 +249,18 @@ namespace PictureWhisper.Client.Views
         {
             if (e.Parameter != null)
             {
-                UserId = (int)e.Parameter;
+                var param = (dynamic)e.Parameter;
+                UserId = param.UserId;
+                Todo = param.Todo;
                 StoryGridVisible = false;
                 ImageStackPanel.Visibility = Visibility.Visible;
                 StoryGrid.Visibility = Visibility.Collapsed;
                 InputStackPanel.Visibility = Visibility.Visible;
                 MarkdownGrid.Visibility = Visibility.Collapsed;
+            }
+            if (Todo == "AdWallpaperUpload" && AdminMainPage.Page != null)
+            {
+                AdminMainPage.Page.HyperLinkButtonFocusChange("AdWallpaperUploadHyperlinkButton");
             }
             UploadErrorMsgTextBlock.Visibility = Visibility.Collapsed;
             PublishErrorMsgTextBlock.Visibility = Visibility.Collapsed;

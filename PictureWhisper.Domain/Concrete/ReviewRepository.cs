@@ -110,11 +110,11 @@ namespace PictureWhisper.Domain.Concrete
 
             if (wallpaper != null)
             {
-                ReviewHelper.RemoveWallpaper(wallpaper);//将壁纸移出正在审核列表
+                ReviewHelper.RemoveWallpaper(wallpaper, entity.RV_ReviewerID);//将壁纸移出正在审核列表
             }
             if (report != null)
             {
-                ReviewHelper.RemoveReport(report);//将举报移出正在处理列表
+                ReviewHelper.RemoveReport(report, entity.RV_ReviewerID);//将举报移出正在处理列表
             }
             return true;
         }

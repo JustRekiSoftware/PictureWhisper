@@ -126,15 +126,16 @@ namespace PictureWhisper.Client.ViewModels
         /// <summary>
         /// 获取未审核壁纸
         /// </summary>
+        /// <param name="userId">审核人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns></returns>
-        public async Task GetUnReviewedWallpapersAsync(int count)
+        public async Task GetUnReviewedWallpapersAsync(int userId, int count)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
                 //获取壁纸列表
-                var url = string.Format("{0}wallpaper/unreviewed/{1}",
-                    HttpClientHelper.baseUrl, count);
+                var url = string.Format("{0}wallpaper/unreviewed/{1}/{2}",
+                    HttpClientHelper.baseUrl, userId, count);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
                 {

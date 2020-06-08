@@ -3,6 +3,9 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
+using System.Threading.Tasks;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -30,6 +33,7 @@ namespace PictureWhisper.Client.Views
             ReplyLVM = new ReplyListViewModel();
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
+            ReplyTextBox.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         /// <summary>
@@ -123,42 +127,7 @@ namespace PictureWhisper.Client.Views
         /// <param name="e"></param>
         private async void ReplySendButton_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
-            //检查输入是否正确
-            if (ReplyTextBox.Text == string.Empty)
-            {
-                ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;
-                ErrorMsgTextBlock.Visibility = Visibility.Visible;
-                return;
-            }
-            var reply = new T_Reply
-            {
-                RPL_PublisherID = UserId,
-                RPL_CommentID = CommentDto.CommentInfo.C_ID,
-                RPL_Content = ReplyTo == null ?
-                    ReplyTextBox.Text : "@" + ReplyTo.PublisherInfo.U_Name + ": " + ReplyTextBox.Text,
-                RPL_ReceiverID = ReplyTo == null ?
-                    CommentDto.CommentInfo.C_PublisherID : ReplyTo.PublisherInfo.U_ID
-            };
-            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
-            {
-                var url = HttpClientHelper.baseUrl + "reply";
-                var content = new HttpStringContent(JObject.FromObject(reply).ToString());
-                content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-                var resp = await client.PostAsync(new Uri(url), content);
-                if (!resp.IsSuccessStatusCode)//发送失败显示错误提示
-                {
-                    ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
-                    ErrorMsgTextBlock.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
-                    ReplyTextBox.Text = string.Empty;
-                    //PageNum = 1;
-                    //await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
-                }
-            }
+            await ReplyNow();
         }
 
         /// <summary>
@@ -288,6 +257,79 @@ namespace PictureWhisper.Client.Views
             var reply = (ReplyDto)((Button)sender).DataContext;
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(UserMainPage), reply.PublisherInfo);
+        }
+
+        /// <summary>
+        /// 拦截回复输入框Control + Enter事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Dispatcher_AcceleratorKeyActivated(object sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.EventType.ToString().Contains("Down"))
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    switch (args.VirtualKey)
+                    {
+                        case VirtualKey.Enter:
+                            await ReplyNow();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 执行回复
+        /// </summary>
+        /// <returns></returns>
+        private async Task ReplyNow()
+        {
+            ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
+            //检查输入是否正确
+            if (ReplyTextBox.Text == string.Empty)
+            {
+                ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;
+                ErrorMsgTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+            var reply = new T_Reply
+            {
+                RPL_PublisherID = UserId,
+                RPL_CommentID = CommentDto.CommentInfo.C_ID,
+                RPL_Content = ReplyTo == null ?
+                    ReplyTextBox.Text : "@" + ReplyTo.PublisherInfo.U_Name + ": " + ReplyTextBox.Text,
+                RPL_ReceiverID = ReplyTo == null ?
+                    CommentDto.CommentInfo.C_PublisherID : ReplyTo.PublisherInfo.U_ID
+            };
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl + "reply";
+                var content = new HttpStringContent(JObject.FromObject(reply).ToString());
+                content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+                var resp = await client.PostAsync(new Uri(url), content);
+                if (!resp.IsSuccessStatusCode)//发送失败显示错误提示
+                {
+                    ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
+                    ErrorMsgTextBlock.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                    ReplyTextBox.Text = string.Empty;
+                    //当现有评论内容为空或不能滚动时，刷新评论列表
+                    if (ReplyScrollViewer.ExtentHeight == 0
+                        || ReplyScrollViewer.ExtentHeight == ReplyScrollViewer.ViewportHeight)
+                    {
+                        PageNum = 1;
+                        await ReplyLVM.GetCommentReplysAsync(CommentDto.CommentInfo.C_ID, PageNum++, PageSize);
+                    }
+                }
+            }
         }
     }
 }

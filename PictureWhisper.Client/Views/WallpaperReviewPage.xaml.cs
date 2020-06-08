@@ -134,11 +134,11 @@ namespace PictureWhisper.Client.Views
         {
             if (WallpaperLVM.UnReviewedWallpapers.Count == 0)
             {
-                await WallpaperLVM.GetUnReviewedWallpapersAsync(5);
+                await WallpaperLVM.GetUnReviewedWallpapersAsync(UserId, 5);
             }
             else
             {
-                await WallpaperLVM.GetUnReviewedWallpapersAsync(Count);
+                await WallpaperLVM.GetUnReviewedWallpapersAsync(UserId, Count);
             }
             if (CurrentIndex < WallpaperLVM.UnReviewedWallpapers.Count)
             {

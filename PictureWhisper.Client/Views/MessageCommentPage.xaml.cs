@@ -150,13 +150,15 @@ namespace PictureWhisper.Client.Views
         /// <param name="e"></param>
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (NotifyHelper.NotifyTypes.Contains((short)NotifyMessageType.评论))
-            {
-                NotifyHelper.NotifyTypes.Remove((short)NotifyMessageType.评论);
-            }
             if (MessageMainPage.Page != null)
             {
                 MessageMainPage.Page.HyperLinkButtonFocusChange("CommentToUserHyperlinkButton");
+            }
+            if (NotifyHelper.NotifyTypes.Contains((short)NotifyMessageType.评论))
+            {
+                //由于进入消息页面时会自动跳转到该页面，所以需要在清除评论的消息提示之前进行提示
+                MessageMainPage.Page.HyperLinkButtonMessageNotify("CommentToUserHyperlinkButton");
+                NotifyHelper.NotifyTypes.Remove((short)NotifyMessageType.评论);
             }
             UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             PageNum = 1;

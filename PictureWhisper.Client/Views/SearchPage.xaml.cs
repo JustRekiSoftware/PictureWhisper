@@ -26,6 +26,45 @@ namespace PictureWhisper.Client.Views
         /// <param name="e"></param>
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
+            SearchNow();
+        }
+
+        /// <summary>
+        /// 导航到该页面时的事件
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if ((string)e.Parameter == "wallpaper")
+            {
+                SearchTypeResult = false;
+            }
+            else
+            {
+                SearchTypeResult = true;
+            }
+            ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
+            base.OnNavigatedTo(e);
+        }
+
+        /// <summary>
+        /// 拦截搜索框回车事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SearchTextBox_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                SearchNow();
+            }
+        }
+
+        /// <summary>
+        /// 执行搜索
+        /// </summary>
+        private void SearchNow()
+        {
             if (SearchTextBox.Text == string.Empty)
             {
                 ErrorMessageTextBlock.Text += "错误信息：" + Environment.NewLine;
@@ -46,24 +85,6 @@ namespace PictureWhisper.Client.Views
                 MainPage.Page.HyperLinkButtonFocusChange(
                     "WallpaperSearchResultHyperlinkButton", SearchTextBox.Text);
             }
-        }
-
-        /// <summary>
-        /// 导航到该页面时的事件
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if ((string)e.Parameter == "wallpaper")
-            {
-                SearchTypeResult = false;
-            }
-            else
-            {
-                SearchTypeResult = true;
-            }
-            ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
-            base.OnNavigatedTo(e);
         }
     }
 }

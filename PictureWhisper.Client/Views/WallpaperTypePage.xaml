@@ -50,6 +50,8 @@
                       ViewChanged="WallpaperScrollViewer_ViewChanged">
             <toolkitControls:AdaptiveGridView
                       x:Name="WallpaperAdaptiveGridView"
+                      IsItemClickEnabled="True" SelectionMode="None"
+                      ItemClick="WallpaperAdaptiveGridView_ItemClick"
                       ItemsSource="{x:Bind WallpaperLVM.TypeResultWallpapers}"
                       DesiredWidth="320" SizeChanged="WallpaperAdaptiveGridView_SizeChanged">
                 <toolkitControls:AdaptiveGridView.ItemTemplate>

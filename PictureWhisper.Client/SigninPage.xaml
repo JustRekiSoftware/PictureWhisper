@@ -20,9 +20,10 @@
                    Margin="10,10,10,0"
                    Foreground="{StaticResource SystemAccentColor}" />
         <TextBox x:Name="EmailTextBox" Header="邮箱" PlaceholderText="输入邮箱"
-                 MaxLength="32" Width="300" Margin="10,10,10,0" IsSpellCheckEnabled="False" />
+                 MaxLength="32" Width="300" Margin="10,10,10,0" IsSpellCheckEnabled="False"
+                 KeyDown="EmailTextBox_KeyDown" />
         <PasswordBox x:Name="PwdPasswordBox" Header="密码" PlaceholderText="输入密码"
-                     MaxLength="16" Width="300" Margin="10,10,10,0" />
+                     MaxLength="16" Width="300" Margin="10,10,10,0" KeyDown="PwdPasswordBox_KeyDown" />
         <TextBlock x:Name="ErrorMsgTextBlock" Foreground="Red" 
                    Visibility="Collapsed" Margin="10,10,10,0"
                    Width="300" />

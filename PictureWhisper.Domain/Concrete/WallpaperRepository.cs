@@ -324,9 +324,10 @@ namespace PictureWhisper.Domain.Concrete
         /// <summary>
         /// 获取未审核的壁纸
         /// </summary>
+        /// <param name="userId">审核人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns>返回壁纸列表</returns>
-        public async Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int count)
+        public async Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int userId, int count)
         {
             var result = new List<T_Wallpaper>();
             while (result.Count < count)
@@ -337,7 +338,7 @@ namespace PictureWhisper.Domain.Concrete
                     .Skip(ReviewHelper.Wallpapers.Count).Take(count).ToListAsync();
                 foreach (var report in tmp)
                 {
-                    ReviewHelper.AddWallpaper(ref result, report);//将不是正在审核的壁纸加入返回列表
+                    ReviewHelper.AddWallpaper(ref result, report, userId);//将不是正在审核的壁纸加入返回列表
                 }
             }
 

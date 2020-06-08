@@ -42,12 +42,13 @@ namespace PictureWhisper.WebAPI.Controllers
         /// <summary>
         /// 获取未处理举报记录列表
         /// </summary>
+        /// <param name="userId">举报处理人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns>获取成功，则返回举报记录列表；否则返回404</returns>
-        [HttpGet("unreviewed/{count}")]
-        public async Task<ActionResult<List<T_Report>>> GetUnReviewedReportsAsync(int count)
+        [HttpGet("unreviewed/{userId}/{count}")]
+        public async Task<ActionResult<List<T_Report>>> GetUnReviewedReportsAsync(int userId, int count)
         {
-            var result = await reportRepo.GetUnReviewedReportsAsync(count);
+            var result = await reportRepo.GetUnReviewedReportsAsync(userId, count);
             if (result == null || result.Count == 0)
             {
                 return NotFound();

@@ -21,17 +21,6 @@ namespace PictureWhisper.Client.Helper
         }
 
         /// <summary>
-        /// 获取更亮的主题色
-        /// </summary>
-        /// <returns></returns>
-        public static Color GetLighterAccentColor()
-        {
-            var uiSetting = new UISettings();
-
-            return uiSetting.GetColorValue(UIColorType.AccentLight2);
-        }
-
-        /// <summary>
         /// 获取背景色
         /// </summary>
         /// <returns></returns>
@@ -46,7 +35,7 @@ namespace PictureWhisper.Client.Helper
         /// 获取前景色
         /// </summary>
         /// <returns></returns>
-        public static Color GetForegroudColor()
+        public static Color GetForegroudColor1()
         {
             var uiSetting = new UISettings();
 
@@ -54,16 +43,21 @@ namespace PictureWhisper.Client.Helper
         }
 
         /// <summary>
-        /// 根据System.Drawing.Color的颜色获取Windows.UI.Color
+        /// 获取前景色
         /// </summary>
-        /// <param name="color"></param>
         /// <returns></returns>
-        public static Color GetColor(System.Drawing.Color color)
+        public static Color GetHyperLinkButtonForegroundColor()
         {
-            var value = color.ToArgb();
-            var bytes = BitConverter.GetBytes(value);
+            return Colors.Gray;
+        }
 
-            return Color.FromArgb(bytes[0], bytes[1], bytes[2], bytes[3]);
+        /// <summary>
+        /// 获取消息提示色
+        /// </summary>
+        /// <returns></returns>
+        public static Color GetMessageNotifyColor()
+        {
+            return Colors.Aqua;
         }
     }
 }

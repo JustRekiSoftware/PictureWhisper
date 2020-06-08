@@ -62,9 +62,10 @@ namespace PictureWhisper.Domain.Abstract
         /// <summary>
         /// 获取未审核的壁纸
         /// </summary>
+        /// <param name="userId">审核人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns>返回壁纸列表</returns>
-        Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int count);
+        Task<List<T_Wallpaper>> GetUnReviewedWallpaperAsync(int userId, int count);
 
         /// <summary>
         /// 获取用户发布的壁纸

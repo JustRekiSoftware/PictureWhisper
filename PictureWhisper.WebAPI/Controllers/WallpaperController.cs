@@ -102,12 +102,13 @@ namespace PictureWhisper.WebAPI.Controllers
         /// <summary>
         /// 获取未审核的壁纸
         /// </summary>
+        /// <param name="userId">审核人员Id</param>
         /// <param name="count">每获取数量</param>
         /// <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
         [HttpGet("unreviewed/{count}")]
-        public async Task<ActionResult<List<T_Wallpaper>>> GetUnReviewedWallpapersAsync(int count)
+        public async Task<ActionResult<List<T_Wallpaper>>> GetUnReviewedWallpapersAsync(int userId, int count)
         {
-            var result = await wallpaperRepo.GetUnReviewedWallpaperAsync(count);
+            var result = await wallpaperRepo.GetUnReviewedWallpaperAsync(userId, count);
             if (result == null || result.Count == 0)
             {
                 return NotFound();

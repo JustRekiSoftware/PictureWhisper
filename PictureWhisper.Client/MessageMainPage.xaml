@@ -44,13 +44,6 @@
                     <TextBlock Text="审核消息" FontSize="18" />
                 </HyperlinkButton>
             </StackPanel>
-            <!--<StackPanel Orientation="Horizontal" Width="40" Grid.Column="1">
-                <Button x:Name="CloseButton" Click="CloseButton_Click"
-                        Width="40" Height="40" 
-                        Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-                    <SymbolIcon Symbol="Cancel" />
-                </Button>
-            </StackPanel>-->
         </Grid>
 
         <!-- 页面内容 -->

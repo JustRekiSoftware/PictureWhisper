@@ -25,15 +25,16 @@ namespace PictureWhisper.Client.ViewModels
         /// <summary>
         /// 获取举报列表
         /// </summary>
+        /// <param name="userId">举报处理人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns></returns>
-        public async Task GetReportsAsync(int count)
+        public async Task GetReportsAsync(int userId, int count)
         {
             using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
             {
                 //获取举报列表
-                var url = string.Format("{0}report/unreviewed/{1}",
-                    HttpClientHelper.baseUrl, count);
+                var url = string.Format("{0}report/unreviewed/{1}/{2}",
+                    HttpClientHelper.baseUrl, userId, count);
                 var response = await client.GetAsync(new Uri(url));
                 if (!response.IsSuccessStatusCode)
                 {

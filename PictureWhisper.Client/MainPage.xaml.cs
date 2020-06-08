@@ -7,6 +7,7 @@ using PictureWhisper.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -48,8 +49,11 @@ namespace PictureWhisper.Client
             var signinInfo = SQLiteHelper.GetSigninInfo();
             UserId = signinInfo.SI_UserID;
             await GetUserInfoAsync(signinInfo);
-            ContentFrame.Navigate(typeof(WallpaperRecommendPage));//自动导航到壁纸推荐页面
-            HyperLinkButtonFocusChange("WallpaperRecommendHyperlinkButton");//高亮壁纸推荐按钮
+            if (!ContentFrame.CanGoBack)
+            {
+                ContentFrame.Navigate(typeof(WallpaperRecommendPage));//自动导航到壁纸推荐页面
+                HyperLinkButtonFocusChange("WallpaperRecommendHyperlinkButton");//高亮壁纸推荐按钮
+            }
             NotifyHelper.ConfigConnect();//配置消息提示服务器连接
             NotifyHelper.ConnectionOn<short>("NotifyNewMessage", (type) =>
             {
@@ -57,18 +61,25 @@ namespace PictureWhisper.Client
                 {
                     NotifyHelper.NotifyTypes.Add(type);
                 }
-                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
             });//配置客户端函数
             NotifyHelper.ConnectionOn<List<short>>("NotifyNewMessages", (types) =>
             {
-                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                foreach (var type in types)
+                {
+                    if (!NotifyHelper.NotifyTypes.Contains(type))
+                    {
+                        NotifyHelper.NotifyTypes.Add(type);
+                    }
+                }
+                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
             });//配置客户端函数
             await NotifyHelper.StartAsync();//连接服务器
             await NotifyHelper.SignInAsync();//向服务器发送注册请求
             await NotifyHelper.CheckNewMessageAsync();//向服务器发送检查新消息请求
             if (NotifyHelper.NotifyTypes.Count > 0)
             {
-                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
             }
         }
 
@@ -213,7 +224,12 @@ namespace PictureWhisper.Client
         /// <param name="e"></param>
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(typeof(WallpaperPublishPage), UserId);
+            dynamic param = new
+            {
+                UserId = UserId,
+                Todo = "UserWallpaperPublish"
+            };
+            ContentFrame.Navigate(typeof(WallpaperPublishPage), param);
         }
 
         /// <summary>
@@ -269,11 +285,30 @@ namespace PictureWhisper.Client
             //将上一次高亮超链接按钮的颜色更改为默认色
             if (LastFocus != null)
             {
-                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
             //将当前高亮超链接按钮保存为上一次高亮超链接按钮，并更改颜色为高亮色
             LastFocus = currentFocus;
             LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
+        }
+
+        /// <summary>
+        /// 导航到该页面的事件
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (NotifyHelper.NotifyTypes.Count > 0)
+            {
+                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
+                MessageButton.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                MessageButton.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
+                MessageButton.FontWeight = FontWeights.Normal;
+            }
+            base.OnNavigatedTo(e);
         }
     }
 }

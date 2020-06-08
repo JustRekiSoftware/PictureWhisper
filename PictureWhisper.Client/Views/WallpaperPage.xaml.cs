@@ -147,7 +147,7 @@ namespace PictureWhisper.Client.Views
             }
             else
             {
-                LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
         }
 
@@ -201,7 +201,7 @@ namespace PictureWhisper.Client.Views
             }
             else
             {
-                FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
         }
 
@@ -339,7 +339,7 @@ namespace PictureWhisper.Client.Views
                         }
                         else
                         {
-                            LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                            LikeButton.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
                         }
                     }
                     else
@@ -359,7 +359,7 @@ namespace PictureWhisper.Client.Views
                         }
                         else
                         {
-                            FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                            FavoriteButton.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
                         }
                     }
                     else

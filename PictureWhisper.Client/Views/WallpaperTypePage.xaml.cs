@@ -35,7 +35,7 @@ namespace PictureWhisper.Client.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WallpaperGridView_ItemClick(object sender, ItemClickEventArgs e)
+        private void WallpaperAdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var wallpaperDto = (WallpaperDto)e.ClickedItem;
             var rootFrame = Window.Current.Content as Frame;

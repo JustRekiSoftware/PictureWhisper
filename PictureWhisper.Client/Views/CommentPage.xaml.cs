@@ -3,6 +3,9 @@ using PictureWhisper.Client.Helper;
 using PictureWhisper.Client.ViewModels;
 using PictureWhisper.Domain.Entites;
 using System;
+using System.Threading.Tasks;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -29,6 +32,7 @@ namespace PictureWhisper.Client.Views
             CommentLVM = new CommentListViewModel();
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;//启用缓存
+            CommentTextBox.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         /// <summary>
@@ -123,39 +127,7 @@ namespace PictureWhisper.Client.Views
         /// <param name="e"></param>
         private async void CommentSendButton_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
-            if (CommentTextBox.Text == string.Empty)
-            {
-                ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;
-                ErrorMsgTextBlock.Visibility = Visibility.Visible;
-                return;
-            }
-            var comment = new T_Comment
-            {
-                C_PublisherID = UserId,
-                C_Content = CommentTextBox.Text,
-                C_ReceiverID = WallpaperInfo.W_PublisherID,
-                C_WallpaperID = WallpaperInfo.W_ID
-            };
-            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
-            {
-                var url = HttpClientHelper.baseUrl + "comment";
-                var content = new HttpStringContent(JObject.FromObject(comment).ToString());
-                content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-                var resp = await client.PostAsync(new Uri(url), content);//发表评论
-                if (!resp.IsSuccessStatusCode)
-                {
-                    ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
-                    ErrorMsgTextBlock.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
-                    CommentTextBox.Text = string.Empty;
-                    //PageNum = 1;
-                    //await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
-                }
-            }
+            await CommentNow();
         }
 
         /// <summary>
@@ -213,6 +185,76 @@ namespace PictureWhisper.Client.Views
                 UserId = SQLiteHelper.GetSigninInfo().SI_UserID;
             }
             base.OnNavigatedTo(e);
+        }
+
+        /// <summary>
+        /// 拦截评论输入框Control + Enter事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Dispatcher_AcceleratorKeyActivated(object sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.EventType.ToString().Contains("Down"))
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    switch (args.VirtualKey)
+                    {
+                        case VirtualKey.Enter:
+                            await CommentNow();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 执行评论
+        /// </summary>
+        /// <returns></returns>
+        private async Task CommentNow()
+        {
+            ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
+            if (CommentTextBox.Text == string.Empty)
+            {
+                ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;
+                ErrorMsgTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+            var comment = new T_Comment
+            {
+                C_PublisherID = UserId,
+                C_Content = CommentTextBox.Text,
+                C_ReceiverID = WallpaperInfo.W_PublisherID,
+                C_WallpaperID = WallpaperInfo.W_ID
+            };
+            using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+            {
+                var url = HttpClientHelper.baseUrl + "comment";
+                var content = new HttpStringContent(JObject.FromObject(comment).ToString());
+                content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+                var resp = await client.PostAsync(new Uri(url), content);//发表评论
+                if (!resp.IsSuccessStatusCode)
+                {
+                    ErrorMsgTextBlock.Text += "· 发送失败" + Environment.NewLine;
+                    ErrorMsgTextBlock.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ErrorMsgTextBlock.Visibility = Visibility.Collapsed;
+                    CommentTextBox.Text = string.Empty;
+                    //当现有评论内容为空或不能滚动时，刷新评论列表
+                    if (CommentScrollViewer.ExtentHeight == 0
+                        || CommentScrollViewer.ExtentHeight == CommentScrollViewer.ViewportHeight)
+                    {
+                        PageNum = 1;
+                        await CommentLVM.GetWallpaperCommentsAsync(WallpaperInfo.W_ID, PageNum++, PageSize);
+                    }
+                }
+            }
         }
     }
 }

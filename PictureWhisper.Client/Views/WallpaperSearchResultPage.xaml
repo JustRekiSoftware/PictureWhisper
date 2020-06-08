@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:data="using:PictureWhisper.Client.ViewModels"
+    xmlns:toolkitControls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <!-- 壁纸搜索结果页面 -->
@@ -42,19 +43,21 @@
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Hidden" Grid.Row="1"
                       ViewChanged="WallpaperScrollViewer_ViewChanged">
-            <GridView x:Name="WallpaperGridView" 
+            <toolkitControls:AdaptiveGridView 
+                      x:Name="WallpaperAdaptiveGridView" 
                       IsItemClickEnabled="True" 
-                      ItemClick="WallpaperGridView_ItemClick"
+                      ItemClick="WallpaperAdaptiveGridView_ItemClick"
                       SelectionMode="None"
-                      ItemsSource="{x:Bind WallpaperLVM.SearchResultWallpapers}">
+                      ItemsSource="{x:Bind WallpaperLVM.SearchResultWallpapers}"
+                      DesiredWidth="320" SizeChanged="WallpaperAdaptiveGridView_SizeChanged">
                 <!-- 壁纸显示模板 -->
-                <GridView.ItemTemplate>
+                <toolkitControls:AdaptiveGridView.ItemTemplate>
                     <DataTemplate x:DataType="data:WallpaperDto">
-                        <Image Source="{x:Bind Image}"  Width="320" Height="180"
+                        <Image Source="{x:Bind Image, Mode=OneWay}"
                                Stretch="UniformToFill" Margin="5,5,5,5" />
                     </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
+                </toolkitControls:AdaptiveGridView.ItemTemplate>
+            </toolkitControls:AdaptiveGridView>
         </ScrollViewer>
         <Button x:Name="RefreshButton" HorizontalAlignment="Right" 
                 VerticalAlignment="Bottom" Grid.Row="1" Margin="10,10,10,10"

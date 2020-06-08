@@ -34,9 +34,10 @@ namespace PictureWhisper.Domain.Concrete
         /// <summary>
         /// 获取未处理的举报信息
         /// </summary>
+        /// <param name="userId">举报处理人员Id</param>
         /// <param name="count">获取数量</param>
         /// <returns></returns>
-        public async Task<List<T_Report>> GetUnReviewedReportsAsync(int count)
+        public async Task<List<T_Report>> GetUnReviewedReportsAsync(int userId, int count)
         {
             var result = new List<T_Report>();
             var times = 0;
@@ -52,7 +53,7 @@ namespace PictureWhisper.Domain.Concrete
                     .Skip(ReviewHelper.Reports.Count).Take(count).ToListAsync();
                 foreach (var report in tmp)
                 {
-                    ReviewHelper.AddReport(ref result, report);//将不是正在处理的举报信息加入返回列表
+                    ReviewHelper.AddReport(ref result, report, userId);//将不是正在处理的举报信息加入返回列表
                 }
             }
 

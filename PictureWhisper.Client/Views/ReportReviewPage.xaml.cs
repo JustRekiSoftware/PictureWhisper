@@ -137,11 +137,11 @@ namespace PictureWhisper.Client.Views
         {
             if (ReportLVM.Reports.Count == 0)
             {
-                await ReportLVM.GetReportsAsync(5);
+                await ReportLVM.GetReportsAsync(UserId, 5);
             }
             else
             {
-                await ReportLVM.GetReportsAsync(Count);
+                await ReportLVM.GetReportsAsync(UserId, Count);
             }
             if (CurrentIndex < ReportLVM.Reports.Count)
             {

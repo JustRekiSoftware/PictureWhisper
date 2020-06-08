@@ -2,6 +2,7 @@
 using PictureWhisper.Client.Views;
 using PictureWhisper.Domain.Entites;
 using System;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -92,7 +93,6 @@ namespace PictureWhisper.Client
             {
                 ContentFrame.Navigate(typeof(MessageCommentPage));
             }
-            HyperLinkButtonFocusChange("CommentToUserHyperlinkButton");
             //提示新消息
             foreach (var type in NotifyHelper.NotifyTypes)
             {
@@ -100,21 +100,20 @@ namespace PictureWhisper.Client
                 {
                     case (short)NotifyMessageType.评论:
                         CommentToUserHyperlinkButton.Foreground =
-                            new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                            new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
                         break;
                     case (short)NotifyMessageType.回复:
                         ReplyToUserHyperlinkButton.Foreground =
-                            new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                            new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
                         break;
                     case (short)NotifyMessageType.审核:
                         ReviewMessageHyperlinkButton.Foreground =
-                            new SolidColorBrush(ColorHelper.GetLighterAccentColor());
+                            new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
                         break;
                     default:
                         break;
                 }
             }
-            NotifyHelper.NotifyTypes.Clear();
             var settingInfo = SQLiteHelper.GetSettingInfo();
             settingInfo.STI_LastCheckMessageDate = DateTime.Now;
             await SQLiteHelper.UpdateSettingInfoAsync(settingInfo);
@@ -158,11 +157,43 @@ namespace PictureWhisper.Client
             //将上一次高亮超链接按钮的颜色更改为默认色
             if (LastFocus != null)
             {
-                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
             //将当前高亮超链接按钮保存为上一次高亮超链接按钮，并更改颜色为高亮色
             LastFocus = currentFocus;
             LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetAccentColor());
+        }
+
+        /// <summary>
+        /// 超链接按钮消息提示
+        /// </summary>
+        /// <param name="currentName">当前进行消息提示的超链接按钮名</param>
+        public void HyperLinkButtonMessageNotify(string currentName)
+        {
+            HyperlinkButton current;
+            //获取当前高亮的超链接按钮
+            switch (currentName)
+            {
+                case "CommentToUserHyperlinkButton":
+                    current = CommentToUserHyperlinkButton;
+                    break;
+                case "ReplyToUserHyperlinkButton":
+                    current = ReplyToUserHyperlinkButton;
+                    break;
+                case "ReviewMessageHyperlinkButton":
+                    current = ReviewMessageHyperlinkButton;
+                    break;
+                default:
+                    current = CommentToUserHyperlinkButton;
+                    break;
+            }
+            //显示当前超链接按钮
+            if (current.Visibility == Visibility.Collapsed)
+            {
+                current.Visibility = Visibility.Visible;
+            }
+            //更改颜色为消息提示色
+            current.Foreground = new SolidColorBrush(ColorHelper.GetMessageNotifyColor());
         }
     }
 }

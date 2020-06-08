@@ -205,10 +205,11 @@
             <param name="id">举报Id</param>
             <returns>获取成功，则返回举报记录；否则返回404</returns>
         </member>
-        <member name="M:PictureWhisper.WebAPI.Controllers.ReportController.GetUnReviewedReportsAsync(System.Int32)">
+        <member name="M:PictureWhisper.WebAPI.Controllers.ReportController.GetUnReviewedReportsAsync(System.Int32,System.Int32)">
             <summary>
             获取未处理举报记录列表
             </summary>
+            <param name="userId">举报处理人员Id</param>
             <param name="count">获取数量</param>
             <returns>获取成功，则返回举报记录列表；否则返回404</returns>
         </member>
@@ -428,10 +429,11 @@
             <param name="count">获取数量</param>
             <returns>若获取到，则返回壁纸列表；若未获取到，则返回404</returns>
         </member>
-        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetUnReviewedWallpapersAsync(System.Int32)">
+        <member name="M:PictureWhisper.WebAPI.Controllers.WallpaperController.GetUnReviewedWallpapersAsync(System.Int32,System.Int32)">
             <summary>
             获取未审核的壁纸
             </summary>
+            <param name="userId">审核人员Id</param>
             <param name="count">每获取数量</param>
             <returns>若获取到，则返回壁纸列表；没获取到，则返回404</returns>
         </member>
@@ -559,6 +561,13 @@
             SignalR消息通知中心
             </summary>
         </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.NotifyHub.OnDisconnectedAsync(System.Exception)">
+            <summary>
+            处理异常断线
+            </summary>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
         <member name="M:PictureWhisper.WebAPI.Hubs.NotifyHub.SignIn(System.Int32)">
             <summary>
             上线时记录连接信息
@@ -576,6 +585,30 @@
             检查新消息
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:PictureWhisper.WebAPI.Hubs.ReviewHub">
+            <summary>
+            SignalR审核处理中心
+            </summary>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.ReviewHub.OnDisconnectedAsync(System.Exception)">
+            <summary>
+            处理异常断线
+            </summary>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.ReviewHub.SignIn(System.Int32)">
+            <summary>
+            上线时记录连接信息
+            </summary>
+            <param name="id">用户Id</param>
+        </member>
+        <member name="M:PictureWhisper.WebAPI.Hubs.ReviewHub.SignOut(System.Int32)">
+            <summary>
+            下线时删除连接信息
+            </summary>
+            <param name="id">用户Id</param>
         </member>
     </members>
 </doc>

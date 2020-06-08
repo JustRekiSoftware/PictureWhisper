@@ -20,6 +20,7 @@ namespace PictureWhisper.Client
     public sealed partial class ReviewMainPage : Page
     {
         private T_SigninInfo SigninInfo { get; set; }
+        private int UserId { get; set; }
         private ImageViewModel ImageVM { get; set; }
         private HyperlinkButton LastFocus { get; set; }
 
@@ -33,6 +34,20 @@ namespace PictureWhisper.Client
             NavigationCacheMode = NavigationCacheMode.Enabled;
             PageFrame = ContentFrame;
             Page = this;
+        }
+
+        /// <summary>
+        /// 页面加载后事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            var signinInfo = SQLiteHelper.GetSigninInfo();
+            UserId = signinInfo.SI_UserID;
+            NotifyHelper.ConfigConnect();//配置审核处理服务器连接
+            await NotifyHelper.StartAsync();//连接服务器
+            await NotifyHelper.SignInAsync();//向服务器发送注册请求
         }
 
         /// <summary>
@@ -134,7 +149,7 @@ namespace PictureWhisper.Client
             //将上一次高亮超链接按钮的颜色更改为默认色
             if (LastFocus != null)
             {
-                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetForegroudColor());
+                LastFocus.Foreground = new SolidColorBrush(ColorHelper.GetHyperLinkButtonForegroundColor());
             }
             //将当前高亮超链接按钮保存为上一次高亮超链接按钮，并更改颜色为高亮色
             LastFocus = currentFocus;

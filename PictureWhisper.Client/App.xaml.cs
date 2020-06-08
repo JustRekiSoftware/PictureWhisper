@@ -111,7 +111,11 @@ namespace PictureWhisper.Client
                                 {
                                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                                 }
-                                else//非注册用户跳转到审核页面
+                                else if (result.SI_Type == (short)UserType.管理员)//管理员跳转到管理员主页面
+                                {
+                                    rootFrame.Navigate(typeof(AdminMainPage), e.Arguments);
+                                }
+                                else//壁纸审核人员和举报处理人员跳转到审核主页面
                                 {
                                     rootFrame.Navigate(typeof(ReviewMainPage), e.Arguments);
                                 }
@@ -139,6 +143,10 @@ namespace PictureWhisper.Client
                     if (NotifyHelper.connected)
                     {
                         await NotifyHelper.SignOutAsync();//关闭应用并且消息提示已连接时，向服务端发送注销请求
+                    }
+                    if (ReviewHelper.connected)
+                    {
+                        await ReviewHelper.SignOutAsync();//关闭应用并且审核处理已连接时，向服务端发送注销请求
                     }
                 };
             }

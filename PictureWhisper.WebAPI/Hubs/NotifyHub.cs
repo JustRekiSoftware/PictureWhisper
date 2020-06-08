@@ -17,11 +17,26 @@ namespace PictureWhisper.WebAPI.Hubs
         private static object syncRoot = new object();//同步锁
         public static Dictionary<int, string> ConnectionIdDict { get; set; }
             = new Dictionary<int, string>();//记录已连接用户
-        private DB_PictureWhisperContext context;
+        private DB_PictureWhisperContext pwContext;
 
-        public NotifyHub(DB_PictureWhisperContext context)
+        public NotifyHub(DB_PictureWhisperContext pwContext)
         {
-            this.context = context;
+            this.pwContext = pwContext;
+        }
+
+        /// <summary>
+        /// 处理异常断线
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            if (ConnectionIdDict.ContainsValue(Context.ConnectionId))
+            {
+                var toRemove = ConnectionIdDict.FirstOrDefault(p => p.Value == Context.ConnectionId);
+                ConnectionIdDict.Remove(toRemove.Key);
+            }
+            await base.OnDisconnectedAsync(exception);
         }
 
         /// <summary>
@@ -59,19 +74,19 @@ namespace PictureWhisper.WebAPI.Hubs
         public async Task<List<short>> CheckNewMessageAsync(int id, DateTime lastCheckDate)
         {
             var result = new List<short>();
-            var count = await context.Comments
+            var count = await pwContext.Comments
                 .Where(p => p.C_ReceiverID == id && p.C_Date > lastCheckDate).CountAsync();
             if (count > 0)
             {
                 result.Add((short)NotifyMessageType.评论);
             }
-            count = await context.Replies
+            count = await pwContext.Replies
                 .Where(p => p.RPL_ReceiverID == id && p.RPL_Date > lastCheckDate).CountAsync();
             if (count > 0)
             {
                 result.Add((short)NotifyMessageType.回复);
             }
-            count = await context.Reviews
+            count = await pwContext.Reviews
                 .Where(p => (p.RV_MsgToReportedID == id || p.RV_MsgToReporterID == id) && p.RV_Date > lastCheckDate).CountAsync();
             if (count > 0)
             {

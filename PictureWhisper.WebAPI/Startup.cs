@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ namespace PictureWhisper.WebAPI
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddSignalR();
+
             //添加身份验证
             services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
             {
@@ -84,6 +86,7 @@ namespace PictureWhisper.WebAPI
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<NotifyHub>("/hubs/notifyhub");
+                endpoints.MapHub<ReviewHub>("/hubs/reviewhub");
             });
 
             //测试web api
