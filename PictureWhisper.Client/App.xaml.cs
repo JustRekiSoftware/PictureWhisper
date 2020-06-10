@@ -8,6 +8,7 @@ using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -138,8 +139,11 @@ namespace PictureWhisper.Client
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
-                Window.Current.Closed += async (sender, args) =>
+                //注册窗体关闭事件
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += async (sender, args) =>
                 {
+                    var deferral = args.GetDeferral();
+
                     if (NotifyHelper.connected)
                     {
                         await NotifyHelper.SignOutAsync();//关闭应用并且消息提示已连接时，向服务端发送注销请求
@@ -148,6 +152,8 @@ namespace PictureWhisper.Client
                     {
                         await ReviewHelper.SignOutAsync();//关闭应用并且审核处理已连接时，向服务端发送注销请求
                     }
+
+                    deferral.Complete();
                 };
             }
         }
@@ -175,5 +181,7 @@ namespace PictureWhisper.Client
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
+
+        
     }
 }

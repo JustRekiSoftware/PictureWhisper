@@ -11,8 +11,10 @@ namespace PictureWhisper.Domain.Helper
     public class ReviewHelper
     {
         public static object syncRoot = new object();//同步锁
-        public static Dictionary<int, List<T_Report>> Reports { get; set; } = new Dictionary<int, List<T_Report>>();
-        public static Dictionary<int, List<T_Wallpaper>> Wallpapers { get; set; } = new Dictionary<int, List<T_Wallpaper>>();
+        public static List<T_Report> Reports { get; set; } = new List<T_Report>();
+        public static List<T_Wallpaper> Wallpapers { get; set; } = new List<T_Wallpaper>();
+        public static Dictionary<int, List<T_Report>> UserReports { get; set; } = new Dictionary<int, List<T_Report>>();
+        public static Dictionary<int, List<T_Wallpaper>> UserWallpapers { get; set; } = new Dictionary<int, List<T_Wallpaper>>();
 
         /// <summary>
         /// 添加要处理的举报
@@ -24,15 +26,16 @@ namespace PictureWhisper.Domain.Helper
         {
             lock (syncRoot)
             {
-                if (Reports.ContainsKey(userId) && Reports[userId].Contains(entity))
+                if (Reports.Count(p => p.RPT_ID == entity.RPT_ID) > 0)
                 {
                     return;
                 }
-                if (!Reports.ContainsKey(userId))
+                if (!UserReports.ContainsKey(userId))
                 {
-                    Reports.Add(userId, new List<T_Report>());
+                    UserReports.Add(userId, new List<T_Report>());
                 }
-                Reports[userId].Add(entity);
+                Reports.Add(entity);
+                UserReports[userId].Add(entity);
                 result.Add(entity);
             }
         }
@@ -47,15 +50,16 @@ namespace PictureWhisper.Domain.Helper
         {
             lock (syncRoot)
             {
-                if (Wallpapers.ContainsKey(userId) && Wallpapers[userId].Contains(entity))
+                if (Wallpapers.Count(p => p.W_ID == entity.W_ID) > 0)
                 {
                     return;
                 }
-                if (!Wallpapers.ContainsKey(userId))
+                if (!UserWallpapers.ContainsKey(userId))
                 {
-                    Wallpapers.Add(userId, new List<T_Wallpaper>());
+                    UserWallpapers.Add(userId, new List<T_Wallpaper>());
                 }
-                Wallpapers[userId].Add(entity);
+                Wallpapers.Add(entity);
+                UserWallpapers[userId].Add(entity);
                 result.Add(entity);
             }
         }
@@ -69,9 +73,10 @@ namespace PictureWhisper.Domain.Helper
         {
             lock (syncRoot)
             {
-                if (Reports[userId].Contains(entity))
+                if (UserReports[userId].Contains(entity))
                 {
-                    Reports[userId].Remove(entity);
+                    UserReports[userId].Remove(entity);
+                    Reports.Remove(entity);
                 }
             }
         }
@@ -85,9 +90,10 @@ namespace PictureWhisper.Domain.Helper
         {
             lock (syncRoot)
             {
-                if (Wallpapers[userId].Contains(entity))
+                if (UserWallpapers[userId].Contains(entity))
                 {
-                    Wallpapers[userId].Remove(entity);
+                    UserWallpapers[userId].Remove(entity);
+                    Wallpapers.Remove(entity);
                 }
             }
         }
@@ -100,13 +106,21 @@ namespace PictureWhisper.Domain.Helper
         {
             lock (syncRoot)
             {
-                if (Reports.ContainsKey(userId))
+                if (UserReports.ContainsKey(userId))
                 {
-                    Reports.Remove(userId);
+                    foreach (var report in UserReports[userId])
+                    {
+                        Reports.Remove(report);
+                    }
+                    UserReports.Remove(userId);
                 }
-                if (Wallpapers.ContainsKey(userId))
+                if (UserWallpapers.ContainsKey(userId))
                 {
-                    Wallpapers.Remove(userId);
+                    foreach (var wallpaper in UserWallpapers[userId])
+                    {
+                        Wallpapers.Remove(wallpaper);
+                    }
+                    UserWallpapers.Remove(userId);
                 }
             }
         }

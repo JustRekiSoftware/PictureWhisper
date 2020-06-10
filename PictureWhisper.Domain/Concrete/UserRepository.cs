@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using PictureWhisper.Domain.Helper;
 using PictureWhisper.Domain.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,6 +170,42 @@ namespace PictureWhisper.Domain.Concrete
         public async Task<bool> UpdateAsync(int id, JsonPatchDocument<T_User> jsonPatch)
         {
             var target = await context.Users.FindAsync(id);
+            if (jsonPatch.Operations.Count(p => p.path == "U_Password") > 0)//修改密码
+            {
+                return false;//该更新方法不支持密码更新
+            }
+            jsonPatch.ApplyTo(target);//应用更新
+            context.Entry(target).State = EntityState.Modified;//标记为已修改
+            try
+            {
+                await context.SaveChangesAsync();//保存更改
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 更新用户密码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="code">验证码</param>
+        /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+        /// <returns>更新成功返回true，否则返回false</returns>
+        public async Task<bool> UpdatePasswordAsync(int id, string code, JsonPatchDocument<T_User> jsonPatch)
+        {
+            var target = await context.Users.FindAsync(id);
+            if (IdentityCodeHelper.IdentityCodes.ContainsKey(id))
+            {
+                if (IdentityCodeHelper.IdentityCodes[id].Item1 != code)//验证码不正确
+                {
+                    return false;
+                }
+                IdentityCodeHelper.RemoveIdentityCode(id);
+            }
             jsonPatch.ApplyTo(target);//应用更新
             context.Entry(target).State = EntityState.Modified;//标记为已修改
             try
@@ -215,7 +252,7 @@ namespace PictureWhisper.Domain.Concrete
         /// <param name="id">用户Id</param>
         /// <param name="email">邮箱</param>
         /// <returns>有该用户则返回用户Id和验证码，无该用户则返回null</returns>
-        public async Task<dynamic> SendIdentifyCodeAsync(int id, string email)
+        public async Task<int> SendIdentifyCodeAsync(int id, string email)
         {
             var user = await context.Users.FirstOrDefaultAsync(p => p.U_Email == email);
             if (user != null)
@@ -225,18 +262,15 @@ namespace PictureWhisper.Domain.Concrete
                     var tmp = await context.Users.FindAsync(id);
                     if (tmp.U_Email != email || user.U_ID != id)
                     {
-                        return null;
+                        return 0;
                     }
                 }
                 var code = await MailHelper.SendIdentifyCodeAsync(user.U_Name, email);
-                return new
-                {
-                    UserId = user.U_ID,
-                    Code = code
-                };
+                IdentityCodeHelper.AddIdentityCode(user.U_ID, code);
+                return user.U_ID;
             }
 
-            return null;
+            return 0;
         }
     }
 }

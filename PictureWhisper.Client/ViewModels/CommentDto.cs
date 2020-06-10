@@ -1,6 +1,10 @@
-﻿using PictureWhisper.Domain.Abstract;
+﻿using PictureWhisper.Client.Helper;
+using PictureWhisper.Client.Views;
+using PictureWhisper.Domain.Abstract;
 using PictureWhisper.Domain.Entites;
+using System;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace PictureWhisper.Client.ViewModels

@@ -171,6 +171,25 @@ namespace PictureWhisper.WebAPI.Controllers
         }
 
         /// <summary>
+        /// 更新用户密码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="code">验证码</param>
+        /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+        /// <returns>更新成功，则返回204；失败则返回404</returns>
+        [HttpPatch("{id}/{code}")]
+        public async Task<IActionResult> UpdatePasswordAsync(int id, string code, [FromBody] JsonPatchDocument<T_User> jsonPatch)
+        {
+            var result = await userRepo.UpdatePasswordAsync(id, code, jsonPatch);
+            if (result)
+            {
+                return NoContent();
+            }
+
+            return NotFound();
+        }
+
+        /// <summary>
         /// 删除用户
         /// </summary>
         /// <param name="id">用户Id</param>
@@ -192,17 +211,17 @@ namespace PictureWhisper.WebAPI.Controllers
         /// </summary>
         /// <param name="id">用户Id</param>
         /// <param name="email">邮箱</param>
-        /// <returns>发送成功返回用户Id和验证码，否则返回404</returns>
+        /// <returns>发送成功返回用户Id，否则返回404</returns>
         [HttpGet("identify/{id}/{email}")]
-        public async Task<ActionResult<dynamic>> SendIdentifyCodeAsync(int id, string email)
+        public async Task<ActionResult<int>> SendIdentifyCodeAsync(int id, string email)
         {
             var result = await userRepo.SendIdentifyCodeAsync(id, email);
-            if (result == null)
+            if (result != 0)
             {
-                return NotFound();
+                return result;
             }
 
-            return result;
+            return NotFound();
         }
     }
 }

@@ -128,7 +128,7 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            UserLVM.FillInfo();//补充关注信息
+            UserLVM.FillAllInfo();//补充关注信息
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace PictureWhisper.Client.Views
             await UserLVM.GetFollowUsersAsync(UserId, page, PageSize);
             if (UserLVM.FollowUsers.Count > 0)
             {
-                UserLVM.FillInfo();
+                UserLVM.FillAllInfo();
             }
         }
     }

@@ -117,7 +117,7 @@ namespace PictureWhisper.Client.Views
                     }
                 }
             }
-            UserLVM.FillInfo();
+            UserLVM.FillAllInfo();
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace PictureWhisper.Client.Views
             await UserLVM.GetSearchResultUsersAsync(Keyword, page, PageSize);
             if (UserLVM.SearchResultUsers.Count > 0)
             {
-                UserLVM.FillInfo();
+                UserLVM.FillAllInfo();
             }
         }
     }

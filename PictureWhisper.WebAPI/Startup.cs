@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PictureWhisper.Domain.Concrete;
+using PictureWhisper.Domain.Helper;
 using PictureWhisper.WebAPI.DI;
 using PictureWhisper.WebAPI.Hubs;
 
@@ -17,6 +18,7 @@ namespace PictureWhisper.WebAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            IdentityCodeHelper.StartCodeCleanTask();//开启验证码清理任务
         }
 
         public IConfiguration Configuration { get; }
@@ -40,11 +42,11 @@ namespace PictureWhisper.WebAPI
                 options.RequireHttpsMetadata = false;
                 options.Audience = "PictureWhisperWebAPI";
             });
-            //测试web api
+
             services.AddMvc();
             services.AddSwaggerGen(p =>
             {
-                p.SwaggerDoc("v1", new OpenApiInfo { Title = "PictureWhisper Web API", Version = "v1" });
+                p.SwaggerDoc("v1", new OpenApiInfo { Title = "PictureWhisper Web API", Version = "v1" });//生成web api的文档
                 p.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "在下框中输入请求头中需要添加Jwt授权Token：Bearer {Token}",
@@ -89,7 +91,7 @@ namespace PictureWhisper.WebAPI
                 endpoints.MapHub<ReviewHub>("/hubs/reviewhub");
             });
 
-            //测试web api
+            //添加测试web api的页面
             app.UseSwagger();
             app.UseSwaggerUI(p =>
             {

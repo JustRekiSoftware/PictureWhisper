@@ -51,15 +51,6 @@ namespace PictureWhisper.Client.ViewModels
                     "download/picture/origin/" + User.UserInfo.U_Avatar;
                 User.UserAvatar = await ImageHelper.GetImageAsync(client, url);
                 await GetIsFollowAsync(User.UserInfo.U_ID);
-                if (User.IsFollow)
-                {
-                    User.FollowButtonText = "已关注";
-                }
-                else
-                {
-                    User.FollowButtonText = "+ 关注（" + FormatFollowNum(User.UserInfo.U_FollowerNum) + "）";
-                }
-                User.FollowedTextBlockText = FormatFollowNum(User.UserInfo.U_FollowedNum);
             }
         }
 
@@ -98,6 +89,7 @@ namespace PictureWhisper.Client.ViewModels
 
                 User.IsFollow = isFollow;
             }
+            FillInfo();
         }
 
         /// <summary>
@@ -111,8 +103,9 @@ namespace PictureWhisper.Client.ViewModels
             }
             else
             {
-                User.FollowButtonText = "+ 关注（" + FormatFollowNum(User.UserInfo.U_FollowerNum) + "）";
+                User.FollowButtonText = "+ 关注";
             }
+            user.FollowButtonText += "（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
             User.FollowedTextBlockText = FormatFollowNum(User.UserInfo.U_FollowedNum);
         }
 

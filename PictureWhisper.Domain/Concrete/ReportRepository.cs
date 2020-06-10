@@ -40,17 +40,16 @@ namespace PictureWhisper.Domain.Concrete
         public async Task<List<T_Report>> GetUnReviewedReportsAsync(int userId, int count)
         {
             var result = new List<T_Report>();
-            var times = 0;
             while (result.Count < count)
             {
-                if (times++ >= 3)
-                {
-                    break;
-                }
                 var tmp = await context.Reports
                     .Where(p => p.RPT_Status == (short)Status.未审核)
                     .OrderByDescending(p => p.RPT_Date)
                     .Skip(ReviewHelper.Reports.Count).Take(count).ToListAsync();
+                if (tmp.Count == 0)
+                {
+                    break;
+                }
                 foreach (var report in tmp)
                 {
                     ReviewHelper.AddReport(ref result, report, userId);//将不是正在处理的举报信息加入返回列表

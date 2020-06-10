@@ -336,9 +336,13 @@ namespace PictureWhisper.Domain.Concrete
                     .Where(p => p.W_Status == (short)Status.未审核)
                     .OrderByDescending(p => p.W_Date)
                     .Skip(ReviewHelper.Wallpapers.Count).Take(count).ToListAsync();
-                foreach (var report in tmp)
+                if (tmp.Count == 0)
                 {
-                    ReviewHelper.AddWallpaper(ref result, report, userId);//将不是正在审核的壁纸加入返回列表
+                    break;
+                }
+                foreach (var wallpaper in tmp)
+                {
+                    ReviewHelper.AddWallpaper(ref result, wallpaper, userId);//将不是正在审核的壁纸加入返回列表
                 }
             }
 

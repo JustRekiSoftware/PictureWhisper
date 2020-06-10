@@ -61,7 +61,16 @@ namespace PictureWhisper.Domain.Abstract
         /// <param name="id">用户Id</param>
         /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
         /// <returns>更新成功返回true，否则返回false</returns>
-        Task<bool> UpdateAsync(int id, JsonPatchDocument<T_User> entity);
+        Task<bool> UpdateAsync(int id, JsonPatchDocument<T_User> jsonPatch);
+
+        /// <summary>
+        /// 更新用户密码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="code">验证码</param>
+        /// <param name="jsonPatch">用于更新的JsonPatchDocument</param>
+        /// <returns>更新成功返回true，否则返回false</returns>
+        Task<bool> UpdatePasswordAsync(int id, string code,  JsonPatchDocument<T_User> jsonPatch);
 
         /// <summary>
         /// 删除用户
@@ -75,7 +84,6 @@ namespace PictureWhisper.Domain.Abstract
         /// </summary>
         /// <param name="id">用户Id</param>
         /// <param name="email">邮箱</param>
-        /// <returns>有该用户则返回用户Id和验证码，无该用户则返回null</returns>
-        Task<dynamic> SendIdentifyCodeAsync(int id, string email);
+        Task<int> SendIdentifyCodeAsync(int id, string email);
     }
 }

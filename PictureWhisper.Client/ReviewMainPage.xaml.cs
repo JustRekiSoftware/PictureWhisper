@@ -45,9 +45,9 @@ namespace PictureWhisper.Client
         {
             var signinInfo = SQLiteHelper.GetSigninInfo();
             UserId = signinInfo.SI_UserID;
-            NotifyHelper.ConfigConnect();//配置审核处理服务器连接
-            await NotifyHelper.StartAsync();//连接服务器
-            await NotifyHelper.SignInAsync();//向服务器发送注册请求
+            ReviewHelper.ConfigConnect();//配置审核处理服务器连接
+            await ReviewHelper.StartAsync();//连接服务器
+            await ReviewHelper.SignInAsync();//向服务器发送注册请求
         }
 
         /// <summary>

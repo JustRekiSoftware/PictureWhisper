@@ -217,7 +217,7 @@ namespace PictureWhisper.Client.Views
         /// <returns></returns>
         private async Task CommentNow()
         {
-            ErrorMsgTextBlock.Text += "错误信息：" + Environment.NewLine;
+            ErrorMsgTextBlock.Text = "错误信息：" + Environment.NewLine;
             if (CommentTextBox.Text == string.Empty)
             {
                 ErrorMsgTextBlock.Text += "· 未输入评论" + Environment.NewLine;

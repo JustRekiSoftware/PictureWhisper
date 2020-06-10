@@ -133,38 +133,58 @@ namespace PictureWhisper.Client.ViewModels
                 var url = HttpClientHelper.baseUrl +
                     "follow/" + userId + "/" + user.UserInfo.U_ID;
                 var isFollow = bool.Parse(await client.GetStringAsync(new Uri(url)));
-
                 user.IsFollow = isFollow;
             }
+            FillInfo(ref user);
+        }
+
+        /// <summary>
+        /// 补充用户关注信息
+        /// </summary>
+        /// <param name="user">用户显示信息</param>
+        public void FillInfo(ref UserDto user)
+        {
+            if (user.IsFollow)
+            {
+                user.FollowButtonText = "已关注";
+            }
+            else
+            {
+                user.FollowButtonText = "+ 关注";
+            }
+            user.FollowButtonText += "（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
+            user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
         }
 
         /// <summary>
         /// 补充关注显示信息
         /// </summary>
-        public void FillInfo()
+        public void FillAllInfo()
         {
             foreach (var user in SearchResultUsers)
             {
                 if (user.IsFollow)
                 {
-                    user.FollowButtonText = "已关注 ";
+                    user.FollowButtonText = "已关注";
                 }
                 else
                 {
-                    user.FollowButtonText = "+ 关注（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
+                    user.FollowButtonText = "+ 关注";
                 }
+                user.FollowButtonText += "（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
                 user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
             }
             foreach (var user in FollowUsers)
             {
                 if (user.IsFollow)
                 {
-                    user.FollowButtonText = "已关注 ";
+                    user.FollowButtonText = "已关注";
                 }
                 else
                 {
-                    user.FollowButtonText = "+ 关注（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
+                    user.FollowButtonText = "+ 关注";
                 }
+                user.FollowButtonText += "（" + FormatFollowNum(user.UserInfo.U_FollowerNum) + "）";
                 user.FollowedTextBlockText = FormatFollowNum(user.UserInfo.U_FollowedNum);
             }
         }

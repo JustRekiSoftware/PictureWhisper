@@ -20,7 +20,6 @@ namespace PictureWhisper.Client.Views
     public sealed partial class PasswordChangePage : Page
     {
         private int UserId { get; set; }
-        private string Code { get; set; }
         private string FromPage { get; set; }
 
         public PasswordChangePage()
@@ -43,15 +42,15 @@ namespace PictureWhisper.Client.Views
             {
                 ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
             }
-            else if (userInfo.SI_Email != EmailTextBox.Text)
-            {
-                ErrorMessageTextBlock.Text += "· 邮箱输入错误" + Environment.NewLine;
-                ErrorMessageTextBlock.Visibility = Visibility.Visible;
-                return;
-            }
             else
             {
                 ErrorMessageTextBlock.Text += "· 邮箱未输入或格式不正确" + Environment.NewLine;
+                ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+            if (userInfo != null && userInfo.SI_Email != EmailTextBox.Text)
+            {
+                ErrorMessageTextBlock.Text += "· 邮箱输入错误" + Environment.NewLine;
                 ErrorMessageTextBlock.Visibility = Visibility.Visible;
                 return;
             }
@@ -64,24 +63,24 @@ namespace PictureWhisper.Client.Views
                 if (resp.IsSuccessStatusCode)//获取成功
                 {
                     SendIdentifyCodeButton.Content = "已发送";
-                    dynamic identifyInfo = JObject.Parse(await resp.Content.ReadAsStringAsync())
-                            .ToObject<dynamic>();
+                    var userId = int.Parse(await resp.Content.ReadAsStringAsync());
                     if (UserId == 0)//忘记密码
                     {
-                        UserId = (int)identifyInfo.userId;
+                        UserId = userId;
                     }
-                    else if (UserId != (int)identifyInfo.userId)//修改密码，邮箱非注册邮箱
+                    else if (UserId != userId)//修改密码，邮箱非注册邮箱
                     {
                         ErrorMessageTextBlock.Text += "· 发送失败，请检查邮箱是否正确" + Environment.NewLine;
                         ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                        SendIdentifyCodeButton.IsEnabled = true;
                         return;
                     }
-                    Code = (string)identifyInfo.code;//验证码
                 }
                 else
                 {
                     ErrorMessageTextBlock.Text += "· 发送失败，请检查邮箱是否正确" + Environment.NewLine;
                     ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                    SendIdentifyCodeButton.IsEnabled = true;
                     return;
                 }
             }
@@ -106,59 +105,62 @@ namespace PictureWhisper.Client.Views
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorMessageTextBlock.Text = "错误信息：" + Environment.NewLine;
-            if (Code == string.Empty)
+            //检查输入是否正确
+            if (IdentifyCodeTextBox.Text == string.Empty)
             {
-                ErrorMessageTextBlock.Text += "· 验证码未输入" + Environment.NewLine;
+                ErrorMessageTextBlock.Text += "· 验证码输入错误" + Environment.NewLine;
+                ErrorMessageTextBlock.Visibility = Visibility.Visible;
+                return;
             }
-            else
+            if (NewPwdTextBox.Password.TrimEnd() != string.Empty
+                && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
+                && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
             {
-                if (Code == IdentifyCodeTextBox.Text)//验证码正确
+                var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Password.TrimEnd());//加密密码
+                using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
                 {
-                    //检查输入是否正确
-                    if (NewPwdTextBox.Password.TrimEnd() != string.Empty
-                        && RepeatNewPwdtextBox.Password.TrimEnd() != string.Empty
-                        && NewPwdTextBox.Password.TrimEnd() == RepeatNewPwdtextBox.Password.TrimEnd())
+                    var url = HttpClientHelper.baseUrl + "user/" + UserId + "/" + IdentifyCodeTextBox.Text;
+                    var userOp = new List<dynamic>();
+                    userOp.Add(new
                     {
-                        var pwd = EncryptHelper.SHA256Encrypt(NewPwdTextBox.Password.TrimEnd());//加密密码
-                        using (var client = await HttpClientHelper.GetAuthorizedHttpClientAsync())
+                        op = "replace",
+                        path = "U_Password",
+                        value = pwd
+                    });
+                    var content = new HttpStringContent(JArray.FromObject(userOp).ToString());
+                    content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json-patch+json");
+                    var request = new HttpRequestMessage(HttpMethod.Patch, new Uri(url))
+                    {
+                        Content = content
+                    };
+                    var resp = await client.SendRequestAsync(request);//发送修改密码请求
+                    if (resp.IsSuccessStatusCode)//修改成功
+                    {
+                        if (FromPage == "SigninPage")
                         {
-                            var url = HttpClientHelper.baseUrl + "user/" + UserId;
-                            var userOp = new List<dynamic>();
-                            userOp.Add(new
+                            var rootFrame = Window.Current.Content as Frame;
+                            if (rootFrame.CanGoBack)
                             {
-                                op = "replace",
-                                path = "U_Password",
-                                value = pwd
-                            });
-                            var content = new HttpStringContent(JArray.FromObject(userOp).ToString());
-                            content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json-patch+json");
-                            var request = new HttpRequestMessage(HttpMethod.Patch, new Uri(url))
-                            {
-                                Content = content
-                            };
-                            var resp = await client.SendRequestAsync(request);//发送修改密码请求
-                            if (resp.IsSuccessStatusCode)//修改成功
-                            {
-                                if (UserMainPage.PageFrame.CanGoBack)
-                                {
-                                    UserMainPage.PageFrame.GoBack();
-                                }
+                                rootFrame.GoBack();
                             }
-                            else
+                        }
+                        else if (FromPage == "UserMainPage")
+                        {
+                            if (UserMainPage.PageFrame.CanGoBack)
                             {
-                                ErrorMessageTextBlock.Text += "· 修改失败" + Environment.NewLine;
+                                UserMainPage.PageFrame.GoBack();
                             }
                         }
                     }
                     else
                     {
-                        ErrorMessageTextBlock.Text += "· 新密码未输入或两次密码输入不一致" + Environment.NewLine;
+                        ErrorMessageTextBlock.Text += "· 修改失败" + Environment.NewLine;
                     }
                 }
-                else
-                {
-                    ErrorMessageTextBlock.Text += "· 验证码输入错误" + Environment.NewLine;
-                }
+            }
+            else
+            {
+                ErrorMessageTextBlock.Text += "· 新密码未输入或两次密码输入不一致" + Environment.NewLine;
             }
             if (ErrorMessageTextBlock.Text.Contains("·"))
             {
@@ -173,9 +175,9 @@ namespace PictureWhisper.Client.Views
         /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Code = string.Empty;
-            NewPwdTextBox.Password = string.Empty;
-            RepeatNewPwdtextBox.Password = string.Empty;
+            //IdentifyCodeTextBox.Text = string.Empty;
+            //NewPwdTextBox.Password = string.Empty;
+            //RepeatNewPwdtextBox.Password = string.Empty;
             if (FromPage == "SigninPage")
             {
                 var rootFrame = Window.Current.Content as Frame;
@@ -207,10 +209,6 @@ namespace PictureWhisper.Client.Views
             {
                 UserId = (int)((dynamic)e.Parameter).UserId;
                 FromPage = (string)((dynamic)e.Parameter).FromPage;
-            }
-            if (Code != null || Code != string.Empty)
-            {
-                Code = string.Empty;
             }
             base.OnNavigatedTo(e);
         }

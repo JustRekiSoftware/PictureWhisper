@@ -16,7 +16,7 @@ namespace PictureWhisper.Domain.Helpers
         private readonly static string SMTPServer = "smtp.office365.com";
         private readonly static int Port = 587;
         private readonly static string UserName = "justrekisoftware@outlook.com";
-        private readonly static string Pwd = "1314510qaz";
+        private readonly static string Pwd = "reki7354";
         private readonly static string FromName = "JustReki Software";
         private readonly static string FromEmail = "justrekisoftware@outlook.com";
         private readonly static string SubjectIdentifyCode = "修改密码";
@@ -24,6 +24,7 @@ namespace PictureWhisper.Domain.Helpers
         /// <summary>
         /// 发送验证码
         /// </summary>
+        /// <param name="toName">邮件接收者名</param>
         /// <param name="toEmail">邮件接收者邮箱</param>
         /// <returns>返回验证码</returns>
         public async static Task<string> SendIdentifyCodeAsync(string toName, string toEmail)
